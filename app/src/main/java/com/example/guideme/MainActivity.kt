@@ -1,37 +1,27 @@
 package com.example.guideme
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.guideme.tts.TTS
 import com.example.guideme.ui.theme.GuideMeTheme
-import android.content.Intent
-import android.net.Uri
-import android.provider.MediaStore
-import android.provider.Settings
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import com.example.guideme.camera.CameraActivity
+import androidx.compose.ui.unit.dp
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // If this import/call is unresolved on your setup, you can safely delete this line
         enableEdgeToEdge()
 
         // Initialize TTS
@@ -41,8 +31,23 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             GuideMeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(modifier = Modifier.padding(innerPadding))
+                Scaffold { inner ->
+                    MainScreen(
+                        modifier = Modifier
+                            .padding(inner)
+                            .fillMaxSize(),
+                        // ✅ Navigation stays in the Activity (safe; non-composable)
+                        onCameraClick = {
+                            TTS.speak("Camera is selected. Opening the guidance screen.")
+                            startActivity(Intent(this, CameraActivity::class.java))
+                        },
+                        onPhoneClick = {
+                            // We just signal the composable to show the dialog for Phone
+                        },
+                        onWifiClick = {
+                            // We just signal the composable to show the dialog for Wi-Fi
+                        }
+                    )
                 }
             }
         }
@@ -55,33 +60,48 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    onCameraClick: () -> Unit,
+    onPhoneClick: () -> Unit,
+    onWifiClick: () -> Unit
+) {
     val context = androidx.compose.ui.platform.LocalContext.current
 
-    // Which dialog to show: "camera", "phone", or "wifi"
+    // Which dialog to show: "phone" or "wifi" (we launch Camera guidance directly)
     var showDialogFor by remember { mutableStateOf<String?>(null) }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        // Camera
-        Button(onClick = {
-            TTS.speak("Camera is selected. Would you like me to open it for you, or guide you there?")
-            showDialogFor = "camera"
-        }) { Text("Camera") }
+    Column(modifier = modifier.padding(24.dp)) {
 
-        // Phone
+        // CAMERA — launch guidance Activity via the lambda (no composable APIs here)
+        Button(onClick = onCameraClick) {
+            Text("Camera")
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        // PHONE — ask whether to open or guide
         Button(onClick = {
             TTS.speak("Phone is selected. Would you like me to open it for you, or guide you there?")
             showDialogFor = "phone"
-        }) { Text("Phone") }
+            onPhoneClick() // optional: no-op hook to keep signature symmetric
+        }) {
+            Text("Phone")
+        }
 
-        // Wi-Fi
+        Spacer(Modifier.height(12.dp))
+
+        // WI-FI — ask whether to open or guide
         Button(onClick = {
             TTS.speak("Wi-Fi is selected. Would you like me to open it for you, or guide you there?")
             showDialogFor = "wifi"
-        }) { Text("Wi-Fi") }
+            onWifiClick() // optional: no-op hook to keep signature symmetric
+        }) {
+            Text("Wi-Fi")
+        }
     }
 
-    // Dialog logic
+    // Dialog for Phone / Wi-Fi actions (safe to use LocalContext inside composables)
     showDialogFor?.let { choice ->
         AlertDialog(
             onDismissRequest = { showDialogFor = null },
@@ -91,13 +111,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 TextButton(onClick = {
                     showDialogFor = null
                     when (choice) {
-                        "camera" -> {
-                            TTS.speak("Opening the camera app.")
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            intent.resolveActivity(context.packageManager)?.let {
-                                context.startActivity(intent)
-                            }
-                        }
                         "phone" -> {
                             TTS.speak("Opening the phone app.")
                             val intent = Intent(Intent.ACTION_DIAL)
@@ -137,6 +150,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
 @Composable
 fun PreviewMain() {
     GuideMeTheme {
-        MainScreen()
+        MainScreen(
+            onCameraClick = {},
+            onPhoneClick = {},
+            onWifiClick = {}
+        )
     }
 }
