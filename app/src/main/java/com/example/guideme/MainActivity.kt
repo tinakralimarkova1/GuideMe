@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.guideme.phone.CameraScreen
 import com.example.guideme.phone.PhoneScreen
 import com.example.guideme.tts.TTS
 import com.example.guideme.ui.theme.GuideMeTheme
@@ -74,8 +75,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
                 // Phone → navigate to PhoneScreen
                 Button(onClick = {
-                    TTS.speak("Opening the phone feature.")
-                    currentScreen = "phone"
+                    TTS.speak("Phone is selected. Would you like me to open it for you, or guide you there?")
+                    showDialogFor = "phone"
                 }) { Text("Phone") }
 
                 // Wi-Fi
@@ -107,6 +108,12 @@ fun MainScreen(modifier: Modifier = Modifier) {
                                     val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
                                     context.startActivity(intent)
                                 }
+                                "phone" -> {
+                                    TTS.speak("Opening the phone app.")
+                                    val intent = Intent(Intent.ACTION_DIAL)
+                                    context.startActivity(intent)
+                                }
+
                             }
                         }) { Text("Open the app for me") }
                     },
@@ -114,12 +121,22 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         Row {
                             TextButton(onClick = {
                                 showDialogFor = null
-                                TTS.speak("Guiding you to the home screen.")
-                                val intent = Intent(Intent.ACTION_MAIN).apply {
-                                    addCategory(Intent.CATEGORY_HOME)
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                when(choice){
+                                    "camera" -> {
+                                        currentScreen = "camera"
+                                    }
+                                    "phone" -> {
+                                        TTS.speak("Opening the phone feature.")
+                                        currentScreen = "phone"
+                                    }
                                 }
-                                context.startActivity(intent)
+
+//                                TTS.speak("Guiding you to the home screen.")
+//                                val intent = Intent(Intent.ACTION_MAIN).apply {
+//                                    addCategory(Intent.CATEGORY_HOME)
+//                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                                }
+//                                context.startActivity(intent)
                             }) { Text("Guide me to the app") }
 
                             TextButton(onClick = {
@@ -137,6 +154,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
             PhoneScreen()
 
             // Android back button returns to main menu
+            BackHandler { currentScreen = "main" }
+        }
+
+        "camera" -> {
+            CameraScreen()
             BackHandler { currentScreen = "main" }
         }
     }
