@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.guideme.phone.CameraScreen
 import com.example.guideme.phone.PhoneScreen
 import com.example.guideme.tts.TTS
 import com.example.guideme.ui.theme.GuideMeTheme
@@ -114,12 +115,18 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         Row {
                             TextButton(onClick = {
                                 showDialogFor = null
-                                TTS.speak("Guiding you to the home screen.")
-                                val intent = Intent(Intent.ACTION_MAIN).apply {
-                                    addCategory(Intent.CATEGORY_HOME)
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                when(choice){
+                                    "camera" -> {
+                                        currentScreen = "camera"
+                                    }
                                 }
-                                context.startActivity(intent)
+
+//                                TTS.speak("Guiding you to the home screen.")
+//                                val intent = Intent(Intent.ACTION_MAIN).apply {
+//                                    addCategory(Intent.CATEGORY_HOME)
+//                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                                }
+//                                context.startActivity(intent)
                             }) { Text("Guide me to the app") }
 
                             TextButton(onClick = {
@@ -137,6 +144,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
             PhoneScreen()
 
             // Android back button returns to main menu
+            BackHandler { currentScreen = "main" }
+        }
+
+        "camera" -> {
+            CameraScreen()
             BackHandler { currentScreen = "main" }
         }
     }
