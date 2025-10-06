@@ -56,12 +56,4 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    // CameraX BOM (choose a stable version available to you)
-    //Camera permissions
-    implementation(platform("androidx.camera:camera-bom:1.3.4"))
-
-    implementation("androidx.camera:camera-core")
-    implementation("androidx.camera:camera-camera2")
-    implementation("androidx.camera:camera-lifecycle")
-    implementation("androidx.camera:camera-view") // Provides PreviewView
 }
