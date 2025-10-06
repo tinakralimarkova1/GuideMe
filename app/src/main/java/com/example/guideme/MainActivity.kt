@@ -75,8 +75,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
                 // Phone → navigate to PhoneScreen
                 Button(onClick = {
-                    TTS.speak("Opening the phone feature.")
-                    currentScreen = "phone"
+                    TTS.speak("Phone is selected. Would you like me to open it for you, or guide you there?")
+                    showDialogFor = "phone"
                 }) { Text("Phone") }
 
                 // Wi-Fi
@@ -108,6 +108,12 @@ fun MainScreen(modifier: Modifier = Modifier) {
                                     val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
                                     context.startActivity(intent)
                                 }
+                                "phone" -> {
+                                    TTS.speak("Opening the phone app.")
+                                    val intent = Intent(Intent.ACTION_DIAL)
+                                    context.startActivity(intent)
+                                }
+
                             }
                         }) { Text("Open the app for me") }
                     },
@@ -118,6 +124,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
                                 when(choice){
                                     "camera" -> {
                                         currentScreen = "camera"
+                                    }
+                                    "phone" -> {
+                                        TTS.speak("Opening the phone feature.")
+                                        currentScreen = "phone"
                                     }
                                 }
 
