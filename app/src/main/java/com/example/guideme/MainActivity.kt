@@ -28,6 +28,7 @@ import com.example.guideme.phone.CameraScreen
 import com.example.guideme.phone.PhoneScreen
 import com.example.guideme.tts.TTS
 import com.example.guideme.ui.theme.GuideMeTheme
+import com.example.guideme.wifi.WifiScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,6 +130,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
                                         TTS.speak("Opening the phone feature.")
                                         currentScreen = "phone"
                                     }
+                                    "wifi" -> {
+                                        TTS.speak("Showing you current available networks")
+                                        currentScreen = "wifi"
+                                    }
                                 }
 
 //                                TTS.speak("Guiding you to the home screen.")
@@ -159,6 +164,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
         "camera" -> {
             CameraScreen()
+            BackHandler { currentScreen = "main" }
+        }
+
+        "wifi" -> {
+            WifiScreen()
             BackHandler { currentScreen = "main" }
         }
     }
