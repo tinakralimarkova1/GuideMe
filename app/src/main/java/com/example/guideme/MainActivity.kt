@@ -57,108 +57,33 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-
-    // Simple screen switcher: "main" menu or "phone" screen
     var currentScreen by remember { mutableStateOf("main") }
-
-    // Dialog only used for camera/wifi (we won’t use it for phone anymore)
-    var showDialogFor by remember { mutableStateOf<String?>(null) }
 
     when (currentScreen) {
         "main" -> {
             Column(modifier = modifier.fillMaxSize()) {
-                // Camera
+                // Go to in-app Camera training screen
                 Button(onClick = {
-                    TTS.speak("Camera is selected. Would you like me to open it for you, or guide you there?")
-                    showDialogFor = "camera"
+                    TTS.speak("Opening Camera.")
+                    currentScreen = "camera"
                 }) { Text("Camera") }
 
-                // Phone → navigate to PhoneScreen
+                // Go to in-app Phone training screen
                 Button(onClick = {
-                    TTS.speak("Phone is selected. Would you like me to open it for you, or guide you there?")
-                    showDialogFor = "phone"
+                    TTS.speak("Opening Phone.")
+                    currentScreen = "phone"
                 }) { Text("Phone") }
 
-                // Wi-Fi
+                // Go to in-app Wi-Fi training screen
                 Button(onClick = {
-                    TTS.speak("Wi-Fi is selected. Would you like me to open it for you, or guide you there?")
-                    showDialogFor = "wifi"
+                    TTS.speak("Opening Wi-Fi.")
+                    currentScreen = "wifi"
                 }) { Text("Wi-Fi") }
-            }
-
-            // Camera / Wi-Fi dialog
-            showDialogFor?.let { choice ->
-                AlertDialog(
-                    onDismissRequest = { showDialogFor = null },
-                    title = { Text("${choice.replaceFirstChar { it.uppercase() }} Options") },
-                    text = { Text("Would you like me to open the $choice app for you, or guide you there?") },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showDialogFor = null
-                            when (choice) {
-                                "camera" -> {
-                                    TTS.speak("Opening the camera app.")
-                                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                                    intent.resolveActivity(context.packageManager)?.let {
-                                        context.startActivity(intent)
-                                    }
-                                }
-                                "wifi" -> {
-                                    TTS.speak("Opening Wi-Fi settings.")
-                                    val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
-                                    context.startActivity(intent)
-                                }
-                                "phone" -> {
-                                    TTS.speak("Opening the phone app.")
-                                    val intent = Intent(Intent.ACTION_DIAL)
-                                    context.startActivity(intent)
-                                }
-
-                            }
-                        }) { Text("Open the app for me") }
-                    },
-                    dismissButton = {
-                        Row {
-                            TextButton(onClick = {
-                                showDialogFor = null
-                                when(choice){
-                                    "camera" -> {
-                                        currentScreen = "camera"
-                                    }
-                                    "phone" -> {
-                                        TTS.speak("Opening the phone feature.")
-                                        currentScreen = "phone"
-                                    }
-                                    "wifi" -> {
-                                        TTS.speak("Showing you current available networks")
-                                        currentScreen = "wifi"
-                                    }
-                                }
-
-//                                TTS.speak("Guiding you to the home screen.")
-//                                val intent = Intent(Intent.ACTION_MAIN).apply {
-//                                    addCategory(Intent.CATEGORY_HOME)
-//                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                                }
-//                                context.startActivity(intent)
-                            }) { Text("Guide me to the app") }
-
-                            TextButton(onClick = {
-                                showDialogFor = null
-                                TTS.speak("Cancelled.")
-                            }) { Text("Cancel") }
-                        }
-                    }
-                )
             }
         }
 
         "phone" -> {
-            // Show your Compose phone feature
             PhoneScreen()
-
-            // Android back button returns to main menu
             BackHandler { currentScreen = "main" }
         }
 
