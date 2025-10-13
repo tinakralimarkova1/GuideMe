@@ -100,9 +100,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                                 "camera" -> {
                                     TTS.speak("Opening the camera app.")
                                     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                                    intent.resolveActivity(context.packageManager)?.let {
-                                        context.startActivity(intent)
-                                    }
+                                     context.startActivity(intent)
                                 }
                                 "wifi" -> {
                                     TTS.speak("Opening Wi-Fi settings.")
@@ -110,9 +108,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                                     context.startActivity(intent)
                                 }
                                 "phone" -> {
-                                    TTS.speak("Opening the phone app.")
-                                    val intent = Intent(Intent.ACTION_DIAL)
-                                    context.startActivity(intent)
+                                    openPhoneApp(context)
                                 }
 
                             }
