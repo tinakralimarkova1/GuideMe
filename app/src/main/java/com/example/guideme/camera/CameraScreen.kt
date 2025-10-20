@@ -71,5 +71,5 @@ public fun CameraScreen() {
 @Preview(showBackground = true)
 @Composable
 private fun PhoneScreenPreview() {
-    MaterialTheme { PhoneScreen() }
+    MaterialTheme { PhoneNavHost() }
 }
