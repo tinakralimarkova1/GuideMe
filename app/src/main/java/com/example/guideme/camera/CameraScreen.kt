@@ -1,30 +1,11 @@
 package com.example.guideme.phone
 
-import android.content.ContentValues
-import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
-
-// Keep these video imports for future implementation (unused for now)
-import androidx.camera.video.OutputOptions
-import androidx.camera.video.Quality
-import androidx.camera.video.QualitySelector
-import androidx.camera.video.VideoRecordEvent
-import androidx.camera.video.MediaStoreOutputOptions
-import androidx.camera.video.Recording
-// ----
-
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,107 +22,73 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.graphics.graphicsLayer
+import com.example.guideme.R
 import com.example.guideme.tts.TTS
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import androidx.core.content.ContextCompat
 
-enum class CameraMode { PHOTO }  // video removed for now
-enum class FlashMode { AUTO, ON, OFF }
+private enum class FlashSim { AUTO, ON, OFF }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen() {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
 
-    // ---- Permissions ----
-    val permissions = remember {
-        if (Build.VERSION.SDK_INT >= 33)
-            arrayOf(android.Manifest.permission.CAMERA)
-        else
-            arrayOf(android.Manifest.permission.CAMERA)
-    }
-    var hasPermissions by remember { mutableStateOf(false) }
+    // permissions — still ask so the preview "feels" real
     val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { result ->
-        hasPermissions = permissions.all { result[it] == true }
-        if (!hasPermissions) TTS.speak("Camera permission is required.")
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (!granted) TTS.speak("Camera permission is needed to view the preview.")
     }
 
     LaunchedEffect(Unit) {
-        TTS.speak("You are in the camera. Tap the big button to take a photo.")
-        launcher.launch(permissions)
+        launcher.launch(android.Manifest.permission.CAMERA)
+        TTS.speak("This is the camera. Tap the big button to take a photo.")
     }
 
-    // ---- Camera controller ----
-    val controller = remember {
-        LifecycleCameraController(context).apply {
-            setEnabledUseCases(
-                LifecycleCameraController.IMAGE_CAPTURE or
-                        LifecycleCameraController.IMAGE_ANALYSIS
-            )
-            cameraSelector = androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
-            imageCaptureMode = ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
-            // (Keeping video quality config out for now)
-        }
-    }
-    LaunchedEffect(hasPermissions) {
-        if (hasPermissions) controller.bindToLifecycle(lifecycleOwner)
-    }
+    // Fake flash overlay animation
+    val flashAlpha = remember { Animatable(0f) }
 
-    // ---- UI state ----
-    val mode = CameraMode.PHOTO
-    var flash by remember { mutableStateOf(FlashMode.AUTO) }
-    var zoom by remember { mutableFloatStateOf(1.0f) } // 1x..max
-    var lastThumb by remember { mutableStateOf<Bitmap?>(null) }
+    // Fake states
+    var flash by remember { mutableStateOf(FlashSim.AUTO) }
+    var zoom by remember { mutableStateOf(1.0f) }              // 1.0x .. 5.0x (UI only)
+    var lastThumb by remember { mutableStateOf(androidx.compose.ui.graphics.ImageBitmap(1, 1)) }
+    var hasPhoto by remember { mutableStateOf(false) }
 
-    // Map flash to controller
-    LaunchedEffect(flash) {
-        controller.imageCaptureFlashMode = when (flash) {
-            FlashMode.AUTO -> ImageCapture.FLASH_MODE_AUTO
-            FlashMode.ON -> ImageCapture.FLASH_MODE_ON
-            FlashMode.OFF -> ImageCapture.FLASH_MODE_OFF
-        }
-    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
-    fun loadLatestImageThumb(context: Context, uri: Uri?): Bitmap? {
-        return try {
-            uri?.let {
-                context.contentResolver.openInputStream(it)?.use { stream ->
-                    BitmapFactory.decodeStream(stream)
-                }
-            }
-        } catch (_: Exception) { null }
-    }
-
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        // Preview
+        // Pretend Preview (no camera feed)
         AndroidView(
             factory = { ctx ->
                 PreviewView(ctx).apply {
-                    layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
                     scaleType = PreviewView.ScaleType.FILL_CENTER
-                    this.controller = controller
                 }
             },
             modifier = Modifier.fillMaxSize()
         )
 
-        // Top bar
+        // Flash overlay for "shutter" effect
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .alpha(flashAlpha.value)
+        )
+
+        // Top bar (title + flash toggle — cycles Auto/On/Off)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -150,66 +97,60 @@ fun CameraScreen() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text("Camera", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+
             FilledTonalIconButton(onClick = {
                 flash = when (flash) {
-                    FlashMode.AUTO -> FlashMode.ON
-                    FlashMode.ON -> FlashMode.OFF
-                    FlashMode.OFF -> FlashMode.AUTO
+                    FlashSim.AUTO -> FlashSim.ON
+                    FlashSim.ON   -> FlashSim.OFF
+                    FlashSim.OFF  -> FlashSim.AUTO
                 }
-                TTS.speak("Flash ${flash.name.lowercase(Locale.US)}")
+                TTS.speak("Flash ${flash.name.lowercase()}")
             }) {
                 when (flash) {
-                    FlashMode.AUTO -> Icon(Icons.Filled.FlashAuto, contentDescription = "Flash Auto")
-                    FlashMode.ON -> Icon(Icons.Filled.FlashOn, contentDescription = "Flash On")
-                    FlashMode.OFF -> Icon(Icons.Filled.FlashOff, contentDescription = "Flash Off")
+                    FlashSim.AUTO -> Icon(Icons.Filled.FlashAuto, contentDescription = "Flash Auto")
+                    FlashSim.ON   -> Icon(Icons.Filled.FlashOn,   contentDescription = "Flash On")
+                    FlashSim.OFF  -> Icon(Icons.Filled.FlashOff,  contentDescription = "Flash Off")
                 }
             }
         }
 
-        // Right-side: switch + zoom
+        // Right-side controls: fake camera switch + vertical zoom slider
         Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            FilledTonalIconButton(onClick = {
-                controller.cameraSelector =
-                    if (controller.cameraSelector == androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA)
-                        androidx.camera.core.CameraSelector.DEFAULT_FRONT_CAMERA
-                    else
-                        androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
-                TTS.speak("Switched camera")
-            }) {
+            // Fake flip camera (UI + TTS only)
+            FilledTonalIconButton(onClick = { TTS.speak("Switched camera") }) {
                 Icon(Icons.Filled.Cameraswitch, contentDescription = "Switch camera")
             }
 
-            val cameraInfo = controller.cameraInfo
-            val zoomState = cameraInfo?.zoomState?.value
-            val maxZoom = zoomState?.maxZoomRatio ?: 4f
-            val minZoom = zoomState?.minZoomRatio ?: 1f
-
+            // Vertical slider (UI only): rotate the container
             Box(
                 modifier = Modifier
                     .height(200.dp)
-                    .width(32.dp)
+                    .width(120.dp)
                     .graphicsLayer(rotationZ = -90f)
             ) {
                 Slider(
-                    value = zoom.coerceIn(minZoom, maxZoom),
+                    value = zoom,
                     onValueChange = {
                         zoom = it
-                        controller.setZoomRatio(it)
                     },
-                    valueRange = minZoom..maxZoom,
-                    modifier = Modifier.fillMaxSize()
+                    valueRange = 1.0f..5.0f,
+                    steps = 3, // ticks between 1–5
+                    modifier = Modifier.fillMaxSize(),
+                    onValueChangeFinished = {
+                        TTS.speak(String.format("%.1fx", zoom))
+                    }
                 )
             }
-            Text(String.format(Locale.US, "%.1fx", zoom.coerceIn(minZoom, maxZoom)))
+            Text(String.format("%.1fx", zoom))
         }
 
-        // Bottom: thumbnail • shutter
+        // Bottom controls: thumbnail • shutter
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -217,27 +158,23 @@ fun CameraScreen() {
                 .padding(bottom = 18.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(10.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Gallery thumb
+                // Gallery thumbnail
                 Box(
                     modifier = Modifier
                         .size(54.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .clickable {
-                            TTS.speak("This opens your last photo in the gallery on a real phone.")
-                        },
+                        .clickable { TTS.speak("This opens your last photo in a real camera app.") },
                     contentAlignment = Alignment.Center
                 ) {
-                    if (lastThumb != null) {
+                    if (hasPhoto) {
                         Image(
-                            bitmap = lastThumb!!.asImageBitmap(),
+                            bitmap = lastThumb,
                             contentDescription = "Last capture",
                             modifier = Modifier.fillMaxSize()
                         )
@@ -246,26 +183,24 @@ fun CameraScreen() {
                     }
                 }
 
-                // Shutter (photo only)
+                // Capture button — fake shutter
                 Box(
                     modifier = Modifier
                         .size(84.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))
-                        .clickable(enabled = hasPermissions) {
-                            if (!hasPermissions) {
-                                TTS.speak("Please allow camera permission first.")
-                                return@clickable
-                            }
-                            scope.launch(Dispatchers.IO) {
-                                takePhotoWithController(context, controller) { savedUri, ok ->
-                                    if (ok) {
-                                        TTS.speak("Photo saved")
-                                        lastThumb = loadLatestImageThumb(context, savedUri)
-                                    } else {
-                                        TTS.speak("Failed to save photo")
-                                    }
-                                }
+                        .clickable {
+                            scope.launch {
+                                // Flash animation
+                                flashAlpha.snapTo(1f)
+                                flashAlpha.animateTo(0f, tween(300))
+                                TTS.speak("Photo captured!")
+
+                                // Fake thumbnail from drawable
+                                lastThumb = BitmapFactory
+                                    .decodeResource(context.resources, R.drawable.ash_tree___geograph_org_uk___590710)
+                                    .asImageBitmap()
+                                hasPhoto = true
                             }
                         },
                     contentAlignment = Alignment.Center
@@ -273,49 +208,8 @@ fun CameraScreen() {
                     Text("●", style = MaterialTheme.typography.titleLarge)
                 }
 
-                // Spacer to balance layout
                 Spacer(Modifier.size(54.dp))
             }
         }
     }
 }
-
-/** Capture a photo via LifecycleCameraController into MediaStore. */
-private fun takePhotoWithController(
-    context: Context,
-    controller: LifecycleCameraController,
-    onResult: (Uri?, Boolean) -> Unit
-) {
-    val resolver = context.contentResolver
-    val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date()) + ".jpg"
-    val values = ContentValues().apply {
-        put(MediaStore.Images.Media.DISPLAY_NAME, name)
-        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/GuideMe")
-        }
-    }
-
-    // Build OutputFileOptions for MediaStore
-    val output = ImageCapture.OutputFileOptions.Builder(
-        resolver,
-        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        values
-    ).build()
-
-    val executor = androidx.core.content.ContextCompat.getMainExecutor(context)
-
-    controller.takePicture(
-        output,
-        executor,
-        object : ImageCapture.OnImageSavedCallback {
-            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                onResult(outputFileResults.savedUri, true)
-            }
-            override fun onError(exception: ImageCaptureException) {
-                onResult(null, false)
-            }
-        }
-    )
-}
-
