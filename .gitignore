@@ -3,3 +3,6 @@
 .idea/
 local.properties
 *.iml
+
+# Gradle caches
+.gradle/
