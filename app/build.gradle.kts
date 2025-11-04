@@ -41,6 +41,21 @@ android {
 
 dependencies {
 
+
+    // CameraX (stable 1.5.1)
+
+    val camera = "1.3.4"   // stable & widely used; all artifacts below exist in 1.3.4
+    implementation("androidx.camera:camera-core:$camera")
+    implementation("androidx.camera:camera-camera2:$camera")
+    implementation("androidx.camera:camera-lifecycle:$camera")
+    implementation("androidx.camera:camera-view:$camera")   // PreviewView + LifecycleCameraController
+    implementation("androidx.camera:camera-video:$camera")  // Video APIs
+
+    // Video recording
+
+    // (optional) Compose-native helpers if you want them later:
+    // implementation("androidx.camera:camera-compose:$camerax")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -66,3 +81,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
 }
+
