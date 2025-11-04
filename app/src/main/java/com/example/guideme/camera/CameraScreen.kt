@@ -1,9 +1,7 @@
 package com.example.guideme.phone
 
-import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.view.PreviewView
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -25,16 +23,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.example.guideme.R
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.launch
-
+import androidx.compose.ui.graphics.graphicsLayer
 private enum class FlashSim { AUTO, ON, OFF }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +40,7 @@ fun CameraScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // permissions — still ask so the preview "feels" real
+    // permissions (still requested for realism)
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -55,40 +52,41 @@ fun CameraScreen() {
         TTS.speak("This is the camera. Tap the big button to take a photo.")
     }
 
-    // Fake flash overlay animation
     val flashAlpha = remember { Animatable(0f) }
-
-    // Fake states
     var flash by remember { mutableStateOf(FlashSim.AUTO) }
-    var zoom by remember { mutableStateOf(1.0f) }              // 1.0x .. 5.0x (UI only)
-    var lastThumb by remember { mutableStateOf(androidx.compose.ui.graphics.ImageBitmap(1, 1)) }
+    var zoom by remember { mutableStateOf(1.0f) }
+    var lastThumbRes by remember { mutableStateOf(R.drawable.ash_tree___geograph_org_uk___590710) }
     var hasPhoto by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(Color.Black)
     ) {
-
-        // Pretend Preview (no camera feed)
-        AndroidView(
-            factory = { ctx ->
-                PreviewView(ctx).apply {
-                    scaleType = PreviewView.ScaleType.FILL_CENTER
-                }
-            },
-            modifier = Modifier.fillMaxSize()
-        )
-
-        // Flash overlay for "shutter" effect
-        Box(
+        // ===== CAMERA "PREVIEW" BACKGROUND =====
+        Image(
+            painter = painterResource(id = R.drawable.ash_tree___geograph_org_uk___590710),
+            contentDescription = "Simulated camera preview",
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
-                .alpha(flashAlpha.value)
+                // Add smooth zoom based on the slider
+                .graphicsLayer(
+                    scaleX = zoom,
+                    scaleY = zoom,
+                    transformOrigin = androidx.compose.ui.graphics.TransformOrigin.Center
+                ),
+            contentScale = ContentScale.Crop
         )
 
-        // Top bar (title + flash toggle — cycles Auto/On/Off)
+        // ===== FLASH OVERLAY =====
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .background(Color.White)
+//                .alpha(flashAlpha.value)
+//        )
+
+        // ===== TOP BAR =====
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,25 +94,30 @@ fun CameraScreen() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Camera", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text(
+                "Camera",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White
+            )
 
             FilledTonalIconButton(onClick = {
                 flash = when (flash) {
                     FlashSim.AUTO -> FlashSim.ON
-                    FlashSim.ON   -> FlashSim.OFF
-                    FlashSim.OFF  -> FlashSim.AUTO
+                    FlashSim.ON -> FlashSim.OFF
+                    FlashSim.OFF -> FlashSim.AUTO
                 }
                 TTS.speak("Flash ${flash.name.lowercase()}")
             }) {
                 when (flash) {
                     FlashSim.AUTO -> Icon(Icons.Filled.FlashAuto, contentDescription = "Flash Auto")
-                    FlashSim.ON   -> Icon(Icons.Filled.FlashOn,   contentDescription = "Flash On")
-                    FlashSim.OFF  -> Icon(Icons.Filled.FlashOff,  contentDescription = "Flash Off")
+                    FlashSim.ON -> Icon(Icons.Filled.FlashOn, contentDescription = "Flash On")
+                    FlashSim.OFF -> Icon(Icons.Filled.FlashOff, contentDescription = "Flash Off")
                 }
             }
         }
 
-        // Right-side controls: fake camera switch + vertical zoom slider
+        // ===== RIGHT SIDE CONTROLS =====
         Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
@@ -122,12 +125,10 @@ fun CameraScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Fake flip camera (UI + TTS only)
             FilledTonalIconButton(onClick = { TTS.speak("Switched camera") }) {
                 Icon(Icons.Filled.Cameraswitch, contentDescription = "Switch camera")
             }
 
-            // Vertical slider (UI only): rotate the container
             Box(
                 modifier = Modifier
                     .height(200.dp)
@@ -136,21 +137,19 @@ fun CameraScreen() {
             ) {
                 Slider(
                     value = zoom,
-                    onValueChange = {
-                        zoom = it
-                    },
+                    onValueChange = { zoom = it },
                     valueRange = 1.0f..5.0f,
-                    steps = 3, // ticks between 1–5
+                    steps = 3,
                     modifier = Modifier.fillMaxSize(),
                     onValueChangeFinished = {
                         TTS.speak(String.format("%.1fx", zoom))
                     }
                 )
             }
-            Text(String.format("%.1fx", zoom))
+            Text(String.format("%.1fx", zoom), color = Color.White)
         }
 
-        // Bottom controls: thumbnail • shutter
+        // ===== BOTTOM CONTROLS =====
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -163,49 +162,46 @@ fun CameraScreen() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Gallery thumbnail
+                // Thumbnail
                 Box(
                     modifier = Modifier
                         .size(54.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .clickable { TTS.speak("This opens your last photo in a real camera app.") },
+                        .clickable {
+                            TTS.speak("This opens your last photo in a real camera app.")
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     if (hasPhoto) {
                         Image(
-                            bitmap = lastThumb,
+                            painter = painterResource(id = lastThumbRes),
                             contentDescription = "Last capture",
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
                         )
                     } else {
                         Icon(Icons.Filled.Photo, contentDescription = null)
                     }
                 }
 
-                // Capture button — fake shutter
+                // Capture button
                 Box(
                     modifier = Modifier
                         .size(84.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                         .clickable {
                             scope.launch {
-                                // Flash animation
                                 flashAlpha.snapTo(1f)
                                 flashAlpha.animateTo(0f, tween(300))
                                 TTS.speak("Photo captured!")
-
-                                // Fake thumbnail from drawable
-                                lastThumb = BitmapFactory
-                                    .decodeResource(context.resources, R.drawable.ash_tree___geograph_org_uk___590710)
-                                    .asImageBitmap()
                                 hasPhoto = true
                             }
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("●", style = MaterialTheme.typography.titleLarge)
+                    Text("●", style = MaterialTheme.typography.titleLarge, color = Color.White)
                 }
 
                 Spacer(Modifier.size(54.dp))
