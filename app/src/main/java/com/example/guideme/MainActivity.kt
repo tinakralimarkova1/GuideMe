@@ -14,7 +14,7 @@ import com.example.guideme.phone.PhoneNavHost
 import com.example.guideme.phone.CameraScreen
 import com.example.guideme.tts.TTS
 import com.example.guideme.ui.theme.GuideMeTheme
-import com.example.guideme.wifi.WifiScreen
+import com.example.guideme.wifi.WifiNavHost
 import androidx.compose.ui.unit.dp
 
 
@@ -111,7 +111,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         }
 
         "wifi" -> {
-            WifiScreen()
+            WifiNavHost()
             BackHandler {
                 TTS.speak("Returning to main menu.")
                 currentScreen = "main"
