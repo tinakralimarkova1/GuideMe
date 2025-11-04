@@ -16,11 +16,15 @@ import com.example.guideme.tts.TTS
 import com.example.guideme.ui.theme.GuideMeTheme
 import com.example.guideme.wifi.WifiNavHost
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Brush
 
-
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import com.example.guideme.ui.theme.MainBackgroundGradient
 
 
 class MainActivity : ComponentActivity() {
@@ -33,13 +37,25 @@ class MainActivity : ComponentActivity() {
             TTS.speak("Welcome to Guide Me. Choose Search to look up how to do something, or go to the Lessons menu.")
         }
 
+        // MainActivity.onCreate -> setContent
         setContent {
             GuideMeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(modifier = Modifier.padding(innerPadding))
+                // Paint full-screen gradient first
+                Box(Modifier.fillMaxSize().background(MainBackgroundGradient)) {
+                    Scaffold(
+                        containerColor = Color.Transparent,          // don't cover the gradient
+                        contentWindowInsets = WindowInsets(0)        // no auto-padding; we’ll pass it manually
+                    ) { innerPadding ->
+                        MainScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        )
+                    }
                 }
             }
         }
+
     }
 
     override fun onDestroy() {
@@ -126,53 +142,65 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
 /* ------------ UI COMPOSABLES ------------ */
 
+
 @Composable
 private fun WelcomeScreen(
     modifier: Modifier = Modifier,
     onSearchClick: () -> Unit,
     onLessonsClick: () -> Unit
 ) {
-    Column(
-        modifier = modifier.padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    // gradient brush (top to bottom)
+
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MainBackgroundGradient),
+        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Welcome to GuideMe",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(Modifier.height(28.dp))
-
-        // Big button: Search how to do something (non-functional for now)
-        Button(
-            onClick = onSearchClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Text(
-                text = "Search how to do something",
-                style = MaterialTheme.typography.titleMedium
+                text = "Welcome to GuideMe",
+                style = MaterialTheme.typography.headlineLarge,
+                color = Color(0xFF6A4C93) // soft purple
             )
-        }
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(40.dp))
 
-        // Big button: Go to Lessons Menu
-        Button(
-            onClick = onLessonsClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-        ) {
-            Text(
-                text = "Go to Lessons Menu",
-                style = MaterialTheme.typography.titleMedium
-            )
+            Button(
+                onClick = onLessonsClick,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(64.dp),
+                shape = RoundedCornerShape(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFF5EFF7),
+                    contentColor = Color(0xFF6A4C93)
+                )
+            ) {
+                Text("Click here to learn")
+            }
+
+            Button(
+                onClick = onSearchClick,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(64.dp),
+                shape = RoundedCornerShape(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFF5EFF7),
+                    contentColor = Color(0xFF6A4C93)
+                )
+            ) {
+                Text("Click here to search")
+            }
         }
     }
 }
+
 
 @Composable
 private fun LessonsMenu(
@@ -181,6 +209,12 @@ private fun LessonsMenu(
     onOpenPhone: () -> Unit,
     onOpenWifi: () -> Unit
 ) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MainBackgroundGradient)
+
+    )
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(20.dp)
