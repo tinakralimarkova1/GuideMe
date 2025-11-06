@@ -27,7 +27,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun DialPadScreen(
     navController: NavController,
-    initialNumber: String = ""
+    initialNumber: String = "",
+    onButtonPressed: (String) -> Unit = {},
+    onNumberCommitted: (String) -> Unit = {}
 ) {
     var number by remember { mutableStateOf("") }
     var isCalling by remember { mutableStateOf(false) }
