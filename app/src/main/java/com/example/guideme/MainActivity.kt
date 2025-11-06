@@ -17,14 +17,23 @@ import com.example.guideme.ui.theme.GuideMeTheme
 import com.example.guideme.wifi.WifiNavHost
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.material3.MaterialTheme
 
-import androidx.compose.ui.graphics.Color
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
-
+import  com.example.guideme.ui.theme.MainButtonColor
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.VerticalAlignmentLine
+import androidx.compose.ui.text.style.TextAlign
 import com.example.guideme.ui.theme.MainBackgroundGradient
+import com.example.guideme.ui.theme.Transparent
+import  com.example.guideme.ui.theme.MainButtonContentColor
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
+
+
 
 
 class MainActivity : ComponentActivity() {
@@ -43,7 +52,7 @@ class MainActivity : ComponentActivity() {
                 // Paint full-screen gradient first
                 Box(Modifier.fillMaxSize().background(MainBackgroundGradient)) {
                     Scaffold(
-                        containerColor = Color.Transparent,          // don't cover the gradient
+                        containerColor = Transparent,          // don't cover the gradient
                         contentWindowInsets = WindowInsets(0)        // no auto-padding; we’ll pass it manually
                     ) { innerPadding ->
                         MainScreen(
@@ -75,8 +84,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
             WelcomeScreen(
                 modifier = modifier.fillMaxSize(),
                 onSearchClick = {
-                    // Non-functional for now; just TTS
-                    TTS.speak("Search will be available soon.")
+                    TTS.speak("Opening search.");
+                    currentScreen = "search"
                 },
                 onLessonsClick = {
                     TTS.speak("Opening lessons menu.")
@@ -110,6 +119,27 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 currentScreen = "welcome"
             }
         }
+        // ---------------- SEARCH ----------------
+        "search" -> {
+            SearchMenu(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                onVoiceSearch = {
+                    TTS.speak("Voice search coming soon. Say your question after the beep.");
+                    // TODO: navigate to VoiceSearch screen or launch speech recognizer
+                },
+                onTextSearch = {
+                    TTS.speak("Opening text search.");
+                    // TODO: navigate to TextSearch screen
+                }
+            )
+            BackHandler {
+                TTS.speak("Returning to welcome.");
+                currentScreen = "welcome"
+            }
+        }
+
 
         // ---------------- PHONE (bottom tabs) ----------------
         "phone" -> {
@@ -165,37 +195,44 @@ private fun WelcomeScreen(
             Text(
                 text = "Welcome to GuideMe",
                 style = MaterialTheme.typography.headlineLarge,
-                color = Color(0xFF6A4C93) // soft purple
+                color = MainButtonContentColor
             )
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(0.dp))
 
             Button(
                 onClick = onLessonsClick,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .height(64.dp),
+                    .height(130.dp),
                 shape = RoundedCornerShape(40.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFF5EFF7),
-                    contentColor = Color(0xFF6A4C93)
+                    containerColor = MainButtonColor,
+                    contentColor = MainButtonContentColor
                 )
             ) {
-                Text("Click here to learn")
+                Text("Click here to learn",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center)
             }
+            Spacer(Modifier.height(0.dp))
+
+
 
             Button(
                 onClick = onSearchClick,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-                    .height(64.dp),
+                    .height(130.dp),
                 shape = RoundedCornerShape(40.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFF5EFF7),
-                    contentColor = Color(0xFF6A4C93)
+                    containerColor = MainButtonColor,
+                    contentColor = MainButtonContentColor
                 )
             ) {
-                Text("Click here to search")
+                Text("Click here to search",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center)
             }
         }
     }
@@ -212,32 +249,146 @@ private fun LessonsMenu(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MainBackgroundGradient)
+            .background(MainBackgroundGradient),
 
-    )
+
+
+    ){
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
+        verticalArrangement = Arrangement.spacedBy(30.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+        ) {
         Text(
-            text = "GuideMe Training Menu",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(bottom = 12.dp)
+            text = "Lesson Menu",
+            color = MainButtonContentColor,
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier
+                .padding(bottom = 40.dp)
+                .padding(top = 60.dp),
+
         )
 
-        Button(onClick = onOpenCamera, modifier = Modifier.fillMaxWidth()) {
-            Text("Camera")
+        Button(onClick = onOpenCamera,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp).height(100.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MainButtonColor,
+                contentColor = MainButtonContentColor
+            )
+        ) {
+            Text("Camera",
+                color = MainButtonContentColor,
+                style = MaterialTheme.typography.labelSmall
+            )
         }
 
-        Button(onClick = onOpenPhone, modifier = Modifier.fillMaxWidth()) {
-            Text("Phone")
+        Button(onClick = onOpenPhone,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp).height(100.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MainButtonColor,
+                contentColor = MainButtonContentColor
+            )
+        ){
+            Text("Phone",
+                color =MainButtonContentColor,
+                style = MaterialTheme.typography.labelSmall)
+
         }
 
-        Button(onClick = onOpenWifi, modifier = Modifier.fillMaxWidth()) {
-            Text("Wi-Fi")
+        Button(onClick = onOpenWifi,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp).height(100.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MainButtonColor,
+                contentColor = MainButtonContentColor
+            )
+        ){
+            Text("Wi-Fi",
+                color = MainButtonContentColor,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+    }
+}}
+
+@Composable
+private fun SearchMenu(
+    modifier: Modifier = Modifier,
+    onVoiceSearch: () -> Unit,
+    onTextSearch: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MainBackgroundGradient)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Search",
+                color = MainButtonContentColor,
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier
+                    .padding(top = 60.dp, bottom = 40.dp)
+            )
+
+            // ---- Voice search button ----
+            Button(
+                onClick = onVoiceSearch,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+                    .height(130.dp),
+                shape = RoundedCornerShape(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MainButtonColor,
+                    contentColor = MainButtonContentColor
+                )
+            ) {
+                // If you have the icon lib, this shows a mic. Otherwise it’ll just show the text.
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Mic,
+                        contentDescription = "Microphone",
+                        modifier = Modifier.size(52.dp)
+                    )
+                    Text(
+                        "Say your question",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            // ---- Text search button ----
+            Button(
+                onClick = onTextSearch,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+                    .height(130.dp),
+                shape = RoundedCornerShape(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MainButtonColor,
+                    contentColor = MainButtonContentColor
+                )
+            ) {
+                Text(
+                    "Type your question",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
+
 
 @Preview(showBackground = true, name = "Welcome")
 @Composable
@@ -261,6 +412,18 @@ fun PreviewLessonsMenu() {
         )
     }
 }
+
+@Preview(showBackground = true, name = "Search Menu")
+@Composable
+fun PreviewSearchMenu() {
+    GuideMeTheme {
+        SearchMenu(
+            onVoiceSearch = {},
+            onTextSearch = {}
+        )
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
