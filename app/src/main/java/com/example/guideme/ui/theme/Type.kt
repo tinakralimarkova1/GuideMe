@@ -19,9 +19,17 @@ val Typography = Typography(
     labelSmall= TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 60.sp,
+        fontSize = 50.sp,
         lineHeight = 24.sp,
         letterSpacing = 1.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 40.sp,
+        lineHeight = 50.sp,
+        letterSpacing = 1.sp
+
     )
     /* Other default text styles to override
     titleLarge = TextStyle(
