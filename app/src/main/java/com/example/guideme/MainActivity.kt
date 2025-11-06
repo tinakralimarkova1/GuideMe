@@ -26,6 +26,8 @@ import com.example.guideme.ui.theme.MainButtonColor
 import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
+import com.example.guideme.lessons.LessonHost
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -375,21 +377,7 @@ private fun SearchMenu(
 }
 
 /* --------- Placeholder so it compiles; replace with your real lesson host later --------- */
-@Composable
-private fun LessonHost(appName: String, lessonId: Int) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MainBackgroundGradient),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "$appName Lesson $lessonId (placeholder)",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MainButtonContentColor
-        )
-    }
-}
+
 
 /* -------------------- Previews -------------------- */
 
