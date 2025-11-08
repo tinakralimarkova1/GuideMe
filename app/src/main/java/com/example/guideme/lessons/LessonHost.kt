@@ -20,9 +20,13 @@ import androidx.navigation.compose.rememberNavController // SHORT TERM SOLUTION 
 fun LessonHost(
     appName: String,
     lessonId: Int,
-    repo: LessonsRepository = FakeLessonsRepository()
+    repo: LessonsRepository,
+    userEmail: String
 ) {
-    val vm: LessonViewModel = viewModel(factory = LessonViewModelFactory(repo))
+    val vm: LessonViewModel = viewModel(
+        factory = LessonViewModelFactory(repo, userEmail)
+    )
+
     val state = vm.uiState
     val phoneNav = rememberNavController()
 
