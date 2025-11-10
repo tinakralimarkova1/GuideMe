@@ -49,6 +49,9 @@ fun LessonHost(
         // 2) Instruction overlay
         if (!state.completed && state.steps.isNotEmpty()) {
             val current = state.steps[state.currentIndex]
+            LessonHighlightOverlay(
+                anchorId = current.anchorId
+            )
             InstructionOverlay(
                 text = current.text,
                 // For now, we just show text; later you can map anchorId -> coordinates.

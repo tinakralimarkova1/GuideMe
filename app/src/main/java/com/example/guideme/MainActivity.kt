@@ -213,6 +213,7 @@ fun MainScreen(
         modifier = modifier
     ) {
         // Top bar with welcome + logout
+        //TODO: fix UI here. Only show when logging in
         Row(
             modifier = Modifier
                 .fillMaxWidth()
