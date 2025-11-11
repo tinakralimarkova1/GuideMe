@@ -61,9 +61,24 @@ class LessonViewModel(
                 val entered = evt as? UserEvent.TextEntered ?: return
                 val expected = step.expectedText
 
+                // If we have an expected string, treat "shorter than expected"
+                // as "still typing / deleting" -> clear feedback & don't mark error.
+                if (!expected.isNullOrBlank() && entered.text.length < expected.length) {
+                    if (s.feedback != null) {
+                        uiState = s.copy(feedback = null)
+                    }
+                    return  // don't advance, don't increment errorCount, don't show "Try again"
+                }
+
                 when {
+                    // generic non-empty check when there's no specific expectedText
                     expected.isNullOrBlank() -> entered.text.isNotBlank()
-                    else -> entered.text == expected
+
+                    // only compare when length matches expected
+                    entered.text.length == expected.length -> entered.text == expected
+
+                    // longer than expected => wrong attempt
+                    else -> false
                 }
             }
 
@@ -83,6 +98,7 @@ class LessonViewModel(
             // count mistakes + show feedback, but do NOT advance
             errorCount++
             uiState = s.copy(feedback = "Try again.")
+
             return
         }
 

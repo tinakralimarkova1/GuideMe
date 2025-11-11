@@ -79,7 +79,6 @@ class MainActivity : ComponentActivity() {
 
         // --- end Room setup ---
 
-        //TODO: Move this to a diff file later, fine for now
 
         // Seed instructions the first time (very simple check)
         lifecycleScope.launch {
@@ -122,7 +121,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     modifier: Modifier = Modifier,
     lessonsRepo: LessonsRepository,
-    userEmail: String,                    // 👈 add this
+    userEmail: String,
     onLogout: () -> Unit = {}
 ) {
     Column(
@@ -139,17 +138,19 @@ fun MainScreen(
                     onSearchClick = {
                         TTS.speak("Opening search.")
                         currentScreen = "search"
+
                     },
                     onLessonsClick = {
                         TTS.speak("Opening lessons menu.")
                         currentScreen = "main"
                     },
-                    onLogoutClick = {                 // 👈 new
+                    onLogoutClick = {
                         TTS.speak("Logging out.")
                         onLogout()
                     }
                 )
             }
+
 
             "main" -> {
                 LessonsMenu(
@@ -194,6 +195,7 @@ fun MainScreen(
                 BackHandler {
                     TTS.speak("Returning to welcome.")
                     currentScreen = "welcome"
+
                 }
             }
 
@@ -226,7 +228,7 @@ fun MainScreen(
                     appName = "Phone",
                     lessonId = 1,
                     repo = lessonsRepo,
-                    userEmail = userEmail              // 👈 forward it down
+                    userEmail = userEmail
                 )
                 BackHandler {
                     TTS.speak("Returning to lessons menu.")
@@ -322,7 +324,7 @@ fun MainScreen(
         onOpenCamera: () -> Unit,
         onOpenPhone: () -> Unit,
         onOpenWifi: () -> Unit,
-        onStartPhoneLesson: () -> Unit,         // <-- lifted callback
+        onStartPhoneLesson: () -> Unit,
     ) {
         Box(
             modifier = modifier
@@ -436,6 +438,7 @@ fun MainScreen(
                     color = MainButtonContentColor,
                     style = MaterialTheme.typography.headlineLarge,
                     modifier = Modifier.padding(top = 60.dp, bottom = 40.dp)
+
                 )
 
                 Button(
@@ -524,8 +527,6 @@ fun MainScreen(
         }
     }
 
-
-    /* --------- Placeholder so it compiles; replace with your real lesson host later --------- */
 
 
     /* -------------------- Previews -------------------- */

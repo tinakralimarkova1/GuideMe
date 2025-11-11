@@ -99,7 +99,10 @@ fun DialPadScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     IconButton(
-                        onClick = { if (number.isNotEmpty()) number = number.dropLast(1) },
+                        onClick = { if (number.isNotEmpty()) number = number.dropLast(1)
+                            onNumberCommitted(number)
+
+                        },
                         modifier = Modifier.size(40.dp)
                     ) {
                         Icon(
