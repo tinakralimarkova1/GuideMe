@@ -122,6 +122,7 @@ fun DialPadScreen(
                                     else -> key
                                 }
                             )
+                            onNumberCommitted(number)
                         }
                     }
                 )
@@ -130,6 +131,7 @@ fun DialPadScreen(
 
                 Button(
                     onClick = {
+                        onButtonPressed("DialPad.Call")
                         if (number.isEmpty()) {
                             TTS.speak("Please enter a number.")
                         } else {
