@@ -28,17 +28,19 @@ fun LessonHost(
     )
 
     val state = vm.uiState
-    val phoneNav = rememberNavController()
 
     LaunchedEffect(appName, lessonId) { vm.loadLesson(appName, lessonId) }
 
     Box(Modifier.fillMaxSize().background(MainBackgroundGradient)) {
         // 1) Your fake app UI (emit events back to ViewModel)
         when (appName) {
-            "Phone" -> DialPadScreen(  // or PhoneNavHost() if you want tabs
-                navController = phoneNav,
-                onButtonPressed = { anchorId -> vm.onUserEvent(UserEvent.TapOnAnchor(anchorId)) },
-                onNumberCommitted = { text -> vm.onUserEvent(UserEvent.TextEntered(text)) }
+            "Phone" -> PhoneNavHost(
+                onAnchorTapped = { anchorId ->
+                    vm.onUserEvent(UserEvent.TapOnAnchor(anchorId))
+                },
+                onNumberCommitted = { text ->
+                    vm.onUserEvent(UserEvent.TextEntered(text))
+                }
             )
             "WiFi" -> WifiNavHost(     // expose callbacks similarly inside your WiFi screens
                 // e.g., onToggle = { id, on -> vm.onUserEvent(UserEvent.Toggle(id, on)) }
