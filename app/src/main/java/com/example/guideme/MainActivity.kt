@@ -27,7 +27,6 @@ import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import com.example.guideme.lessons.LessonHost
-import com.example.guideme.lessons.FakeLessonsRepository
 import androidx.room.Room
 import com.example.guideme.lessons.GuideMeDatabase
 import com.example.guideme.lessons.LessonsRepository
@@ -110,7 +109,7 @@ class MainActivity : ComponentActivity() {
                         DbInstruction(
                             lessonsId = 1,
                             stepNo = 1,
-                            text = "Tap the blue CALL button.",
+                            text = "HELLOOOOOOOO",
                             anchorId = "DialPad.Call",
                             type = StepType.TapTarget.name,
                             outlineColor = null
@@ -141,7 +140,7 @@ class MainActivity : ComponentActivity() {
             if (existingCustomer == null) {
                 customerDao.insertCustomer(
                     DbCustomer(
-                        email = "demo@guideme.app",
+                        email = "demo",
                         name = "Demo User",
                         password = "password",   // placeholder; not secure, but fine for local dev
                         city = null,
@@ -641,15 +640,5 @@ fun MainScreen(
         }
     }
 
-    @Preview(showBackground = true)
-    @Composable
-    fun PreviewMain() {
-        GuideMeTheme {
-            MainScreen(
-                lessonsRepo = FakeLessonsRepository(),
-                userEmail = "preview@example.com"
 
-            )
-        }
-    }
 
