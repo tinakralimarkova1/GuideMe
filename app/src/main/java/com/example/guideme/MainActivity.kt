@@ -69,7 +69,6 @@ class MainActivity : ComponentActivity() {
             .fallbackToDestructiveMigration()   // dev-friendly: wipes DB on schema change
             .build()
 
-        //TODO: fix this, remove fake lesson repo
 
         val lessonsRepo: LessonsRepository = RoomLessonsRepository(
             instructionDao = db.instructionDao(),
@@ -77,6 +76,8 @@ class MainActivity : ComponentActivity() {
         )
 
         // --- end Room setup ---
+
+        //TODO: Move this to a diff file later, fine for now
 
         // Seed instructions the first time (very simple check)
         lifecycleScope.launch {
@@ -213,23 +214,6 @@ fun MainScreen(
     Column(
         modifier = modifier
     ) {
-        // Top bar with welcome + logout
-        //TODO: fix UI here. Only show when logging in
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Welcome to GuideMe",
-                style = MaterialTheme.typography.headlineSmall
-            )
-
-            TextButton(onClick = onLogout) {
-                Text("Logout")
-            }
-        }
 
         // Screens: welcome -> main (lessons menu) -> phone/camera/wifi/lesson_phone/search
         var currentScreen by remember { mutableStateOf("welcome") }
@@ -245,6 +229,10 @@ fun MainScreen(
                     onLessonsClick = {
                         TTS.speak("Opening lessons menu.")
                         currentScreen = "main"
+                    },
+                    onLogoutClick = {                 // 👈 new
+                        TTS.speak("Logging out.")
+                        onLogout()
                     }
                 )
             }
@@ -343,7 +331,8 @@ fun MainScreen(
     private fun WelcomeScreen(
         modifier: Modifier = Modifier,
         onSearchClick: () -> Unit,
-        onLessonsClick: () -> Unit
+        onLessonsClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
         Box(
             modifier = modifier.fillMaxSize(),
@@ -395,6 +384,19 @@ fun MainScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center
                     )
+                }
+                Button(
+                    onClick = onLogoutClick,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .height(130.dp),
+                    shape = RoundedCornerShape(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MainButtonColor,
+                        contentColor = MainButtonContentColor
+                    )
+                ) {
+                    Text("Logout", style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
@@ -618,7 +620,7 @@ fun MainScreen(
     @Composable
     fun PreviewWelcome() {
         GuideMeTheme {
-            WelcomeScreen(onSearchClick = {}, onLessonsClick = {})
+            WelcomeScreen(onSearchClick = {}, onLessonsClick = {}, onLogoutClick = {})
         }
     }
 
