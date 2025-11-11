@@ -28,17 +28,19 @@ fun LessonHost(
     )
 
     val state = vm.uiState
-    val phoneNav = rememberNavController()
 
     LaunchedEffect(appName, lessonId) { vm.loadLesson(appName, lessonId) }
 
     Box(Modifier.fillMaxSize().background(MainBackgroundGradient)) {
         // 1) Your fake app UI (emit events back to ViewModel)
         when (appName) {
-            "Phone" -> DialPadScreen(  // or PhoneNavHost() if you want tabs
-                navController = phoneNav,
-                onButtonPressed = { anchorId -> vm.onUserEvent(UserEvent.TapOnAnchor(anchorId)) },
-                onNumberCommitted = { text -> vm.onUserEvent(UserEvent.TextEntered(text)) }
+            "Phone" -> PhoneNavHost(
+                onAnchorTapped = { anchorId ->
+                    vm.onUserEvent(UserEvent.TapOnAnchor(anchorId))
+                },
+                onNumberCommitted = { text ->
+                    vm.onUserEvent(UserEvent.TextEntered(text))
+                }
             )
             "WiFi" -> WifiNavHost(     // expose callbacks similarly inside your WiFi screens
                 // e.g., onToggle = { id, on -> vm.onUserEvent(UserEvent.Toggle(id, on)) }
@@ -49,8 +51,12 @@ fun LessonHost(
         // 2) Instruction overlay
         if (!state.completed && state.steps.isNotEmpty()) {
             val current = state.steps[state.currentIndex]
+            LessonHighlightOverlay(
+                anchorId = current.anchorId
+            )
             InstructionOverlay(
                 text = current.text,
+                feedback = state.feedback
                 // For now, we just show text; later you can map anchorId -> coordinates.
             )
         } else if (state.completed) {
@@ -60,7 +66,7 @@ fun LessonHost(
 }
 
 @Composable
-private fun InstructionOverlay(text: String) {
+private fun InstructionOverlay(text: String, feedback: String? = null) {
     Box(
         Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
@@ -74,6 +80,13 @@ private fun InstructionOverlay(text: String) {
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.bodyLarge
             )
+            if (feedback != null) {
+                Text(
+                    text = feedback,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
