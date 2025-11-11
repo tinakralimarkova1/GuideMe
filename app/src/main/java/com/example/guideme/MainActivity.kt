@@ -70,6 +70,8 @@ class MainActivity : ComponentActivity() {
             .fallbackToDestructiveMigration()   // dev-friendly: wipes DB on schema change
             .build()
 
+        //TODO: fix this, remove fake lesson repo
+
         val lessonsRepo: LessonsRepository = RoomLessonsRepository(
             instructionDao = db.instructionDao(),
             completionDao = db.completionDao()
@@ -141,7 +143,7 @@ class MainActivity : ComponentActivity() {
             if (existingCustomer == null) {
                 customerDao.insertCustomer(
                     DbCustomer(
-                        email = "demo@guideme.app",
+                        email = "demo",
                         name = "Demo User",
                         password = "password",   // placeholder; not secure, but fine for local dev
                         city = null,
