@@ -31,6 +31,7 @@ fun AuthScreen(
 
     val scope = rememberCoroutineScope()
 
+    //TODO: fix UI so it fits with the rest
     Column(
         modifier = modifier
             .padding(24.dp),

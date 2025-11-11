@@ -51,7 +51,8 @@ object DatabaseSeeder {
                         text = "Enter the number 123.",
                         anchorId = "DialPad.NumberField",
                         type = StepType.EnterText.name,
-                        outlineColor = null
+                        outlineColor = null,
+                        expectedText = "123"
                     ),
                     DbInstruction(
                         lessonsId = 1,

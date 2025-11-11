@@ -56,6 +56,7 @@ fun LessonHost(
             )
             InstructionOverlay(
                 text = current.text,
+                feedback = state.feedback
                 // For now, we just show text; later you can map anchorId -> coordinates.
             )
         } else if (state.completed) {
@@ -65,7 +66,7 @@ fun LessonHost(
 }
 
 @Composable
-private fun InstructionOverlay(text: String) {
+private fun InstructionOverlay(text: String, feedback: String? = null) {
     Box(
         Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
@@ -79,6 +80,13 @@ private fun InstructionOverlay(text: String) {
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.bodyLarge
             )
+            if (feedback != null) {
+                Text(
+                    text = feedback,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }

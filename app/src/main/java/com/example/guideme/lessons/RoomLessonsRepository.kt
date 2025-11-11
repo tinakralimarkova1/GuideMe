@@ -24,7 +24,8 @@ class RoomLessonsRepository(
 
                 anchorId = db.anchorId,
                 type = StepType.valueOf(db.type),   // "TapTarget" -> StepType.TapTarget
-                outlineColor = db.outlineColor
+                outlineColor = db.outlineColor,
+                expectedText = db.expectedText
             )
         }
     }
