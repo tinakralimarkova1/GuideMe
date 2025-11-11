@@ -12,5 +12,6 @@ data class DbInstruction(
     val text: String,
     val anchorId: String?,
     val type: String,
-    val outlineColor: Long?
+    val outlineColor: Long?,
+    val expectedText: String? = null
 )

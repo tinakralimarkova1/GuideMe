@@ -33,40 +33,62 @@ class LessonViewModel(
         lessonStartTimeMillis = System.currentTimeMillis()
         errorCount = 0
         attempts += 1
-        if (attempts == 0) attempts = 1   // just in case
+        if (attempts == 0) attempts = 1   // safety, though it should never be 0 now
 
         viewModelScope.launch {
             val steps = repo.getLessonInstructions(appName, lessonId)
             uiState = LessonState(
                 appName = appName,
                 lessonId = lessonId,
-                steps = steps
+                steps = steps,
+                currentIndex = 0,
+                completed = false,
+                feedback = null
             )
         }
     }
-
     fun onUserEvent(evt: UserEvent) {
         val s = uiState
         val step = s.steps.getOrNull(s.currentIndex) ?: return
 
         val ok = when (step.type) {
-            StepType.TapTarget -> (evt as? UserEvent.TapOnAnchor)?.anchorId == step.anchorId
-            StepType.EnterText -> (evt as? UserEvent.TextEntered)?.text == "123" // demo rule
-            StepType.Select    -> (evt as? UserEvent.SelectOption)?.optionId == step.anchorId
-            StepType.Toggle    -> (evt as? UserEvent.Toggle)?.anchorId == step.anchorId
+            StepType.TapTarget -> {
+                val tap = evt as? UserEvent.TapOnAnchor
+                tap?.anchorId == step.anchorId
+            }
+
+            StepType.EnterText -> {
+                val entered = evt as? UserEvent.TextEntered ?: return
+                val expected = step.expectedText
+
+                when {
+                    expected.isNullOrBlank() -> entered.text.isNotBlank()
+                    else -> entered.text == expected
+                }
+            }
+
+            StepType.Select -> {
+                val sel = evt as? UserEvent.SelectOption
+                sel?.optionId == step.anchorId
+            }
+
+            StepType.Toggle -> {
+                val toggle = evt as? UserEvent.Toggle
+                toggle?.anchorId == step.anchorId
+                // you could later also check toggle.on if needed
+            }
         }
 
         if (!ok) {
-            // count mistakes when user does the wrong thing
+            // count mistakes + show feedback, but do NOT advance
             errorCount++
+            uiState = s.copy(feedback = "Try again.")
             return
         }
 
         val next = s.currentIndex + 1
         val justFinished = next >= s.steps.size
 
-        // If we just finished the lesson (and it wasn't already marked completed),
-        // record the completion in the database.
         if (justFinished && !s.completed) {
             val durationSeconds =
                 ((System.currentTimeMillis() - lessonStartTimeMillis) / 1000).toInt()
@@ -78,7 +100,6 @@ class LessonViewModel(
                     timeSpentSeconds = durationSeconds,
                     errorCount = errorCount,
                     attempts = attempts,
-                    // temp email until you have real login wiring
                     customerEmail = userEmail
                 )
             }
@@ -86,7 +107,8 @@ class LessonViewModel(
 
         uiState = s.copy(
             currentIndex = next,
-            completed = justFinished
+            completed = justFinished,
+            feedback = null            // clear any old error message
         )
     }
 }

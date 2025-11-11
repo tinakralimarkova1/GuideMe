@@ -44,6 +44,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.launch
 import com.example.guideme.lessons.CustomerDao
 import com.example.guideme.lessons.AuthScreen
+import com.example.guideme.lessons.DatabaseSeeder
+
 
 
 
@@ -69,6 +71,7 @@ class MainActivity : ComponentActivity() {
             .fallbackToDestructiveMigration()   // dev-friendly: wipes DB on schema change
             .build()
 
+
         val lessonsRepo: LessonsRepository = RoomLessonsRepository(
             instructionDao = db.instructionDao(),
             completionDao = db.completionDao()
@@ -76,98 +79,12 @@ class MainActivity : ComponentActivity() {
 
         // --- end Room setup ---
 
+        //TODO: Move this to a diff file later, fine for now
+
         // Seed instructions the first time (very simple check)
         lifecycleScope.launch {
             // Seed Lessons table
-            val lessonDao = db.lessonDao()
-            val existingLessons = lessonDao.getAllLessons()
-            if (existingLessons.isEmpty()) {
-                lessonDao.insertAll(
-                    listOf(
-                        DbLesson(
-                            id = 1,
-                            name = "Phone – Calling Basics",
-                            difficulty = 1
-                        ),
-                        DbLesson(
-                            id = 2,
-                            name = "Wi-Fi – Connect to a network",
-                            difficulty = 1
-                        )
-                        // add more later as needed
-                    )
-                )
-            }
-
-            // Seed Instructions for lesson 1 if not present (you already had this block;
-            // keep it, just make sure it still runs after the DB build).
-            val instructionDao = db.instructionDao()
-            val existing = instructionDao.getInstructionsForLesson(lessonId = 1)
-            if (existing.isEmpty()) {
-                instructionDao.insertAll(
-                    listOf(
-                        DbInstruction(
-                            lessonsId = 1,
-                            stepNo = 1,
-                            text = "HELLOOOOOOOO",
-                            anchorId = "DialPad.Call",
-                            type = StepType.TapTarget.name,
-                            outlineColor = null
-                        ),
-                        DbInstruction(
-                            lessonsId = 1,
-                            stepNo = 2,
-                            text = "Enter the number 123.",
-                            anchorId = "DialPad.NumberField",
-                            type = StepType.EnterText.name,
-                            outlineColor = null
-                        ),
-                        DbInstruction(
-                            lessonsId = 1,
-                            stepNo = 3,
-                            text = "Tap CALL again to confirm.",
-                            anchorId = "DialPad.CallConfirm",
-                            type = StepType.TapTarget.name,
-                            outlineColor = null
-                        )
-                    )
-                )
-            }
-
-            // --- Seed a demo customer matching the email used in LessonViewModel ---
-            val customerDao = db.customerDao()
-            val existingCustomer = customerDao.getCustomer("demo@guideme.app")
-            if (existingCustomer == null) {
-                customerDao.insertCustomer(
-                    DbCustomer(
-                        email = "demo",
-                        name = "Demo User",
-                        password = "password",   // placeholder; not secure, but fine for local dev
-                        city = null,
-                        street = null,
-                        state = null,
-                        buildingNumber = null,
-                        phoneNum = null,
-                        dateOfBirth = null
-                    )
-                )
-            }
-
-            // --- Seed some prereqs (for future recommendations) ---
-            val preReqDao = db.preReqDao()
-            val existingPrereqs = preReqDao.getPrereqsForLesson(lessonId = 2)  // e.g. Wi-Fi lesson
-            if (existingPrereqs.isEmpty()) {
-                preReqDao.insertAll(
-                    listOf(
-                        // Example: Phone (1) must be done before Wi-Fi (2)
-                        DbPreReq(
-                            lessonId = 2,    // Wi-Fi
-                            prereqId = 1,    // Phone
-                            priority = 1
-                        )
-                    )
-                )
-            }
+            DatabaseSeeder.seed(db)
         }
 
 
@@ -211,22 +128,6 @@ fun MainScreen(
     Column(
         modifier = modifier
     ) {
-        // Top bar with welcome + logout
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Welcome to GuideMe",
-                style = MaterialTheme.typography.headlineSmall
-            )
-
-            TextButton(onClick = onLogout) {
-                Text("Logout")
-            }
-        }
 
         // Screens: welcome -> main (lessons menu) -> phone/camera/wifi/lesson_phone/search
         var currentScreen by remember { mutableStateOf("welcome") }
@@ -242,6 +143,10 @@ fun MainScreen(
                     onLessonsClick = {
                         TTS.speak("Opening lessons menu.")
                         currentScreen = "main"
+                    },
+                    onLogoutClick = {                 // 👈 new
+                        TTS.speak("Logging out.")
+                        onLogout()
                     }
                 )
             }
@@ -340,7 +245,8 @@ fun MainScreen(
     private fun WelcomeScreen(
         modifier: Modifier = Modifier,
         onSearchClick: () -> Unit,
-        onLessonsClick: () -> Unit
+        onLessonsClick: () -> Unit,
+        onLogoutClick: () -> Unit,
     ) {
         Box(
             modifier = modifier.fillMaxSize(),
@@ -392,6 +298,19 @@ fun MainScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center
                     )
+                }
+                Button(
+                    onClick = onLogoutClick,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .height(130.dp),
+                    shape = RoundedCornerShape(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MainButtonColor,
+                        contentColor = MainButtonContentColor
+                    )
+                ) {
+                    Text("Logout", style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
@@ -615,7 +534,7 @@ fun MainScreen(
     @Composable
     fun PreviewWelcome() {
         GuideMeTheme {
-            WelcomeScreen(onSearchClick = {}, onLessonsClick = {})
+            WelcomeScreen(onSearchClick = {}, onLessonsClick = {}, onLogoutClick = {})
         }
     }
 
