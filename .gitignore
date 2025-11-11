@@ -1,10 +1,49 @@
-.idea/
+# Gradle
 .gradle/
-.idea/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration files
 local.properties
 *.iml
+.idea/
+.DS_Store
 
-# Gradle caches
-.gradle/
+# Log files
+*.log
 
-local.properties
+# Android specific
+captures/
+output.json
+
+# Generated files
+bin/
+gen/
+out/
+
+# Keystore files (do NOT commit your signing keys)
+*.jks
+*.keystore
+*.key.properties
+
+# Google Services (contains sensitive info)
+google-services.json
+app/google-services.json
+
+# Jetpack Compose previews cache
+.compose-cache/
+
+# Misc
+*.apk
+*.aab
+*.hprof
+
+# Kotlin / Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Room schema outputs (optional — ignore if not versioning)
+schemas/
