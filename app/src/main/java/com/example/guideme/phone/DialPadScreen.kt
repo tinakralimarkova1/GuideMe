@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.delay
+import com.example.guideme.lessons.anchorId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,7 +100,10 @@ fun DialPadScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     IconButton(
-                        onClick = { if (number.isNotEmpty()) number = number.dropLast(1) },
+                        onClick = { if (number.isNotEmpty()) number = number.dropLast(1)
+                            onNumberCommitted(number)
+
+                        },
                         modifier = Modifier.size(40.dp)
                     ) {
                         Icon(
@@ -130,7 +134,9 @@ fun DialPadScreen(
                 Spacer(Modifier.height(16.dp))
 
                 Button(
+
                     onClick = {
+
                         onButtonPressed("DialPad.Call")
                         if (number.isEmpty()) {
                             TTS.speak("Please enter a number.")
@@ -141,7 +147,8 @@ fun DialPadScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(56.dp)
+                        .anchorId("DialPad.Call"),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text("Call", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
