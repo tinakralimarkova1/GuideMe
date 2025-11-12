@@ -4,6 +4,7 @@ package com.example.guideme.lessons
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.example.guideme.util.HashUtils
 
 object DatabaseSeeder {
 
@@ -68,19 +69,18 @@ object DatabaseSeeder {
 
         // --- Seed demo customer ---
         val customerDao = db.customerDao()
-        val existingCustomer = customerDao.getCustomer("demo")   // 👈 matches your current code
+        val existingCustomer = customerDao.getCustomer("demo")
         if (existingCustomer == null) {
+            // generate salt and hash the password
+            val salt = HashUtils.generateSalt()
+            val hashedPassword = HashUtils.hashPasswordWithSalt("password", salt)
+
             customerDao.insertCustomer(
                 DbCustomer(
                     email = "demo",
                     name = "Demo User",
-                    password = "password",   // dev-only
-                    city = null,
-                    street = null,
-                    state = null,
-                    buildingNumber = null,
-                    phoneNum = null,
-                    dateOfBirth = null
+                    password = hashedPassword,
+                    salt = salt
                 )
             )
         }
