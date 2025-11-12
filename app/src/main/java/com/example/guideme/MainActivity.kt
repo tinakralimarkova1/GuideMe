@@ -38,19 +38,15 @@ import com.example.guideme.lessons.StepType
 import com.example.guideme.lessons.DbLesson
 import com.example.guideme.lessons.DbCustomer
 import com.example.guideme.lessons.DbPreReq
-
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.launch
 import com.example.guideme.lessons.CustomerDao
 import com.example.guideme.lessons.AuthScreen
 import com.example.guideme.lessons.DatabaseSeeder
-
-
-
-
-
-
+import com.example.guideme.NLP.IntentLessonRecommender
+import com.example.guideme.lessons.DbMissingLesson
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,9 +83,6 @@ class MainActivity : ComponentActivity() {
         }
 
 
-
-
-
         setContent {
             GuideMeTheme {
                 // Global gradient behind Scaffold
@@ -103,7 +96,10 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxSize()
                                 .padding(innerPadding),
                             lessonsRepo = lessonsRepo,
-                            customerDao = db.customerDao()
+                            customerDao = db.customerDao(),
+                            lessonDao = db.lessonDao(),
+                            missingLessonDao = db.missingLessonDao()
+
                         )
                     }
                 }
@@ -121,6 +117,10 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     modifier: Modifier = Modifier,
     lessonsRepo: LessonsRepository,
+    userEmail: String,                    // 👈 add this
+    onLogout: () -> Unit = {},
+    lessonDao: com.example.guideme.lessons.LessonDao? = null,
+    missingLessonDao: com.example.guideme.lessons.MissingLessonDao? = null
     userEmail: String,
     onLogout: () -> Unit = {}
 ) {
@@ -181,17 +181,98 @@ fun MainScreen(
             }
 
             "search" -> {
-                SearchMenu(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(24.dp),
-                    onVoiceSearch = {
-                        TTS.speak("Voice search coming soon. Say your question after the beep.")
-                    },
-                    onTextSearch = {
-                        TTS.speak("Opening text search.")
+                if (lessonDao == null || missingLessonDao == null) {
+                    // Preview / fallback behavior
+                    SearchMenu(
+                        modifier = modifier.fillMaxSize().padding(24.dp),
+                        onVoiceSearch = { TTS.speak("Voice search coming soon.") },
+                        onTextSearch  = { TTS.speak("Text search coming soon.") }
+                    )
+                } else {
+                    // coroutine scope tied to this Composable
+                    val scope = rememberCoroutineScope()
+
+                    // 1. load lesson titles from Room once
+                    var lessonTitles by remember { mutableStateOf<List<String>>(emptyList()) }
+                    LaunchedEffect(Unit) {
+                        // Query Room off the main thread
+                        lessonTitles = lessonDao.getAllLessons().map { it.name }
                     }
-                )
+                    // 2. create recommender when titles are available
+                    val recommender = remember(lessonTitles) {
+                        com.example.guideme.NLP.IntentLessonRecommender(lessonTitles)
+                    }
+
+                    // 3. simple text input dialog state
+                    var showTextDialog by remember { mutableStateOf(false) }
+                    var typedQuery by remember { mutableStateOf("") }
+
+                    // 4. handle a user query: run recommender, suggest lesson if found, if not found apologize and log to DB
+                    fun handleUserQuery(query: String) {
+                        val suggestion: String? = recommender.recommendLesson(query)
+
+                        if (suggestion != null) {
+                            // voice feedback
+                            TTS.speak("I found a lesson: $suggestion.")
+                            // if want to start the lesson right away: find its id then navigate
+                            scope.launch {
+                                val match = lessonDao.getAllLessons().firstOrNull { it.name == suggestion }
+                                if (match != null) {
+                                    // placeholder as we only have this lesson
+                                    currentScreen = "lesson_phone"
+                                }
+                            }
+                        } else {
+                            TTS.speak("Sorry, we currently don't have a lesson on this.")
+                            // persist the missing query to design it later
+                            scope.launch {
+                                missingLessonDao.insertMissingLesson(
+                                    com.example.guideme.lessons.DbMissingLesson(queryText = query)
+                                )
+                            }
+                        }
+                    }
+
+                    SearchMenu(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        onVoiceSearch = {
+                            TTS.speak("Voice search coming soon. Say your question after the beep.")
+                        },
+                        onTextSearch = {
+                            TTS.speak("Opening text search.")
+                        }
+                    )
+
+                    // 5. minimal dialog for typed input
+                    if (showTextDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showTextDialog = false },
+                            title = { Text("Type your question") },
+                            text = {
+                                OutlinedTextField(
+                                    value = typedQuery,
+                                    onValueChange = { typedQuery = it },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    showTextDialog = false
+                                    if (typedQuery.isNotBlank()) handleUserQuery(typedQuery)
+                                    typedQuery = ""
+                                }) { Text("OK") }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showTextDialog = false; typedQuery = "" }) {
+                                    Text("Cancel")
+                                }
+                            }
+                        )
+                    }
+                }
+
                 BackHandler {
                     TTS.speak("Returning to welcome.")
                     currentScreen = "welcome"
@@ -500,7 +581,9 @@ fun MainScreen(
     fun GuideMeRoot(
         modifier: Modifier = Modifier,
         lessonsRepo: LessonsRepository,
-        customerDao: CustomerDao
+        customerDao: CustomerDao,
+        lessonDao: com.example.guideme.lessons.LessonDao? = null,
+        missingLessonDao: com.example.guideme.lessons.MissingLessonDao? = null
     ) {
         // Remember which user is currently logged in
         var currentUser by rememberSaveable { mutableStateOf<DbCustomer?>(null) }
@@ -515,7 +598,7 @@ fun MainScreen(
                     // Say the welcome message AFTER a successful login
                     TTS.speak(
                         "Welcome to Guide Me. " +
-                                "Choose Search to look up how to do something, or go to the Lessons menu."
+                                "Click learn to go to the lessons menu, or click search to find a specific lesson."
                     )
                 }
             )
@@ -525,9 +608,10 @@ fun MainScreen(
                 modifier = modifier,
                 lessonsRepo = lessonsRepo,
                 userEmail = currentUser!!.email,   // 👈 add this
-                onLogout = { currentUser = null }
+                onLogout = { currentUser = null },
+                lessonDao = lessonDao,
+                missingLessonDao = missingLessonDao
             )
-
         }
     }
 
