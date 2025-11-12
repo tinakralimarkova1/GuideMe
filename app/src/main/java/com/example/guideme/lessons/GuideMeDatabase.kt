@@ -9,9 +9,10 @@ import androidx.room.RoomDatabase
         DbCompletion::class,
         DbLesson::class,
         DbCustomer::class,
-        DbPreReq::class
+        DbPreReq::class,
+        DbMissingLesson::class
     ],
-    version = 6,              // ⬅ bump version for new tables
+    version = 5,              // ⬅ bump version for new tables
     exportSchema = false
 )
 abstract class GuideMeDatabase : RoomDatabase() {
@@ -23,4 +24,5 @@ abstract class GuideMeDatabase : RoomDatabase() {
     // 🆕
     abstract fun customerDao(): CustomerDao
     abstract fun preReqDao(): PreReqDao
+    abstract fun missingLessonDao(): MissingLessonDao
 }
