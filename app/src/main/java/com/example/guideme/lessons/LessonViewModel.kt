@@ -12,6 +12,8 @@ sealed class UserEvent {
     data class TextEntered(val text: String): UserEvent()
     data class SelectOption(val optionId: String): UserEvent()
     data class Toggle(val anchorId: String, val on: Boolean): UserEvent()
+
+    object Acknowledge : UserEvent()
 }
 
 class LessonViewModel(
@@ -99,6 +101,11 @@ class LessonViewModel(
                 val toggle = evt as? UserEvent.Toggle ?: return
                 toggle.anchorId == step.anchorId
                 // add toggle.on checks later if you want
+            }
+
+            StepType.Acknowledge -> {
+                val ack = evt as? UserEvent.Acknowledge ?: return   // ignore everything else
+                true
             }
         }
 

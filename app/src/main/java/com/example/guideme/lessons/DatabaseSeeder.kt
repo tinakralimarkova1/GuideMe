@@ -42,7 +42,7 @@ object DatabaseSeeder {
                         stepNo = 1,
                         text = "This is the call button, it is used to call once a number is entered. Tap it",
                         anchorId = "DialPad.Call",
-                        type = StepType.TapTarget.name,
+                        type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
                     DbInstruction(

@@ -14,6 +14,7 @@ import com.example.guideme.wifi.WifiNavHost
 import com.example.guideme.phone.DialPadScreen   // if you want a single sub-screen
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController // SHORT TERM SOLUTION TODO: fix it
+import androidx.compose.ui.graphics.Color
 
 
 @Composable
@@ -52,13 +53,16 @@ fun LessonHost(
         if (!state.completed && state.steps.isNotEmpty()) {
             val current = state.steps[state.currentIndex]
             LessonHighlightOverlay(
-                anchorId = current.anchorId
+                anchorId = current.anchorId,
+                outlineColor = current.outlineColor?.let { Color(it) } ?: Color(0xFFFFC107)
             )
             InstructionOverlay(
                 text = current.text,
-                //
-                feedback = state.feedback
-                // For now, we just show text; later you can map anchorId -> coordinates.
+                feedback = state.feedback,
+                showOk = current.type == StepType.Acknowledge,
+                onOk = if (current.type == StepType.Acknowledge) {
+                    { vm.onUserEvent(UserEvent.Acknowledge) }
+                } else null
             )
         } else if (state.completed) {
             LessonComplete(onExit = { /* navigate back */ })
@@ -66,27 +70,29 @@ fun LessonHost(
     }
 }
 
+
 @Composable
-private fun InstructionOverlay(text: String, feedback: String? = null) {
-    Box(
-        Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Surface(
-            tonalElevation = 2.dp,
-            shadowElevation = 6.dp
-        ) {
-            Text(
-                text,
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            if (feedback != null) {
-                Text(
-                    text = feedback,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error
-                )
+private fun InstructionOverlay(
+    text: String,
+    feedback: String? = null,
+    showOk: Boolean = false,
+    onOk: (() -> Unit)? = null
+) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        Surface(tonalElevation = 2.dp, shadowElevation = 6.dp) {
+            Column(Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text, style = MaterialTheme.typography.bodyLarge)
+                if (feedback != null) {
+                    Text(
+                        text = feedback,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                if (showOk && onOk != null) {
+                    Spacer(Modifier.height(12.dp))
+                    Button(onClick = onOk) { Text("OK") }
+                }
             }
         }
     }

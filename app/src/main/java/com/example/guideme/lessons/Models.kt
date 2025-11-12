@@ -10,7 +10,7 @@ data class Instruction(
     val expectedText: String? = null // used for EnterText steps
 )
 
-enum class StepType { TapTarget, EnterText, Toggle, Select }
+enum class StepType { TapTarget, EnterText, Toggle, Select, Acknowledge }
 
 data class LessonState(
     val appName: String = "",
@@ -19,4 +19,5 @@ data class LessonState(
     val currentIndex: Int = 0,
     val completed: Boolean = false,
     val feedback: String? = null
+
 )
