@@ -16,6 +16,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
 
+
 @Composable
 fun LessonHighlightOverlay(
     anchorId: String?,
