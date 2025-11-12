@@ -118,10 +118,9 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     lessonsRepo: LessonsRepository,
     userEmail: String,                    // 👈 add this
-    onLogout: () -> Unit = {},
+
     lessonDao: com.example.guideme.lessons.LessonDao? = null,
-    missingLessonDao: com.example.guideme.lessons.MissingLessonDao? = null
-    userEmail: String,
+    missingLessonDao: com.example.guideme.lessons.MissingLessonDao? = null,
     onLogout: () -> Unit = {}
 ) {
     Column(
