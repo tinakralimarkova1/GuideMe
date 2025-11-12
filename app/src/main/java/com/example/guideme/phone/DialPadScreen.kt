@@ -93,6 +93,7 @@ fun DialPadScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp, bottom = 16.dp)
+                        .anchorId("DialPad.NumberField")
                 )
 
                 Row(
@@ -104,7 +105,7 @@ fun DialPadScreen(
                             onNumberCommitted(number)
 
                         },
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(40.dp).anchorId("DialPad.Backspace")
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Backspace,
@@ -193,7 +194,8 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit) {
                     .size(80.dp)
                     .clip(CircleShape)
                     .background(Color(0xFFE53935))
-                    .clickable { onEndCall() },
+                    .clickable { onEndCall() }
+                    .anchorId("DialPad.EndCall"),
                 contentAlignment = Alignment.Center
             ) {
                 Text("End", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -216,6 +218,7 @@ private fun DialPadKeys(onKey: (String) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
+            .anchorId("DialPad.KeysGrid")
     ) {
         rows.forEach { row ->
             Row(
@@ -223,7 +226,10 @@ private fun DialPadKeys(onKey: (String) -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 row.forEach { key ->
-                    DialKey(label = key, modifier = Modifier.weight(1f)) { onKey(key) }
+                    DialKey(label = key, modifier = Modifier.weight(1f).anchorId("DialPad.key$key"))
+                    {
+                        onKey(key)
+                    }
                 }
             }
         }
@@ -239,6 +245,7 @@ private fun DialKey(label: String, modifier: Modifier = Modifier, onClick: () ->
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable { onClick() }
+
     ) {
         Text(
             text = label,
