@@ -45,6 +45,7 @@ import com.example.guideme.lessons.CustomerDao
 import com.example.guideme.lessons.AuthScreen
 import com.example.guideme.lessons.DatabaseSeeder
 import com.example.guideme.NLP.IntentLessonRecommender
+import com.example.guideme.NLP.STT
 import com.example.guideme.lessons.DbMissingLesson
 import kotlinx.coroutines.launch
 
