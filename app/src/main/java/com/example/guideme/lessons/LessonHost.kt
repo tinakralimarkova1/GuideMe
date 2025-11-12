@@ -33,7 +33,8 @@ fun LessonHost(
 
     LaunchedEffect(appName, lessonId) { vm.loadLesson(appName, lessonId) }
 
-    Box(Modifier.fillMaxSize().background(MainBackgroundGradient)) {
+    Box(Modifier.fillMaxSize().background(MainBackgroundGradient))
+    {
         // 1) Your fake app UI (emit events back to ViewModel)
         if (state.completed) {
             // 🔁 Once done, show a *separate full-screen* screen

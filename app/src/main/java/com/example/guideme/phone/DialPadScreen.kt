@@ -223,7 +223,10 @@ private fun DialPadKeys(onKey: (String) -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 row.forEach { key ->
-                    DialKey(label = key, modifier = Modifier.weight(1f)) { onKey(key) }
+                    DialKey(label = key, modifier = Modifier.weight(1f).anchorId("DialPad.key$key"))
+                    {
+                        onKey(key)
+                    }
                 }
             }
         }

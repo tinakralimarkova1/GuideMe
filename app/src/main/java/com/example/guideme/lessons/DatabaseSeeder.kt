@@ -25,6 +25,12 @@ object DatabaseSeeder {
                         id = 2,
                         name = "Wi-Fi – Connect to a network",
                         difficulty = 1
+                    ),
+                    DbLesson(
+                        id = 2001,
+                        name =  "Introduction to Dial Pad",
+                        difficulty = 1,
+
                     )
                     // add more later as needed
                 )
@@ -49,7 +55,7 @@ object DatabaseSeeder {
                         lessonsId = 1,
                         stepNo = 2,
                         text = "Enter the number 123.",
-                        anchorId = "DialPad.NumberField",
+                        anchorId = "DialPad.key1",
                         type = StepType.EnterText.name,
                         outlineColor = null,
                         expectedText = "123"
@@ -61,7 +67,27 @@ object DatabaseSeeder {
                         anchorId = "DialPad.Call",
                         type = StepType.TapTarget.name,
                         outlineColor = null
-                    )
+                    ),
+                    //-------Phone Lesson 2001 Instrucitons-------
+                    DbInstruction(
+                        lessonsId = 2001,
+                        stepNo = 1,
+                        text = "This is the dial pad screen located in your phone app. Let's learn about it",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2001,
+                        stepNo = 2,
+                        text = "This is the dial pad",
+                        anchorId = null, //
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+
                 )
             )
         }
