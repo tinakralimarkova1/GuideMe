@@ -228,7 +228,11 @@ fun MainScreen(
                     appName = "Phone",
                     lessonId = 1,
                     repo = lessonsRepo,
-                    userEmail = userEmail
+                    userEmail = userEmail,
+                    onExit = {
+                        // navigate back to your lessons menu
+                        currentScreen = "main"
+                    }
                 )
                 BackHandler {
                     TTS.speak("Returning to lessons menu.")

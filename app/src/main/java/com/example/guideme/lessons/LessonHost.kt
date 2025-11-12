@@ -22,7 +22,8 @@ fun LessonHost(
     appName: String,
     lessonId: Int,
     repo: LessonsRepository,
-    userEmail: String
+    userEmail: String,
+    onExit: () -> Unit
 ) {
     val vm: LessonViewModel = viewModel(
         factory = LessonViewModelFactory(repo, userEmail)
@@ -34,38 +35,44 @@ fun LessonHost(
 
     Box(Modifier.fillMaxSize().background(MainBackgroundGradient)) {
         // 1) Your fake app UI (emit events back to ViewModel)
-        when (appName) {
-            "Phone" -> PhoneNavHost(
-                onAnchorTapped = { anchorId ->
-                    vm.onUserEvent(UserEvent.TapOnAnchor(anchorId))
-                },
-                onNumberCommitted = { text ->
-                    vm.onUserEvent(UserEvent.TextEntered(text))
-                }
+        if (state.completed) {
+            // 🔁 Once done, show a *separate full-screen* screen
+            LessonCompleteScreen(
+                onExit = onExit
             )
-            "WiFi" -> WifiNavHost(     // expose callbacks similarly inside your WiFi screens
-                // e.g., onToggle = { id, on -> vm.onUserEvent(UserEvent.Toggle(id, on)) }
-            )
-            else -> Text("No fake UI for $appName")
-        }
+        } else {
+            // 🚧 Only show your fake UI while in-progress
+            when (appName) {
+                "Phone" -> PhoneNavHost(
+                    onAnchorTapped = { anchorId ->
+                        vm.onUserEvent(UserEvent.TapOnAnchor(anchorId))
+                    },
+                    onNumberCommitted = { text ->
+                        vm.onUserEvent(UserEvent.TextEntered(text))
+                    }
+                )
+                "WiFi" -> WifiNavHost(
+                    // e.g. onToggle = { id, on -> vm.onUserEvent(UserEvent.Toggle(id, on)) }
+                )
+                else -> Text("No fake UI for $appName")
+            }
 
-        // 2) Instruction overlay
-        if (!state.completed && state.steps.isNotEmpty()) {
-            val current = state.steps[state.currentIndex]
-            LessonHighlightOverlay(
-                anchorId = current.anchorId,
-                outlineColor = current.outlineColor?.let { Color(it) } ?: Color(0xFFFFC107)
-            )
-            InstructionOverlay(
-                text = current.text,
-                feedback = state.feedback,
-                showOk = current.type == StepType.Acknowledge,
-                onOk = if (current.type == StepType.Acknowledge) {
-                    { vm.onUserEvent(UserEvent.Acknowledge) }
-                } else null
-            )
-        } else if (state.completed) {
-            LessonComplete(onExit = { /* navigate back */ })
+            // Instruction overlay + highlight while not completed
+            if (state.steps.isNotEmpty()) {
+                val current = state.steps[state.currentIndex]
+                LessonHighlightOverlay(
+                    anchorId = current.anchorId,
+                    outlineColor = current.outlineColor?.let { Color(it) } ?: Color(0xFFFFC107)
+                )
+                InstructionOverlay(
+                    text = current.text,
+                    feedback = state.feedback,
+                    showOk = current.type == StepType.Acknowledge,
+                    onOk = if (current.type == StepType.Acknowledge) {
+                        { vm.onUserEvent(UserEvent.Acknowledge) }
+                    } else null
+                )
+            }
         }
     }
 }
@@ -99,12 +106,18 @@ private fun InstructionOverlay(
 }
 
 @Composable
-private fun LessonComplete(onExit: () -> Unit) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Lesson complete!", style = MaterialTheme.typography.headlineSmall)
-            Spacer(Modifier.height(12.dp))
-            Button(onClick = onExit) { Text("Back to menu") }
+fun LessonCompleteScreen(onExit: () -> Unit) {
+    // Full-screen, independent of the fake app UI
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.surface
+    ) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("Lesson complete!", style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.height(12.dp))
+                Button(onClick = onExit) { Text("Back to menu") }
+            }
         }
     }
 }
