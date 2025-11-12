@@ -9,10 +9,7 @@ data class DbCustomer(
     @PrimaryKey val email: String,
     val name: String,
     val password: String,
-    val city: String?,
-    val street: String?,
-    val state: String?,
-    val buildingNumber: String?,
-    val phoneNum: String?,
-    val dateOfBirth: String?   // "YYYY-MM-DD"
+    val salt: String //Salt meaning that when two users have similar password, the hashing is still different
 )
+
+
