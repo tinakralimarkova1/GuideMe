@@ -306,7 +306,7 @@ fun MainScreen(
             "lesson_phone" -> {
                 LessonHost(
                     appName = "Phone",
-                    lessonId = 1,
+                    lessonId = 2001,
                     repo = lessonsRepo,
                     userEmail = userEmail,
                     onExit = {

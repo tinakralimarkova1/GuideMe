@@ -55,7 +55,7 @@ object DatabaseSeeder {
                         lessonsId = 1,
                         stepNo = 2,
                         text = "Enter the number 123.",
-                        anchorId = "DialPad.key1",
+                        anchorId = "DialKey2",
                         type = StepType.EnterText.name,
                         outlineColor = null,
                         expectedText = "123"
@@ -72,7 +72,7 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 2001,
                         stepNo = 1,
-                        text = "This is the dial pad screen located in your phone app. Let's learn about it",
+                        text = "This is the dial pad screen located in your phone app. Let's learn about it.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
@@ -81,8 +81,53 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 2001,
                         stepNo = 2,
-                        text = "This is the dial pad",
-                        anchorId = null, //
+                        text = "This is the dial pad.",
+                        anchorId = "DialPad.KeysGrid",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2001,
+                        stepNo = 3,
+                        text = "Each number is button used to enter a phone number. If you press this button, the number 1 will be dialed.",
+                        anchorId = "DialPad.Key1",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2001,
+                        stepNo = 4,
+                        text = "This is where the numbers you dial will appear",
+                        anchorId = "DialPad.NumberField",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2001,
+                        stepNo = 5,
+                        text = "Once you enter a number, pressing the call button will dial the number",
+                        anchorId = "DialPad.Call",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2001,
+                        stepNo = 6,
+                        text = "In case you dial the wrong numbers, pressing the backspace deletes the last number dialed",
+                        anchorId = "DialPad.BackSpace",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2001,
+                        stepNo = 7,
+                        text = "Good job! You have now been familiarized with the dial screen of the phone app!",
+                        anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
 
