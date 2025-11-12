@@ -40,9 +40,9 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 1,
                         stepNo = 1,
-                        text = "HELLOOOOOOOO",
+                        text = "This is the call button, it is used to call once a number is entered. Tap it",
                         anchorId = "DialPad.Call",
-                        type = StepType.TapTarget.name,
+                        type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
                     DbInstruction(
@@ -58,7 +58,7 @@ object DatabaseSeeder {
                         lessonsId = 1,
                         stepNo = 3,
                         text = "Tap CALL again to confirm.",
-                        anchorId = "DialPad.CallConfirm",
+                        anchorId = "DialPad.Call",
                         type = StepType.TapTarget.name,
                         outlineColor = null
                     )
