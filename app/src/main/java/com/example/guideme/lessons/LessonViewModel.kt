@@ -47,61 +47,72 @@ class LessonViewModel(
             )
         }
     }
+
     fun onUserEvent(evt: UserEvent) {
         val s = uiState
         val step = s.steps.getOrNull(s.currentIndex) ?: return
 
         val ok = when (step.type) {
             StepType.TapTarget -> {
-                val tap = evt as? UserEvent.TapOnAnchor
-                tap?.anchorId == step.anchorId
+                // Ignore if this event isn't a tap
+                val tap = evt as? UserEvent.TapOnAnchor ?: return
+                tap.anchorId == step.anchorId
             }
 
             StepType.EnterText -> {
+                // Ignore if this event isn't text input
                 val entered = evt as? UserEvent.TextEntered ?: return
                 val expected = step.expectedText
 
-                // If we have an expected string, treat "shorter than expected"
-                // as "still typing / deleting" -> clear feedback & don't mark error.
-                if (!expected.isNullOrBlank() && entered.text.length < expected.length) {
-                    if (s.feedback != null) {
-                        uiState = s.copy(feedback = null)
+                if (!expected.isNullOrBlank()) {
+                    // We have a specific expected string
+
+                    // 1) User has typed LESS than expected -> still typing/deleting
+                    if (entered.text.length < expected.length) {
+                        // clear "Try again" if it was showing
+                        if (s.feedback != null) {
+                            uiState = s.copy(feedback = null)
+                        }
+                        // don't treat as wrong, don't advance
+                        return
                     }
-                    return  // don't advance, don't increment errorCount, don't show "Try again"
-                }
 
-                when {
-                    // generic non-empty check when there's no specific expectedText
-                    expected.isNullOrBlank() -> entered.text.isNotBlank()
-
-                    // only compare when length matches expected
-                    entered.text.length == expected.length -> entered.text == expected
-
-                    // longer than expected => wrong attempt
-                    else -> false
+                    // 2) Same length -> check correctness
+                    if (entered.text.length == expected.length) {
+                        entered.text == expected
+                    } else {
+                        // 3) Longer than expected -> definite wrong
+                        false
+                    }
+                } else {
+                    // No specific expected text: only require non-empty
+                    entered.text.isNotBlank()
                 }
             }
 
             StepType.Select -> {
-                val sel = evt as? UserEvent.SelectOption
-                sel?.optionId == step.anchorId
+                val sel = evt as? UserEvent.SelectOption ?: return
+                sel.optionId == step.anchorId
             }
 
             StepType.Toggle -> {
-                val toggle = evt as? UserEvent.Toggle
-                toggle?.anchorId == step.anchorId
-                // you could later also check toggle.on if needed
+                val toggle = evt as? UserEvent.Toggle ?: return
+                toggle.anchorId == step.anchorId
+                // add toggle.on checks later if you want
             }
         }
 
+        // ---- handle wrong action ----
         if (!ok) {
-            // count mistakes + show feedback, but do NOT advance
             errorCount++
             uiState = s.copy(feedback = "Try again.")
-
             return
         }
+        else{
+            uiState = s.copy(feedback = null)
+        }
 
+        // ---- handle correct action ----
         val next = s.currentIndex + 1
         val justFinished = next >= s.steps.size
 
@@ -124,7 +135,7 @@ class LessonViewModel(
         uiState = s.copy(
             currentIndex = next,
             completed = justFinished,
-            feedback = null            // clear any old error message
+            feedback = null    // always clear any old "Try again." on success
         )
     }
 }

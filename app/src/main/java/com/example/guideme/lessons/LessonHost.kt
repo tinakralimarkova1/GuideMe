@@ -56,6 +56,7 @@ fun LessonHost(
             )
             InstructionOverlay(
                 text = current.text,
+                //
                 feedback = state.feedback
                 // For now, we just show text; later you can map anchorId -> coordinates.
             )
