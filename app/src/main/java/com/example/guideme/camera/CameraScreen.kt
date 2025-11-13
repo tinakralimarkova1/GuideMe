@@ -32,6 +32,9 @@ import com.example.guideme.R
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.launch
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.guideme.lessons.anchorId
+
 private enum class FlashSim { AUTO, ON, OFF }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +93,7 @@ fun CameraScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(top = 40.dp, end = 40.dp, start =  20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -108,7 +111,8 @@ fun CameraScreen() {
                     FlashSim.OFF -> FlashSim.AUTO
                 }
                 TTS.speak("Flash ${flash.name.lowercase()}")
-            }) {
+            },
+                modifier = Modifier.anchorId("Camera.FlashButton")){
                 when (flash) {
                     FlashSim.AUTO -> Icon(Icons.Filled.FlashAuto, contentDescription = "Flash Auto")
                     FlashSim.ON -> Icon(Icons.Filled.FlashOn, contentDescription = "Flash On")
@@ -121,18 +125,22 @@ fun CameraScreen() {
         Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(12.dp),
+                .padding(0.dp)
+                .height(300.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            FilledTonalIconButton(onClick = { TTS.speak("Switched camera") }) {
+            FilledTonalIconButton(
+                onClick = {
+                    TTS.speak("Switched camera") },
+                modifier = Modifier.anchorId("Camera.SwitchCamera")) {
                 Icon(Icons.Filled.Cameraswitch, contentDescription = "Switch camera")
             }
 
             Box(
                 modifier = Modifier
-                    .height(200.dp)
-                    .width(120.dp)
+                    .height(150.dp)
+                    .width(130.dp)
                     .graphicsLayer(rotationZ = -90f)
             ) {
                 Slider(
@@ -140,13 +148,19 @@ fun CameraScreen() {
                     onValueChange = { zoom = it },
                     valueRange = 1.0f..5.0f,
                     steps = 3,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .height(100.dp)
+                        .anchorId("Camera.ZoomSlider"),
                     onValueChangeFinished = {
                         TTS.speak(String.format("%.1fx", zoom))
                     }
                 )
             }
-            Text(String.format("%.1fx", zoom), color = Color.White)
+            Text(
+                String.format("%.1fx", zoom),
+                color = Color.White,
+                modifier = Modifier.anchorId("Camera.ZoomLabel"))
         }
 
         // ===== BOTTOM CONTROLS =====
@@ -154,7 +168,7 @@ fun CameraScreen() {
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(bottom = 18.dp, start = 16.dp, end = 16.dp),
+                .padding(bottom = 148.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -170,7 +184,8 @@ fun CameraScreen() {
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable {
                             TTS.speak("This opens your last photo in a real camera app.")
-                        },
+                        }
+                        .anchorId("Camera.Gallery"),
                     contentAlignment = Alignment.Center
                 ) {
                     if (hasPhoto) {
@@ -198,7 +213,8 @@ fun CameraScreen() {
                                 TTS.speak("Photo captured!")
                                 hasPhoto = true
                             }
-                        },
+                        }
+                        .anchorId("Camera.Capture"),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("●", style = MaterialTheme.typography.titleLarge, color = Color.White)
@@ -207,5 +223,17 @@ fun CameraScreen() {
                 Spacer(Modifier.size(54.dp))
             }
         }
+    }
+}
+@Composable
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "Camera Screen Preview"
+)
+fun CameraScreenPreview() {
+    // Optionally wrap it in your app’s theme if you have one
+    MaterialTheme {
+        CameraScreen()
     }
 }
