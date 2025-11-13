@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,10 +60,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.TopAppBarDefaults
-
-
-
-
+import android.app.Activity
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import com.example.guideme.NLP.IntentClassifier
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -691,6 +692,41 @@ private fun SearchMenu(
     onVoiceSearch: () -> Unit,
     onTextSearch: () -> Unit
 ) {
+    val context = LocalContext.current
+    val activity = context as Activity
+
+    // reuse one speech + one intent classifier per composition
+    val speech = remember { STT(activity) }
+    val classifier = remember { IntentClassifier(context) }
+
+    var queryText by rememberSaveable { mutableStateOf("") }
+    var resultText by rememberSaveable { mutableStateOf<String?>(null) }
+    var errorText by rememberSaveable { mutableStateOf<String?>(null) }
+    var typingMode by rememberSaveable { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
+
+    // collect speech results
+    LaunchedEffect(Unit) {
+        speech.results.collect { text ->
+            queryText = text
+            errorText = null
+            resultText = "Thinking..."
+            scope.launch {
+                val prediction = classifier.classify(text)
+                if (prediction == null || prediction.confidence < 0.6f) {
+                    resultText = null
+                    errorText = "Sorry, we do not have a lesson on that yet"
+                } else {
+                    // map label to lesson name
+                    val lessonName = prediction.label
+                    print(lessonName)
+
+                    resultText = "I found a lesson for what you need:\n$lessonName\n"
+                }
+            }
+        }
+    }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -708,8 +744,15 @@ private fun SearchMenu(
                 modifier = Modifier.padding(top = 60.dp, bottom = 40.dp)
             )
 
+            // voice button
             Button(
-                onClick = onVoiceSearch,
+                onClick = {
+                    onVoiceSearch()
+                    errorText = null
+                    resultText = null
+                    queryText = ""
+                    speech.start() // starts listening
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 30.dp)
@@ -737,8 +780,12 @@ private fun SearchMenu(
                 }
             }
 
+            // text button
             Button(
-                onClick = onTextSearch,
+                onClick = {
+                    onTextSearch()
+                    typingMode = true
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 30.dp)
@@ -753,6 +800,81 @@ private fun SearchMenu(
                     "Type your question",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center
+                )
+            }
+
+            // typing area (shown after pressing "type your question" button)
+            if (typingMode) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp)
+                ){
+                    OutlinedTextField(
+                        value = queryText,
+                        onValueChange = {
+                            queryText = it
+                            errorText = null
+                        },
+                        label = { Text("Type here") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Button(
+                        onClick = {
+                            val text = queryText.trim()
+                            if (text.isNotEmpty()) {
+                                errorText = null
+                                resultText = "Thinking..."
+                                scope.launch {
+                                    val prediction = classifier.classify(text)
+                                    if (prediction == null || prediction.confidence < 0.6f) {
+                                        resultText = null
+                                        errorText = "Sorry, we don't have a lesson on that yet"
+                                    } else {
+                                        val lessonName = prediction.label
+                                        resultText = "Suggested lesson:\n$lessonName\n"
+                                    }
+                                }
+                            }
+                        }
+                    ) {
+                        Text("Search")
+                    }
+                }
+            }
+            // result or error display
+            if (!queryText.isBlank()) {
+                Text(
+                    text = "You asked: \"$queryText\"",
+                    color = MainButtonContentColor,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 30.dp)
+                )
+            }
+            resultText?.let { msg ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        text = msg,
+                        modifier = Modifier.padding(16.dp),
+                        color = MainButtonContentColor,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+            errorText?.let { msg ->
+                Text(
+                    text = msg,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 30.dp)
                 )
             }
         }
