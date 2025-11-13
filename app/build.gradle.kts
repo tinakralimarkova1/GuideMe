@@ -87,5 +87,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    implementation("org.tensorflow:tensorflow-lite:2.12.0")
+
 }
 
