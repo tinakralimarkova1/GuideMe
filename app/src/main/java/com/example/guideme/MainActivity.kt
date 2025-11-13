@@ -31,6 +31,20 @@ import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.TopAppBarDefaults
+
+
+
 
 
 class MainActivity : ComponentActivity() {
@@ -56,6 +70,8 @@ class MainActivity : ComponentActivity() {
             instructionDao = db.instructionDao(),
             completionDao = db.completionDao()
         )
+
+
         // --- end Room setup ---
 
         // Seed lessons/instructions (simple check inside seeder)
@@ -78,7 +94,9 @@ class MainActivity : ComponentActivity() {
                             lessonsRepo = lessonsRepo,
                             customerDao = db.customerDao(),
                             lessonDao = db.lessonDao(),
-                            missingLessonDao = db.missingLessonDao()
+                            missingLessonDao = db.missingLessonDao(),
+                            completionDao = db.completionDao()
+
                         )
                     }
                 }
@@ -100,7 +118,8 @@ fun GuideMeRoot(
     lessonsRepo: LessonsRepository,
     customerDao: CustomerDao,
     lessonDao: LessonDao? = null,
-    missingLessonDao: MissingLessonDao? = null
+    missingLessonDao: MissingLessonDao? = null,
+    completionDao: CompletionDao
 ) {
     var currentUser by rememberSaveable { mutableStateOf<DbCustomer?>(null) }
 
@@ -125,10 +144,14 @@ fun GuideMeRoot(
             userEmail = currentUser!!.email,
             onLogout = { currentUser = null },
             lessonDao = lessonDao,
-            missingLessonDao = missingLessonDao
+            missingLessonDao = missingLessonDao,
+            completionDao = completionDao,
+            customerDao = customerDao,
         )
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
 fun MainScreen(
@@ -137,7 +160,9 @@ fun MainScreen(
     userEmail: String,
     lessonDao: LessonDao? = null,
     missingLessonDao: MissingLessonDao? = null,
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    customerDao: CustomerDao,
+    completionDao: CompletionDao
 ) {
     Column(modifier = modifier) {
         // Screens: welcome -> main (lessons menu) -> phone/camera/wifi/lesson/search
@@ -162,6 +187,10 @@ fun MainScreen(
                     onLogoutClick = {
                         TTS.speak("Logging out.")
                         onLogout()
+                    },
+                    onAccountClick = {
+                        TTS.speak("Opening your account.")
+                        currentScreen = "account"
                     }
                 )
             }
@@ -320,6 +349,113 @@ fun MainScreen(
                     currentScreen = "main"
                 }
             }
+
+            "account" -> {
+                var user by remember { mutableStateOf<DbCustomer?>(null) }
+                var rows by remember { mutableStateOf<List<AccountRow>>(emptyList()) }
+
+                LaunchedEffect(userEmail) {
+                    user = customerDao.getCustomer(userEmail)
+                    rows = completionDao.getAccountRows(userEmail)
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MainBackgroundGradient)
+                ) {
+                    Scaffold(
+                        containerColor = Color.Transparent, // let gradient show
+                        topBar = {
+                            TopAppBar(
+                                title = { Text("My Account", color = MainButtonContentColor) },
+                                navigationIcon = {
+                                    TextButton(onClick = {
+                                        TTS.speak("Returning to Welcome.")
+                                        currentScreen = "welcome"
+                                    }) { Text("Back", color = MainButtonContentColor) }
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = Color.Transparent,
+                                    titleContentColor = MainButtonContentColor,
+                                    navigationIconContentColor = MainButtonContentColor
+                                )
+                            )
+                        }
+                    ) { padding ->
+                        Column(
+                            Modifier
+                                .padding(padding)
+                                .padding(horizontal = 20.dp, vertical = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Header text using the same purple content color
+                            Text("Username: ${user?.name ?: "-"}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MainButtonContentColor
+                            )
+                            Text("Email: $userEmail",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MainButtonContentColor
+                            )
+
+                            Divider(Modifier.padding(vertical = 8.dp), color = MainButtonContentColor.copy(alpha = 0.2f))
+                            Text("Your Lessons",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MainButtonContentColor
+                            )
+
+                            // Centered, scrollable list
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(14.dp),
+                                contentPadding = PaddingValues(bottom = 28.dp)
+                            ) {
+                                items(rows) { r ->
+                                    Row( // centers each card horizontally
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        ElevatedCard(
+                                            modifier = Modifier
+                                                .fillMaxWidth(0.92f)     // responsive width
+                                                .widthIn(max = 520.dp),  // keep a nice max on tablets
+                                            shape = RoundedCornerShape(20.dp)
+                                        ) {
+                                            Column(
+                                                Modifier.padding(16.dp),
+                                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                                            ) {
+                                                Text(r.lessonName,
+                                                    style = MaterialTheme.typography.titleSmall,
+                                                    color = MainButtonContentColor
+                                                )
+                                                if (!r.unmetPrereqs.isNullOrBlank()) {
+                                                    Text(
+                                                        "Requires: ${r.unmetPrereqs}",
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = MaterialTheme.colorScheme.error
+                                                    )
+                                                }
+                                                Text("Status: ${r.status}",      color = MainButtonContentColor)
+                                                Text("Time Spent: ${r.timeSpent}", color = MainButtonContentColor)
+                                                Text("Errors: ${r.errorCount}",    color = MainButtonContentColor)
+                                                Text("Attempts: ${r.attempts}",    color = MainButtonContentColor)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                BackHandler {
+                    TTS.speak("Returning to Welcome.")
+                    currentScreen = "welcome"
+                }
+            }
+
+
             else -> {}
         }
 
@@ -334,6 +470,7 @@ private fun WelcomeScreen(
     onSearchClick: () -> Unit,
     onLessonsClick: () -> Unit,
     onLogoutClick: () -> Unit,
+    onAccountClick: () -> Unit,
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -400,6 +537,22 @@ private fun WelcomeScreen(
             ) {
                 Text("Logout", style = MaterialTheme.typography.bodyMedium)
             }
+
+            Button(
+                onClick = onAccountClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 40.dp)
+                    .height(100.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MainButtonColor,
+                    contentColor = MainButtonContentColor
+                )
+            ) {
+                Text("My Account", style = MaterialTheme.typography.headlineSmall)
+            }
+
         }
     }
 }
@@ -418,7 +571,7 @@ private fun LessonsMenu(
     onStartLesson: (appName: String, lessonId: Int) -> Unit,
     onOpenCamera: () -> Unit = {},
     onOpenPhone: () -> Unit = {},
-    onOpenWifi: () -> Unit = {},
+    onOpenWifi: () -> Unit = {}
 ) {
     val cameraIds = listOf(1001, 1002, 1003)
     val phoneIds  = listOf(2001, 2002, 2003)
@@ -487,6 +640,7 @@ private fun LessonsMenu(
             wifiIds.forEach { id ->
                 LessonButton(label(id)) { onStartLesson("WiFi", id) }
             }
+
 
             Spacer(Modifier.height(12.dp))
         }
@@ -601,7 +755,7 @@ private fun inferAppFromId(id: Int): String =
 @Composable
 fun PreviewWelcome() {
     GuideMeTheme {
-        WelcomeScreen(onSearchClick = {}, onLessonsClick = {}, onLogoutClick = {})
+        WelcomeScreen(onSearchClick = {}, onLessonsClick = {}, onLogoutClick = {}, onAccountClick = {})
     }
 }
 
