@@ -1,4 +1,4 @@
-// helper class that wraps Android's SpeechRecognizer API
+// class that wraps Android's SpeechRecognizer API
 
 package com.example.guideme.NLP
 
@@ -11,7 +11,7 @@ import android.speech.SpeechRecognizer
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
-class Speech(private val activity: Activity) {
+class STT(private val activity: Activity) {
 
     // instance of Android's built-in SpeechRecognizer
     private var recognizer: SpeechRecognizer? = null

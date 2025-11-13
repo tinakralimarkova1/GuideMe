@@ -30,6 +30,25 @@ import com.example.guideme.ui.theme.MainButtonColor
 import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
+import com.example.guideme.lessons.LessonHost
+import com.example.guideme.lessons.GuideMeDatabase
+import com.example.guideme.lessons.LessonsRepository
+import com.example.guideme.lessons.RoomLessonsRepository
+import androidx.lifecycle.lifecycleScope
+import com.example.guideme.lessons.DbInstruction
+import com.example.guideme.lessons.StepType
+import com.example.guideme.lessons.DbLesson
+import com.example.guideme.lessons.DbCustomer
+import com.example.guideme.lessons.DbPreReq
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import kotlinx.coroutines.launch
+import com.example.guideme.lessons.CustomerDao
+import com.example.guideme.lessons.AuthScreen
+import com.example.guideme.lessons.DatabaseSeeder
+import com.example.guideme.NLP.IntentLessonRecommender
+import com.example.guideme.NLP.STT
+import com.example.guideme.lessons.DbMissingLesson
 import kotlinx.coroutines.launch
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.lazy.LazyColumn
@@ -207,18 +226,18 @@ fun MainScreen(
                         selectedLessonId = lessonId
                         currentScreen = "lesson"
                     },
-                    onOpenCamera = {
-                        TTS.speak("Opening Camera.")
-                        currentScreen = "camera"
-                    },
-                    onOpenPhone = {
-                        TTS.speak("Opening Phone.")
-                        currentScreen = "phone"
-                    },
-                    onOpenWifi = {
-                        TTS.speak("Opening Wi-Fi.")
-                        currentScreen = "wifi"
-                    }
+//                    onOpenCamera = {
+//                        TTS.speak("Opening Camera.")
+//                        currentScreen = "camera"
+//                    },
+//                    onOpenPhone = {
+//                        TTS.speak("Opening Phone.")
+//                        currentScreen = "phone"
+//                    },
+//                    onOpenWifi = {
+//                        TTS.speak("Opening Wi-Fi.")
+//                        currentScreen = "wifi"
+//                    }
                 )
                 BackHandler {
                     TTS.speak("Returning to welcome.")
@@ -569,9 +588,10 @@ private fun LessonsMenu(
     modifier: Modifier = Modifier,
     lessonDao: LessonDao? = null,
     onStartLesson: (appName: String, lessonId: Int) -> Unit,
-    onOpenCamera: () -> Unit = {},
-    onOpenPhone: () -> Unit = {},
-    onOpenWifi: () -> Unit = {}
+    //if need to check ui of apps seperately
+//    onOpenCamera: () -> Unit = {},
+//    onOpenPhone: () -> Unit = {},
+//    onOpenWifi: () -> Unit = {}
 ) {
     val cameraIds = listOf(1001, 1002, 1003)
     val phoneIds  = listOf(2001, 2002, 2003)
