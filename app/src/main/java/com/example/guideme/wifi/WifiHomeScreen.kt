@@ -17,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.guideme.tts.TTS
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.guideme.lessons.anchorId
 
 data class FakeWifi(val ssid: String, val secured: Boolean, val strength: Int)
 
@@ -57,12 +59,15 @@ fun WifiHomeScreen(nav: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .anchorId("Wifi.NetworkBox"),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Toggle row (replicates Settings top area)
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .anchorId("Wifi.OnOffButton")
             ) {
                 Row(
                     modifier = Modifier
@@ -83,6 +88,7 @@ fun WifiHomeScreen(nav: NavController) {
                         }
                     }
                     Switch(
+                        modifier = Modifier.anchorId("Wifi.WifiToggle"),
                         checked = wifiOn,
                         onCheckedChange = {
                             wifiOn = it
@@ -107,6 +113,7 @@ fun WifiHomeScreen(nav: NavController) {
                                     val encoded = java.net.URLEncoder.encode(n.ssid, "UTF-8")
                                     nav.navigate("connect?ssid=$encoded")
                                 }
+                                .anchorId("Wifi.Network.${n.ssid}")
                         ) {
                             Row(
                                 modifier = Modifier
@@ -119,10 +126,14 @@ fun WifiHomeScreen(nav: NavController) {
                                     Text(n.ssid, style = MaterialTheme.typography.titleMedium)
                                     Text(
                                         if (n.secured) "Secured" else "Open network",
-                                        style = MaterialTheme.typography.bodySmall
+                                        style = MaterialTheme.typography.bodySmall,
+                                        modifier = Modifier.anchorId("Wifi.NetworkName.${n.ssid}")
                                     )
                                 }
-                                StrengthPips(level = n.strength)
+                                Box(modifier = Modifier.anchorId("Wifi.Bars.${n.ssid}").padding()){
+                                    StrengthPips(level = n.strength)
+                                }
+
                             }
                         }
                     }
@@ -148,5 +159,13 @@ private fun StrengthPips(level: Int) {
                     )
             )
         }
+    }
+}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun WifiHomeScreenPreview() {
+    val navController = androidx.navigation.compose.rememberNavController()
+    MaterialTheme {
+        WifiHomeScreen(nav = navController)
     }
 }

@@ -262,6 +262,88 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------Wifi Lesson 3001 Instructions-------
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 1,
+                        text = "Welcome to the WiFi screen located in your settings app. Let's learn about it.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 2,
+                        text = "In order to access the internet, you must be connected to the WiFi.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 3,
+                        text = "Many apps need to be connected to Wifi to work. Such apps include Google, What's App, Google Maps, and others",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 4,
+                        text = "Here are located all the available WiFi networks in your area.",
+                        anchorId =  "Wifi.NetworkBox",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 5,
+                        text = "This toggle turns the wifi on and off.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 6,
+                        text = "This is one of the available networks. By clicking it, you can connect to the network.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 7,
+                        text = "This is the name of this network:'Campus-Guest'",
+                        anchorId = "Wifi.NetworkName.Campus-Guest",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 8,
+                        text = "These bars show the strength of the Wifi signal. This means how good the connection is.",
+                        anchorId = "Wifi.Bars.Campus-Guest",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3001,
+                        stepNo = 9,
+                        text = "Good job! You have now been familiarized with the Wifi settings!",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
 
                 )
             )
