@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun WifiNavHost() {
     val nav = rememberNavController()
-    var showIntro by remember { mutableStateOf(true) }
+    var showIntro by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         TTS.speak("You are now in Wi-Fi. This screen looks like your phone's Wi-Fi settings.")

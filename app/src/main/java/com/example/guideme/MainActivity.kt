@@ -418,6 +418,7 @@ fun MainScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MainButtonContentColor
                             )
+                            //??
 
                             Divider(Modifier.padding(vertical = 8.dp), color = MainButtonContentColor.copy(alpha = 0.2f))
                             Text("Your Lessons",
