@@ -31,7 +31,6 @@ import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import com.example.guideme.lessons.LessonHost
-import androidx.room.Room
 import com.example.guideme.lessons.GuideMeDatabase
 import com.example.guideme.lessons.LessonsRepository
 import com.example.guideme.lessons.RoomLessonsRepository
@@ -227,18 +226,18 @@ fun MainScreen(
                         selectedLessonId = lessonId
                         currentScreen = "lesson"
                     },
-                    onOpenCamera = {
-                        TTS.speak("Opening Camera.")
-                        currentScreen = "camera"
-                    },
-                    onOpenPhone = {
-                        TTS.speak("Opening Phone.")
-                        currentScreen = "phone"
-                    },
-                    onOpenWifi = {
-                        TTS.speak("Opening Wi-Fi.")
-                        currentScreen = "wifi"
-                    }
+//                    onOpenCamera = {
+//                        TTS.speak("Opening Camera.")
+//                        currentScreen = "camera"
+//                    },
+//                    onOpenPhone = {
+//                        TTS.speak("Opening Phone.")
+//                        currentScreen = "phone"
+//                    },
+//                    onOpenWifi = {
+//                        TTS.speak("Opening Wi-Fi.")
+//                        currentScreen = "wifi"
+//                    }
                 )
                 BackHandler {
                     TTS.speak("Returning to welcome.")
@@ -589,9 +588,10 @@ private fun LessonsMenu(
     modifier: Modifier = Modifier,
     lessonDao: LessonDao? = null,
     onStartLesson: (appName: String, lessonId: Int) -> Unit,
-    onOpenCamera: () -> Unit = {},
-    onOpenPhone: () -> Unit = {},
-    onOpenWifi: () -> Unit = {}
+    //if need to check ui of apps seperately
+//    onOpenCamera: () -> Unit = {},
+//    onOpenPhone: () -> Unit = {},
+//    onOpenWifi: () -> Unit = {}
 ) {
     val cameraIds = listOf(1001, 1002, 1003)
     val phoneIds  = listOf(2001, 2002, 2003)
