@@ -15,6 +15,8 @@ import com.example.guideme.phone.DialPadScreen   // if you want a single sub-scr
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController // SHORT TERM SOLUTION TODO: fix it
 import androidx.compose.ui.graphics.Color
+import com.example.guideme.phone.CameraScreen
+
 
 
 @Composable
@@ -33,7 +35,8 @@ fun LessonHost(
 
     LaunchedEffect(appName, lessonId) { vm.loadLesson(appName, lessonId) }
 
-    Box(Modifier.fillMaxSize().background(MainBackgroundGradient)) {
+    Box(Modifier.fillMaxSize().background(MainBackgroundGradient))
+    {
         // 1) Your fake app UI (emit events back to ViewModel)
         if (state.completed) {
             // 🔁 Once done, show a *separate full-screen* screen
@@ -53,6 +56,9 @@ fun LessonHost(
                 )
                 "WiFi" -> WifiNavHost(
                     // e.g. onToggle = { id, on -> vm.onUserEvent(UserEvent.Toggle(id, on)) }
+                )
+                "Camera" -> CameraScreen(
+
                 )
                 else -> Text("No fake UI for $appName")
             }

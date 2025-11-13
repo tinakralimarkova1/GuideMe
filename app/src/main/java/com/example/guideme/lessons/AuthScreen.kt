@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import com.example.guideme.util.HashUtils
 
 @Composable
 fun AuthScreen(
@@ -20,12 +21,6 @@ fun AuthScreen(
     var email by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    var phone by rememberSaveable { mutableStateOf("") }
-    var city by rememberSaveable { mutableStateOf("") }
-    var state by rememberSaveable { mutableStateOf("") }
-    var street by rememberSaveable { mutableStateOf("") }
-    var building by rememberSaveable { mutableStateOf("") }
-    var dob by rememberSaveable { mutableStateOf("") }   // "YYYY-MM-DD"
 
     var errorText by remember { mutableStateOf<String?>(null) }
 
@@ -69,56 +64,6 @@ fun AuthScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        if (!isLogin) {
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
-                label = { Text("Phone number (optional)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = city,
-                onValueChange = { city = it },
-                label = { Text("City (optional)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = state,
-                onValueChange = { state = it },
-                label = { Text("State (optional)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = street,
-                onValueChange = { street = it },
-                label = { Text("Street (optional)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = building,
-                onValueChange = { building = it },
-                label = { Text("Building / Apt (optional)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = dob,
-                onValueChange = { dob = it },
-                label = { Text("Date of birth (YYYY-MM-DD, optional)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
         if (errorText != null) {
             Text(
                 text = errorText!!,
@@ -127,22 +72,31 @@ fun AuthScreen(
             )
         }
 
+
         Button(
             onClick = {
                 scope.launch {
-                    if (email.isBlank() || password.isBlank()) {
+                    val trimmedEmail = email.trim()
+                    val trimmedPassword = password.trim()
+
+                    if (trimmedEmail.isBlank() || trimmedPassword.isBlank()) {
                         errorText = "Email and password are required."
                         return@launch
                     }
 
                     if (isLogin) {
                         // LOGIN FLOW
-                        val existing = customerDao.getCustomer(email)
-                        if (existing == null || existing.password != password) {
+                        val existing = customerDao.getCustomer(trimmedEmail)
+                        if (existing == null) {
                             errorText = "Invalid email or password."
                         } else {
-                            errorText = null
-                            onAuthSuccess(existing)
+                            val hashedInput = HashUtils.hashPasswordWithSalt(trimmedPassword, existing.salt)
+                            if (existing.password != hashedInput) {
+                                errorText = "Invalid email or password."
+                            } else {
+                                errorText = null
+                                onAuthSuccess(existing)
+                            }
                         }
                     } else {
                         // REGISTER FLOW
@@ -151,16 +105,14 @@ fun AuthScreen(
                             return@launch
                         }
 
+                        val salt = HashUtils.generateSalt()
+                        val hashedPassword = HashUtils.hashPasswordWithSalt(trimmedPassword, salt)
+
                         val newCustomer = DbCustomer(
-                            email = email,
-                            name = name,
-                            password = password,
-                            city = city.ifBlank { null },
-                            street = street.ifBlank { null },
-                            state = state.ifBlank { null },
-                            buildingNumber = building.ifBlank { null },
-                            phoneNum = phone.ifBlank { null },
-                            dateOfBirth = dob.ifBlank { null }
+                            email = trimmedEmail,
+                            name = name.trim(),
+                            password = hashedPassword,
+                            salt = salt
                         )
 
                         customerDao.insertCustomer(newCustomer)
