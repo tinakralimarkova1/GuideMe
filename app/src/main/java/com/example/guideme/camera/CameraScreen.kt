@@ -120,12 +120,13 @@ fun CameraScreen() {
                 }
             }
         }
+        Box(modifier = Modifier.fillMaxWidth().height(700.dp).anchorId("Camera.Screen"))
 
         // ===== RIGHT SIDE CONTROLS =====
         Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(0.dp)
+                .width((100.dp))
                 .height(300.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -140,8 +141,9 @@ fun CameraScreen() {
             Box(
                 modifier = Modifier
                     .height(150.dp)
-                    .width(130.dp)
-                    .graphicsLayer(rotationZ = -90f)
+                    .width(140.dp)
+                    .anchorId("Camera.ZoomSlider")
+
             ) {
                 Slider(
                     value = zoom,
@@ -151,7 +153,9 @@ fun CameraScreen() {
                     modifier = Modifier
                         .fillMaxSize()
                         .height(100.dp)
-                        .anchorId("Camera.ZoomSlider"),
+
+                        .graphicsLayer(rotationZ = -90f)
+                        .height(60.dp),
                     onValueChangeFinished = {
                         TTS.speak(String.format("%.1fx", zoom))
                     }

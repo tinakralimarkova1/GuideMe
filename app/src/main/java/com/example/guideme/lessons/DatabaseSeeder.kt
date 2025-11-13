@@ -137,7 +137,7 @@ object DatabaseSeeder {
                         lessonsId = 1001,
                         stepNo = 2,
                         text = "This is the screen that shows what the camera sees.",
-                        anchorId = null,
+                        anchorId = "Camera.Screen",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
 
@@ -181,6 +181,15 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 1001,
                         stepNo = 7,
+                        text = "This is the switch camera button. Pressing it will switch between the front and the back camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1001,
+                        stepNo = 8,
                         text = "Good job! You have now been familiarized with the camera app!",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
