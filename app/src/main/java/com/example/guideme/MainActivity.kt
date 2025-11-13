@@ -33,14 +33,7 @@ import com.example.guideme.lessons.LessonHost
 import com.example.guideme.lessons.GuideMeDatabase
 import com.example.guideme.lessons.LessonsRepository
 import com.example.guideme.lessons.RoomLessonsRepository
-import androidx.lifecycle.lifecycleScope
-import com.example.guideme.lessons.DbInstruction
-import com.example.guideme.lessons.StepType
-import com.example.guideme.lessons.DbLesson
 import com.example.guideme.lessons.DbCustomer
-import com.example.guideme.lessons.DbPreReq
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.launch
 import com.example.guideme.lessons.CustomerDao
 import com.example.guideme.lessons.AuthScreen
