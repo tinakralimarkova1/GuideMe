@@ -146,7 +146,7 @@ object DatabaseSeeder {
                         lessonsId = 1001,
                         stepNo = 3,
                         text = "This is the capture button. Pressing it will take a photo",
-                        anchorId = null,
+                        anchorId = "Camera.Capture",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
 
@@ -155,7 +155,7 @@ object DatabaseSeeder {
                         lessonsId = 1001,
                         stepNo = 4,
                         text = "This is the photo library button. Pressing it will open your gallery where your photos are stored",
-                        anchorId = null,
+                        anchorId = "Camera.Gallery",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
 
@@ -164,7 +164,7 @@ object DatabaseSeeder {
                         lessonsId = 1001,
                         stepNo = 5,
                         text = "This is the zoom slider. Sliding it up will zoom in",
-                        anchorId = null,
+                        anchorId = "Camera.ZoomSlider",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
 
@@ -173,7 +173,7 @@ object DatabaseSeeder {
                         lessonsId = 1001,
                         stepNo = 6,
                         text = "This is the flash button. Turning on the flash can help you capture photos more clearly in the dark",
-                        anchorId = null,
+                        anchorId = "Camera.FlashButton",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
 
