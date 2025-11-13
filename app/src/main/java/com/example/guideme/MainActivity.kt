@@ -47,7 +47,6 @@ import com.example.guideme.lessons.DatabaseSeeder
 import com.example.guideme.NLP.IntentLessonRecommender
 import com.example.guideme.NLP.STT
 import com.example.guideme.lessons.DbMissingLesson
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
