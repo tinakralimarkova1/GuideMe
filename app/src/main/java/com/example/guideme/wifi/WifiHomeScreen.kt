@@ -123,11 +123,11 @@ fun WifiHomeScreen(nav: NavController) {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Column {
-                                    Text(n.ssid, style = MaterialTheme.typography.titleMedium)
+                                    Text(n.ssid, style = MaterialTheme.typography.titleMedium, modifier = Modifier.anchorId("Wifi.NetworkName.${n.ssid}"))
                                     Text(
                                         if (n.secured) "Secured" else "Open network",
                                         style = MaterialTheme.typography.bodySmall,
-                                        modifier = Modifier.anchorId("Wifi.NetworkName.${n.ssid}")
+
                                     )
                                 }
                                 Box(modifier = Modifier.anchorId("Wifi.Bars.${n.ssid}").padding()){
