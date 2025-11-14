@@ -2,9 +2,9 @@ package com.example.guideme.lessons
 
 // app/src/main/java/com/example/guideme/lessons/DatabaseSeeder.kt
 
+import com.example.guideme.util.HashUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.example.guideme.util.HashUtils
 
 object DatabaseSeeder {
 
@@ -262,6 +262,143 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------Phone Lesson 2002 Instructions-------
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 1,
+                        text = "This lesson will teach you how to call a number.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 2,
+                        text = "To call someone, you must type in the number you want to call. We can do this on the dial pad.",
+                        anchorId = "DialPad.KeysGrid",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 3,
+                        text = "Tap the corresponding numbers to type them in. Give it a go, type the highlighted number 7.",
+                        anchorId = "DialPad.key7",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "7"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 4,
+                        text = "The dialed keys appear here",
+                        anchorId = "DialPad.NumberField",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 5,
+                        text = "If you make a mistake, you can press the back button to delete the last number you dialed. Give it a go, delete the number 7.",
+                        anchorId = "DialPad.Backspace",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null,
+                        //expectedText = ""
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 6,
+                        text = "Good Job! Now let's dial a practice number. We will dial the number 112 345",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 7,
+                        text = "The number is 112 345. First type in 1.",
+                        anchorId = "Dial.key1",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "1"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 8,
+                        text = "The number is 112 345. Now type in 1 again.",
+                        anchorId = "Dial.key1",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "11"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 9,
+                        text = "The number is 112 345. Now type in 2.",
+                        anchorId = "Dial.key2",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "112"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 10,
+                        text = "The number is 112 345. Now type in 3.",
+                        anchorId = "Dial.key3",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "1123"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 11,
+                        text = "The number is 112 345. Now see if you can type in the rest of the number without the highlight hints! Remember, if you make a mistake, you can press the backspace button to delete the last number.",
+                        anchorId = null,
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "112345"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 12,
+                        text = "Good job! Once the number is typed in you can press the call button to call the number. We will pretend call number 112 345.",
+                        anchorId = "Dial.Call",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null,
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 13,
+                        text = "This is the call screen. To end a call press the hang up button.",
+                        anchorId = "Dial.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null,
+
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2002,
+                        stepNo = 14,
+                        text = "Good job! Now you know how to call someone!",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null,
+
+
+                        ),
+
                     //-------Wifi Lesson 3001 Instructions-------
                     DbInstruction(
                         lessonsId = 3001,
