@@ -183,7 +183,7 @@ fun DialPadScreen(
 }
 
 @Composable
-private fun IncomingCallUI(number: String, onEndCall: () -> Unit) {
+private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPressed: (String) -> Unit = {}) {
     var isConnected by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -217,7 +217,11 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit) {
                     .size(80.dp)
                     .clip(CircleShape)
                     .background(Color(0xFFE53935))
-                    .clickable { onEndCall() }
+                    .clickable {
+                        onEndCall()
+                        onButtonPressed("DialPad.EndCall")
+
+                    }
                     .anchorId("DialPad.EndCall"),
                 contentAlignment = Alignment.Center
             ) {

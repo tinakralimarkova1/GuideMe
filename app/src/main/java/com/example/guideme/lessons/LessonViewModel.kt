@@ -1,11 +1,11 @@
 package com.example.guideme.lessons
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 sealed class UserEvent {
     data class TapOnAnchor(val anchorId: String): UserEvent()
@@ -59,6 +59,7 @@ class LessonViewModel(
                 // Ignore if this event isn't a tap
                 val tap = evt as? UserEvent.TapOnAnchor ?: return
                 tap.anchorId == step.anchorId
+
             }
 
             StepType.EnterText -> {
@@ -107,6 +108,7 @@ class LessonViewModel(
                 val ack = evt as? UserEvent.Acknowledge ?: return   // ignore everything else
                 true
             }
+
         }
 
         // ---- handle wrong action ----

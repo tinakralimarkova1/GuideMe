@@ -373,7 +373,7 @@ object DatabaseSeeder {
                         lessonsId = 2002,
                         stepNo = 12,
                         text = "Good job! Once the number is typed in you can press the call button to call the number. We will pretend call number 112 345.",
-                        anchorId = "Dial.Call",
+                        anchorId = "DialPad.Call",
                         type = StepType.TapTarget.name,
                         outlineColor = null,
 
@@ -382,7 +382,7 @@ object DatabaseSeeder {
                         lessonsId = 2002,
                         stepNo = 13,
                         text = "This is the call screen. To end a call press the hang up button.",
-                        anchorId = "Dial.EndCall",
+                        anchorId = "DialPad.EndCall",
                         type = StepType.TapTarget.name,
                         outlineColor = null,
 
