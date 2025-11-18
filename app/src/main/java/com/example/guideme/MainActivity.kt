@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -651,36 +654,23 @@ private fun LessonsMenu(
             )
 
             // CAMERA group header (optional: still keep quick open)
-            Text(
-                text = "Camera",
-                color = MainButtonContentColor,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 6.dp)
-            )
-            cameraIds.forEach { id ->
-                LessonButton(label(id)) { onStartLesson("Camera", id) }
-            }
+            ExpandableLessonSection(
+                title = "Camera",
+                ids = cameraIds,
+                label = { label(it) },
+            ) { id -> onStartLesson("Camera", id) }
 
-            Text(
-                text = "Phone",
-                color = MainButtonContentColor,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-            phoneIds.forEach { id ->
-                LessonButton(label(id)) { onStartLesson("Phone", id) }
-            }
+            ExpandableLessonSection(
+                title = "Phone",
+                ids = phoneIds,
+                label = { label(it) },
+            ) { id -> onStartLesson("Phone", id) }
 
-            Text(
-                text = "Wi-Fi",
-                color = MainButtonContentColor,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-            wifiIds.forEach { id ->
-                LessonButton(label(id)) { onStartLesson("WiFi", id) }
-            }
-
+            ExpandableLessonSection(
+                title = "Wi-Fi",
+                ids = wifiIds,
+                label = { label(it) },
+            ) { id -> onStartLesson("WiFi", id) }
 
             Spacer(Modifier.height(12.dp))
         }
@@ -704,6 +694,62 @@ private fun LessonButton(text: String, onClick: () -> Unit) {
         Text(text, style = MaterialTheme.typography.bodyLarge)
     }
 }
+
+@Composable
+private fun ExpandableLessonSection(
+    title: String,
+    ids: List<Int>,
+    label: (Int) -> String,
+    onStartLesson: (id: Int) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .animateContentSize()     // smooth open/close animation
+    ) {
+
+        // The clickable group header (button style)
+        Button(
+            onClick = { expanded = !expanded },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(54.dp),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MainButtonColor,
+                contentColor = MainButtonContentColor
+            )
+        ) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(title, style = MaterialTheme.typography.titleLarge)
+                Icon(
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+        }
+
+        // Expanded content (your lesson buttons)
+        if (expanded) {
+            Spacer(Modifier.height(8.dp))
+
+            ids.forEach { id ->
+                LessonButton(text = label(id)) {
+                    onStartLesson(id)
+                }
+                Spacer(Modifier.height(8.dp))
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun SearchMenu(
