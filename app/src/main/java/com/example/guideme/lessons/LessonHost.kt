@@ -2,21 +2,27 @@ package com.example.guideme.lessons
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.guideme.ui.theme.MainBackgroundGradient
-import com.example.guideme.phone.PhoneNavHost    // reuse your existing fake UI
-import com.example.guideme.wifi.WifiNavHost
-import com.example.guideme.phone.DialPadScreen   // if you want a single sub-screen
-import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController // SHORT TERM SOLUTION TODO: fix it
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.guideme.phone.CameraScreen
-
+import com.example.guideme.phone.PhoneNavHost
+import com.example.guideme.ui.theme.MainBackgroundGradient
+import com.example.guideme.wifi.WifiNavHost
 
 
 @Composable
@@ -127,3 +133,4 @@ fun LessonCompleteScreen(onExit: () -> Unit) {
         }
     }
 }
+

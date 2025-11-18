@@ -54,86 +54,86 @@ class LessonViewModel(
         val s = uiState
         val step = s.steps.getOrNull(s.currentIndex) ?: return
 
-        val ok = when (step.type) {
-            StepType.TapTarget -> {
-                // Ignore if this event isn't a tap
-                val tap = evt as? UserEvent.TapOnAnchor ?: return
-                tap.anchorId == step.anchorId
+        // --- 1. Handle WRONG EVENT TYPE early ---
+        val isEventTypeCorrect = when(step.type) {
+            StepType.TapTarget -> evt is UserEvent.TapOnAnchor
+            StepType.EnterText -> evt is UserEvent.TextEntered
+            StepType.Select -> evt is UserEvent.SelectOption
+            StepType.Toggle -> evt is UserEvent.Toggle
+            StepType.Acknowledge -> evt is UserEvent.Acknowledge
+        }
 
+        if (!isEventTypeCorrect) {
+            // user pressed a totally unrelated button (wrong type)
+            uiState = s.copy(feedback = "That's not the right action.")
+            return
+        }
+
+        // --- 2. Now safe to cast to correct event type ---
+        val ok = when (step.type) {
+
+            StepType.TapTarget -> {
+                val tap = evt as UserEvent.TapOnAnchor
+                tap.anchorId == step.anchorId
             }
 
             StepType.EnterText -> {
-                // Ignore if this event isn't text input
-                val entered = evt as? UserEvent.TextEntered ?: return
+                val entered = evt as UserEvent.TextEntered
                 val expected = step.expectedText
 
                 if (!expected.isNullOrBlank()) {
-                    // We have a specific expected string
-
-                    // 1) User has typed LESS than expected -> still typing/deleting
-                    if (entered.text.length < expected.length) {
-                        // clear "Try again" if it was showing
-                        if (s.feedback != null) {
-                            uiState = s.copy(feedback = null)
+                    when {
+                        entered.text.length < expected.length -> {
+                            // still typing, no wrong action yet
+                            if (s.feedback != null) {
+                                uiState = s.copy(feedback = null)
+                            }
+                            return
                         }
-                        // don't treat as wrong, don't advance
-                        return
-                    }
-
-                    // 2) Same length -> check correctness
-                    if (entered.text.length == expected.length) {
-                        entered.text == expected
-                    } else {
-                        // 3) Longer than expected -> definite wrong
-                        false
+                        entered.text.length == expected.length ->
+                            entered.text == expected
+                        else ->
+                            false
                     }
                 } else {
-                    // No specific expected text: only require non-empty
                     entered.text.isNotBlank()
                 }
             }
 
             StepType.Select -> {
-                val sel = evt as? UserEvent.SelectOption ?: return
+                val sel = evt as UserEvent.SelectOption
                 sel.optionId == step.anchorId
             }
 
             StepType.Toggle -> {
-                val toggle = evt as? UserEvent.Toggle ?: return
+                val toggle = evt as UserEvent.Toggle
                 toggle.anchorId == step.anchorId
-                // add toggle.on checks later if you want
             }
 
-            StepType.Acknowledge -> {
-                val ack = evt as? UserEvent.Acknowledge ?: return   // ignore everything else
-                true
-            }
-
+            StepType.Acknowledge -> true
         }
 
-        // ---- handle wrong action ----
+        // ---- 3. Wrong action (right event type, wrong target) ----
         if (!ok) {
             errorCount++
             uiState = s.copy(feedback = "Try again.")
             return
-        }
-        else{
+        } else {
             uiState = s.copy(feedback = null)
         }
 
-        // ---- handle correct action ----
+        // ---- 4. Correct action ----
         val next = s.currentIndex + 1
-        val justFinished = next >= s.steps.size
+        val finished = next >= s.steps.size
 
-        if (justFinished && !s.completed) {
-            val durationSeconds =
-                ((System.currentTimeMillis() - lessonStartTimeMillis) / 1000).toInt()
+        if (finished && !s.completed) {
+            val duration = ((System.currentTimeMillis() - lessonStartTimeMillis) / 1000).toInt()
 
             viewModelScope.launch {
                 repo.saveCompletion(
                     lessonId = s.lessonId,
                     status = "Completed",
-                    timeSpentSeconds = durationSeconds,
+                    timeSpentSeconds = duration,
                     errorCount = errorCount,
                     attempts = attempts,
                     customerEmail = userEmail
@@ -143,8 +143,16 @@ class LessonViewModel(
 
         uiState = s.copy(
             currentIndex = next,
-            completed = justFinished,
-            feedback = null    // always clear any old "Try again." on success
+            completed = finished,
+            feedback = null
         )
+    }
+
+    fun isButtonAllowed(anchorId: String): Boolean {
+        val step = uiState.steps.getOrNull(uiState.currentIndex) ?: return false
+        return when (step.type) {
+            StepType.TapTarget, StepType.Select, StepType.Toggle -> step.anchorId == anchorId
+            else -> true // other types (Text, Acknowledge) are always allowed
+        }
     }
 }
