@@ -75,6 +75,8 @@ fun DialPadScreen(
                 TTS.speak("Call ended.")
                 number = ""
                 isCalling = false
+                onButtonPressed("DialPad.EndCall")
+
             }
         )
     } else {
@@ -219,7 +221,7 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPresse
                     .background(Color(0xFFE53935))
                     .clickable {
                         onEndCall()
-                        onButtonPressed("DialPad.EndCall")
+
 
                     }
                     .anchorId("DialPad.EndCall"),
