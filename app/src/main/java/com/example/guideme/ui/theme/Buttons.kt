@@ -25,10 +25,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.guideme.ui.theme.GuideMeTheme
-import com.example.guideme.ui.theme.MainBackgroundGradient
-import com.example.guideme.ui.theme.MainButtonColor
-import com.example.guideme.ui.theme.MainButtonContentColor
 import me.nikhilchaudhari.library.neumorphic
 import me.nikhilchaudhari.library.shapes.Pressed
 
@@ -118,6 +114,71 @@ fun TesterButton(
     }
 }
 
+
+@Composable
+fun ElderButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = Color.White,     // WHITE
+    textColor: Color = MainButtonContentColor,
+    cornerRadius: Dp = 35.dp,
+    height: Dp = 64.dp,       // large by default
+    fontSize: TextUnit = 22.sp, // big readable font
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+            // THICK SHADOW so elderly see the button as raised
+            .shadow(
+                elevation = 14.dp,
+                shape = RoundedCornerShape(cornerRadius),
+                ambientColor = Color.Black.copy(alpha = 0.25f),
+                spotColor = Color.Black.copy(alpha = 0.25f)
+            )
+
+            // BUTTON BACKGROUND
+            .background(backgroundColor, RoundedCornerShape(cornerRadius))
+
+            // GLOW / HIGHLIGHT
+            .drawBehind {
+                drawRoundRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.35f),
+                            Color.Transparent
+                        )
+                    ),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(
+                        cornerRadius.toPx(),
+                        cornerRadius.toPx()
+                    )
+                )
+            }
+
+            // CLICK
+            .clickable { onClick() }
+
+            // SUBTLE INNER SHADOW
+            .neumorphic(
+                neuShape = Pressed.Rounded(cornerRadius),
+                lightShadowColor = Color.White.copy(alpha = 0.6f),
+                darkShadowColor = Color.Black.copy(alpha = 0.3f)
+            ),
+
+        contentAlignment = androidx.compose.ui.Alignment.Center
+    ) {
+        Text(
+            text = text,
+            color = textColor,
+            fontSize = fontSize,
+            style = MaterialTheme.typography.headlineSmall
+        )
+    }
+}
+
+
 @Preview(showBackground = true)
 @Composable
 fun SkeuomorphicButtonPreview() {
@@ -162,6 +223,7 @@ fun SkeuomorphicButtonPreview() {
                     width = 150.dp,
                     fontSize = 14.sp
                 )
+                ElderButton(text = "Start Lesson", onClick = {})
 
             }}
     }
