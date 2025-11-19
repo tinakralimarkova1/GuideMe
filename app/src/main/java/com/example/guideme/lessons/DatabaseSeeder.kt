@@ -197,6 +197,26 @@ object DatabaseSeeder {
 
                     ),
 
+                    //-------Camera tester 1002
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 1,
+                        text = "press capture.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 2,
+                        text = "flash",
+                        anchorId = "Camera.FlashButton",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+
+                    ),
+
 
                     //-------Phone Lesson 2001 Instrucitons-------
                     DbInstruction(
@@ -476,6 +496,37 @@ object DatabaseSeeder {
                         lessonsId = 3001,
                         stepNo = 9,
                         text = "Good job! You have now been familiarized with the Wifi settings!",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+
+                    //------- tester wifi
+
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 1,
+                        text = "Turn Wifi on",
+                        anchorId = "Wifi.OnOffButton",
+                        type = StepType.Toggle.name,
+                        outlineColor = null,
+                        expectedText = "true"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 2,
+                        text = "In order to access the internet, you must be connected to the WiFi.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 3,
+                        text = "Many apps need to be connected to Wifi to work. Such apps include Google, What's App, Google Maps, and others",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null

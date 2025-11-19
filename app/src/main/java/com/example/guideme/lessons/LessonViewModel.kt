@@ -107,7 +107,22 @@ class LessonViewModel(
 
             StepType.Toggle -> {
                 val toggle = evt as UserEvent.Toggle
-                toggle.anchorId == step.anchorId
+
+                // *** THIS IS THE NEW LOGIC ***
+                val correctAnchor = toggle.anchorId == step.anchorId
+                if (!correctAnchor) {
+                    // User toggled the wrong switch
+                    false
+                } else {
+                    // The step has an expected state defined (e.g., "true" or "false")
+                    if (!step.expectedText.isNullOrBlank()) {
+                        // Check if the toggle's state matches the expected state
+                        toggle.on == step.expectedText.toBoolean()
+                    } else {
+                        // If no expected state, just interacting with the right toggle is enough
+                        true
+                    }
+                }
             }
 
             StepType.Acknowledge -> true

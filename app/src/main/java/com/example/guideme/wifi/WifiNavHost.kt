@@ -3,18 +3,32 @@ package com.example.guideme.wifi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.navigation.compose.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.guideme.tts.TTS
-import androidx.compose.ui.unit.dp
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WifiNavHost() {
+fun WifiNavHost(
+    onAnchorTapped: (String) -> Unit = {},
+    onToggle: (String, Boolean) -> Unit = {_,_ ->},
+) {
     val nav = rememberNavController()
     var showIntro by remember { mutableStateOf(false) }
 
@@ -73,8 +87,26 @@ fun WifiNavHost() {
     }
 
     NavHost(navController = nav, startDestination = "home") {
-        composable("home") { WifiHomeScreen(nav) }
-        composable("toggle") { WifiToggleScreen(nav) }
+        composable("home") { WifiHomeScreen(
+            nav = nav,
+            onButtonPressed = { anchorId ->
+                onAnchorTapped(anchorId)
+            },
+            onTogglePressed = { anchorId, value ->
+                onToggle(anchorId, value)
+            }
+
+        )
+
+        }
+        composable("toggle") {
+            WifiToggleScreen(
+                nav = nav,
+                onToggle = { anchorId, on ->
+                    onToggle(anchorId, on)
+                }
+            )
+        }
         composable("connect") { WifiConnectScreen(nav) }
         composable("add") { WifiAddNetworkScreen(nav) }
         composable("tips") { WifiTipsScreen(nav) }

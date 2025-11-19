@@ -61,9 +61,17 @@ fun LessonHost(
                     }
                 )
                 "WiFi" -> WifiNavHost(
-                    // e.g. onToggle = { id, on -> vm.onUserEvent(UserEvent.Toggle(id, on)) }
+                    onAnchorTapped = { anchorId ->
+                        vm.onUserEvent(UserEvent.TapOnAnchor(anchorId))
+                    },
+                   onToggle = { id, on ->
+                       vm.onUserEvent(UserEvent.Toggle(id, on))
+                   }
                 )
                 "Camera" -> CameraScreen(
+                    onAnchorTapped = { anchorID ->
+                        vm.onUserEvent(UserEvent.TapOnAnchor(anchorID))
+                    }
 
                 )
                 else -> Text("No fake UI for $appName")
