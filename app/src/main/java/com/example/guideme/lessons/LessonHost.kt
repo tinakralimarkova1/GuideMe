@@ -58,7 +58,8 @@ fun LessonHost(
                     },
                     onNumberCommitted = { text ->
                         vm.onUserEvent(UserEvent.TextEntered(text))
-                    }
+                    },
+                    correctAnchor = state.correctAnchor
                 )
                 "WiFi" -> WifiNavHost(
                     onAnchorTapped = { anchorId ->

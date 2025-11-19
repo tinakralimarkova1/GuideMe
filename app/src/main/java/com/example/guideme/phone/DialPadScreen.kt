@@ -52,7 +52,8 @@ fun DialPadScreen(
     navController: NavController,
     initialNumber: String = "",
     onButtonPressed: (String) -> Unit = {},
-    onNumberCommitted: (String) -> Unit = {}
+    onNumberCommitted: (String) -> Unit = {},
+    correctAnchor: String? = null
 ) {
     var number by remember { mutableStateOf("") }
     var isCalling by remember { mutableStateOf(false) }
@@ -162,14 +163,19 @@ fun DialPadScreen(
                 Button(
 
                     onClick = {
-
                         onButtonPressed("DialPad.Call")
-                        if (number.isEmpty()) {
-                            TTS.speak("Please enter a number.")
-                        } else {
-                            TTS.speak("Phone dialing.")
-                            isCalling = true
-                        }
+                        if (correctAnchor == "DialPad.Call"){
+
+                           if (number.isEmpty() ) {
+                               TTS.speak("Please enter a number.")
+                           } else {
+                               TTS.speak("Phone dialing.")
+                               isCalling = true
+                           }
+                       }
+
+
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()

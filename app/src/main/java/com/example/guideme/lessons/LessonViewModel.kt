@@ -45,7 +45,8 @@ class LessonViewModel(
                 steps = steps,
                 currentIndex = 0,
                 completed = false,
-                feedback = null
+                feedback = null,
+                correctAnchor = steps.getOrNull(0)?.anchorId
             )
         }
     }
@@ -53,6 +54,8 @@ class LessonViewModel(
     fun onUserEvent(evt: UserEvent) {
         val s = uiState
         val step = s.steps.getOrNull(s.currentIndex) ?: return
+
+
 
         // --- 1. Handle WRONG EVENT TYPE early ---
         val isEventTypeCorrect = when(step.type) {
@@ -140,6 +143,7 @@ class LessonViewModel(
         // ---- 4. Correct action ----
         val next = s.currentIndex + 1
         val finished = next >= s.steps.size
+        val nextAnchor = s.steps.getOrNull((next))
 
         if (finished && !s.completed) {
             val duration = ((System.currentTimeMillis() - lessonStartTimeMillis) / 1000).toInt()
@@ -159,7 +163,8 @@ class LessonViewModel(
         uiState = s.copy(
             currentIndex = next,
             completed = finished,
-            feedback = null
+            feedback = null,
+            correctAnchor = nextAnchor?.anchorId
         )
     }
 

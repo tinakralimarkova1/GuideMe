@@ -18,6 +18,7 @@ data class LessonState(
     val steps: List<Instruction> = emptyList(),
     val currentIndex: Int = 0,
     val completed: Boolean = false,
-    val feedback: String? = null
+    val feedback: String? = null,
+    val correctAnchor: String? = null
 
 )
