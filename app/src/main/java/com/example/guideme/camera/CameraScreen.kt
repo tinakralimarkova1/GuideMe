@@ -7,7 +7,17 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,30 +26,42 @@ import androidx.compose.material.icons.filled.FlashAuto
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.guideme.R
+import com.example.guideme.lessons.anchorId
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.launch
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.guideme.lessons.anchorId
 
 private enum class FlashSim { AUTO, ON, OFF }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraScreen() {
+fun CameraScreen(
+    onAnchorTapped: (String) -> Unit = {}
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -103,8 +125,9 @@ fun CameraScreen() {
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
             )
-
+            val flashButtonAnchorId = "Camera.FlashButton"
             FilledTonalIconButton(onClick = {
+                onAnchorTapped(flashButtonAnchorId)
                 flash = when (flash) {
                     FlashSim.AUTO -> FlashSim.ON
                     FlashSim.ON -> FlashSim.OFF
@@ -133,6 +156,7 @@ fun CameraScreen() {
         ) {
             FilledTonalIconButton(
                 onClick = {
+                    onAnchorTapped("Camera.SwitchCamera")
                     TTS.speak("Switched camera") },
                 modifier = Modifier.anchorId("Camera.SwitchCamera")) {
                 Icon(Icons.Filled.Cameraswitch, contentDescription = "Switch camera")
@@ -157,6 +181,7 @@ fun CameraScreen() {
                         .graphicsLayer(rotationZ = -90f)
                         .height(60.dp),
                     onValueChangeFinished = {
+                        onAnchorTapped("Camera.ZoomValue$zoom")
                         TTS.speak(String.format("%.1fx", zoom))
                     }
                 )
@@ -187,6 +212,7 @@ fun CameraScreen() {
                         .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable {
+                            onAnchorTapped("Camera.Gallery")
                             TTS.speak("This opens your last photo in a real camera app.")
                         }
                         .anchorId("Camera.Gallery"),
@@ -211,6 +237,7 @@ fun CameraScreen() {
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                         .clickable {
+                            onAnchorTapped("Camera.Capture")
                             scope.launch {
                                 flashAlpha.snapTo(1f)
                                 flashAlpha.animateTo(0f, tween(300))

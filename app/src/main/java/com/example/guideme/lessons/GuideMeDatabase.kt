@@ -12,7 +12,7 @@ import androidx.room.RoomDatabase
         DbPreReq::class,
         DbMissingLesson::class
     ],
-    version = 18,              // ⬅ bump version for new tables
+    version = 26,              // ⬅ bump version for new tables
     exportSchema = false
 )
 abstract class GuideMeDatabase : RoomDatabase() {

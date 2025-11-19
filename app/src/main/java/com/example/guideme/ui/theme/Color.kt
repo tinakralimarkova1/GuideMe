@@ -1,7 +1,7 @@
 package com.example.guideme.ui.theme
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
@@ -22,6 +22,11 @@ val MainBackgroundGradient = Brush.verticalGradient(
 val MainButtonColor = Color(0xFFF5EFF7)
 
 val MainButtonContentColor = Color(0xFF6A4C93)
+
+val SecondaryText = Color(0xFF382F64)
+
+val NoticeColor = Color(0xFFC53957)
+
 
 val Transparent = Color.Transparent
 
