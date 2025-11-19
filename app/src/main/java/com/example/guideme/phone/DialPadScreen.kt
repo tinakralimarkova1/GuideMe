@@ -2,14 +2,36 @@ package com.example.guideme.phone
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,9 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.guideme.lessons.anchorId
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.delay
-import com.example.guideme.lessons.anchorId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +75,8 @@ fun DialPadScreen(
                 TTS.speak("Call ended.")
                 number = ""
                 isCalling = false
+                onButtonPressed("DialPad.EndCall")
+
             }
         )
     } else {
@@ -103,6 +127,7 @@ fun DialPadScreen(
                     IconButton(
                         onClick = { if (number.isNotEmpty()) number = number.dropLast(1)
                             onNumberCommitted(number)
+                            onButtonPressed("DialPad.Backspace")
 
                         },
                         modifier = Modifier.size(40.dp).anchorId("DialPad.Backspace")
@@ -160,7 +185,7 @@ fun DialPadScreen(
 }
 
 @Composable
-private fun IncomingCallUI(number: String, onEndCall: () -> Unit) {
+private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPressed: (String) -> Unit = {}) {
     var isConnected by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -194,7 +219,11 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit) {
                     .size(80.dp)
                     .clip(CircleShape)
                     .background(Color(0xFFE53935))
-                    .clickable { onEndCall() }
+                    .clickable {
+                        onEndCall()
+
+
+                    }
                     .anchorId("DialPad.EndCall"),
                 contentAlignment = Alignment.Center
             ) {
@@ -205,7 +234,11 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit) {
 }
 
 @Composable
-private fun DialPadKeys(onKey: (String) -> Unit) {
+private fun DialPadKeys(
+    onKey: (String) -> Unit,
+    onButtonPressed: (String) -> Unit = {}
+
+) {
     val rows = listOf(
         listOf("1", "2", "3"),
         listOf("4", "5", "6"),
@@ -229,6 +262,7 @@ private fun DialPadKeys(onKey: (String) -> Unit) {
                     DialKey(label = key, modifier = Modifier.weight(1f).anchorId("DialPad.key$key"))
                     {
                         onKey(key)
+                        onButtonPressed("DialPad.key$key")
                     }
                 }
             }
@@ -237,14 +271,21 @@ private fun DialPadKeys(onKey: (String) -> Unit) {
 }
 
 @Composable
-private fun DialKey(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun DialKey(
+    label: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    )
+{
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .aspectRatio(1f)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .clickable { onClick() }
+            .clickable { onClick(
+
+            ) }
 
     ) {
         Text(

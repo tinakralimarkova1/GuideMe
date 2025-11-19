@@ -2,29 +2,56 @@ package com.example.guideme.wifi
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.guideme.tts.TTS
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.guideme.lessons.anchorId
+import com.example.guideme.tts.TTS
 
 data class FakeWifi(val ssid: String, val secured: Boolean, val strength: Int)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WifiHomeScreen(nav: NavController) {
+fun WifiHomeScreen(nav: NavController,
+                   onButtonPressed: (String) -> Unit = {},
+                   onTogglePressed: (String, Boolean) -> Unit = {_,_ ->},
+
+
+
+) {
     var wifiOn by remember { mutableStateOf(true) }
 
     val networks = remember {
@@ -93,7 +120,9 @@ fun WifiHomeScreen(nav: NavController) {
                         onCheckedChange = {
                             wifiOn = it
                             TTS.speak(if (it) "Wi-Fi turned on." else "Wi-Fi turned off.")
+                            onTogglePressed("Wifi.OnOffButton", it)
                         }
+
                     )
                 }
             }
@@ -105,10 +134,13 @@ fun WifiHomeScreen(nav: NavController) {
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(networks) { n ->
+                        val networkAnchorId = "Wifi.Network.${n.ssid}"
                         ElevatedCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
+                                    onButtonPressed(networkAnchorId)
+
                                     TTS.speak("Opening connect screen for ${n.ssid}.")
                                     val encoded = java.net.URLEncoder.encode(n.ssid, "UTF-8")
                                     nav.navigate("connect?ssid=$encoded")
@@ -166,6 +198,7 @@ private fun StrengthPips(level: Int) {
 fun WifiHomeScreenPreview() {
     val navController = androidx.navigation.compose.rememberNavController()
     MaterialTheme {
-        WifiHomeScreen(nav = navController)
+        WifiHomeScreen(nav = navController, onButtonPressed = {},
+            onTogglePressed = { _, _ -> })
     }
 }
