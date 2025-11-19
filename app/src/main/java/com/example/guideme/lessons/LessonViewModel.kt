@@ -46,7 +46,8 @@ class LessonViewModel(
                 currentIndex = 0,
                 completed = false,
                 feedback = null,
-                correctAnchor = steps.getOrNull(0)?.anchorId
+                correctAnchor = steps.getOrNull(0)?.anchorId,
+
             )
         }
     }
@@ -68,7 +69,13 @@ class LessonViewModel(
 
         if (!isEventTypeCorrect) {
             // user pressed a totally unrelated button (wrong type)
-            uiState = s.copy(feedback = "That's not the right action.")
+            uiState = s.copy(feedback = ".",
+                tappedIncorrectAnchorId = when (evt) {
+                    is UserEvent.TapOnAnchor -> evt.anchorId
+                    is UserEvent.Toggle -> evt.anchorId
+                    is UserEvent.SelectOption -> evt.optionId
+                    else -> null
+                })
             return
         }
 
@@ -134,7 +141,15 @@ class LessonViewModel(
         // ---- 3. Wrong action (right event type, wrong target) ----
         if (!ok) {
             errorCount++
-            uiState = s.copy(feedback = "Try again.")
+            uiState = s.copy(feedback = "Try again.",
+                    tappedIncorrectAnchorId = when (evt) {
+                        is UserEvent.TapOnAnchor -> evt.anchorId
+                        is UserEvent.Toggle -> evt.anchorId
+                        is UserEvent.SelectOption -> evt.optionId
+                        else -> null
+                    }
+            )
+
             return
         } else {
             uiState = s.copy(feedback = null)
@@ -164,7 +179,8 @@ class LessonViewModel(
             currentIndex = next,
             completed = finished,
             feedback = null,
-            correctAnchor = nextAnchor?.anchorId
+            correctAnchor = nextAnchor?.anchorId,
+            tappedIncorrectAnchorId = null
         )
     }
 

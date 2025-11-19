@@ -19,6 +19,7 @@ data class LessonState(
     val currentIndex: Int = 0,
     val completed: Boolean = false,
     val feedback: String? = null,
-    val correctAnchor: String? = null
+    val correctAnchor: String? = null,
+    val tappedIncorrectAnchorId: String? = null
 
 )

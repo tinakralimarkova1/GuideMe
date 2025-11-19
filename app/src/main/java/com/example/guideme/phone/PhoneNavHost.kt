@@ -20,7 +20,8 @@ fun PhoneNavHost(
     modifier: Modifier = Modifier,
     onAnchorTapped: (String) -> Unit = {},
     onNumberCommitted: (String) -> Unit = {},
-    correctAnchor: String? = null
+    correctAnchor: String? = null,
+    tappedIncorrectAnchor: String? = null
 
 ) {
     val navController = rememberNavController()
@@ -109,7 +110,9 @@ fun PhoneNavHost(
                 onNumberCommitted = { number ->
                     onNumberCommitted(number)         // 🔁 bubble up to LessonHost
                 },
-                correctAnchor = correctAnchor
+                correctAnchor = correctAnchor,
+                tappedIncorrectAnchor = tappedIncorrectAnchor
+
             )
         }
     }

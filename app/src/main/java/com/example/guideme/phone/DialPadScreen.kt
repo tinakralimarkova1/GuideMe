@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.guideme.lessons.anchorId
+import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.delay
 
@@ -53,7 +54,8 @@ fun DialPadScreen(
     initialNumber: String = "",
     onButtonPressed: (String) -> Unit = {},
     onNumberCommitted: (String) -> Unit = {},
-    correctAnchor: String? = null
+    correctAnchor: String? = null,
+    tappedIncorrectAnchor: String? = null
 ) {
     var number by remember { mutableStateOf("") }
     var isCalling by remember { mutableStateOf(false) }
@@ -160,30 +162,32 @@ fun DialPadScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                Button(
-
-                    onClick = {
-                        onButtonPressed("DialPad.Call")
-                        if (correctAnchor == "DialPad.Call"){
-
-                           if (number.isEmpty() ) {
-                               TTS.speak("Please enter a number.")
-                           } else {
-                               TTS.speak("Phone dialing.")
-                               isCalling = true
-                           }
-                       }
-
-
-
-                    },
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .anchorId("DialPad.Call"),
-                    shape = RoundedCornerShape(16.dp)
+                        .flash(tappedIncorrectAnchor, "DialPad.Call")   // ← apply here
+                        .clip(RoundedCornerShape(16.dp))                // so the flash matches the button shape
                 ) {
-                    Text("Call", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                    Button(
+                        onClick = {
+                            onButtonPressed("DialPad.Call")
+                            if (correctAnchor == "DialPad.Call") {
+                                if (number.isEmpty()) {
+                                    TTS.speak("Please enter a number.")
+                                } else {
+                                    TTS.speak("Phone dialing.")
+                                    isCalling = true
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()                              // button fills the flashing box
+                            .anchorId("DialPad.Call"),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text("Call", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                    }
                 }
             }
         }
@@ -191,7 +195,7 @@ fun DialPadScreen(
 }
 
 @Composable
-private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPressed: (String) -> Unit = {}) {
+private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPressed: (String) -> Unit = {}, tappedIncorrectAnchor:String? = null) {
     var isConnected by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -230,7 +234,8 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPresse
 
 
                     }
-                    .anchorId("DialPad.EndCall"),
+                    .anchorId("DialPad.EndCall")
+                    .flash(tappedIncorrectAnchor,"DialPad.EndCall"),
                 contentAlignment = Alignment.Center
             ) {
                 Text("End", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
