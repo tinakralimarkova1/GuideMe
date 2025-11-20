@@ -68,8 +68,8 @@ class LessonViewModel(
         }
 
         if (!isEventTypeCorrect) {
-            // user pressed a totally unrelated button (wrong type)
-            uiState = s.copy(feedback = ".",
+            uiState = s.copy(
+                feedback = "Try again.",
                 tappedIncorrectAnchorId = buildWrongTapId(evt)
             )
             return
@@ -105,6 +105,7 @@ class LessonViewModel(
                     entered.text.isNotBlank()
                 }
             }
+
 
             StepType.Select -> {
                 val sel = evt as UserEvent.SelectOption
@@ -189,9 +190,34 @@ class LessonViewModel(
 
     fun isButtonAllowed(anchorId: String): Boolean {
         val step = uiState.steps.getOrNull(uiState.currentIndex) ?: return false
+
         return when (step.type) {
-            StepType.TapTarget, StepType.Select, StepType.Toggle -> step.anchorId == anchorId
-            else -> true // other types (Text, Acknowledge) are always allowed
+            StepType.TapTarget,
+            StepType.Select,
+            StepType.Toggle -> {
+                // Only the specific target is allowed
+                step.anchorId == anchorId
+            }
+
+            StepType.EnterText -> {
+                // Typing steps (like lesson 2002)
+                when {
+                    // Always allow backspace during typing steps
+                    anchorId == "DialPad.Backspace" -> true
+
+                    // Free-typing step (lesson 2002 step 11 has anchorId = null) :contentReference[oaicite:2]{index=2}
+                    step.anchorId == null -> anchorId.startsWith("DialPad.key")
+
+                    // Guided typing steps (7–10): only the highlighted key is allowed
+                    else -> anchorId == step.anchorId
+                }
+            }
+
+            StepType.Acknowledge -> {
+                // User is just reading / pressing OK, don't block fake UI
+                false
+            }
         }
     }
+
 }
