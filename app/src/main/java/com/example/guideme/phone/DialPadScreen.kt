@@ -157,7 +157,10 @@ fun DialPadScreen(
                             )
                             onNumberCommitted(number)
                         }
-                    }
+                    },
+                    onButtonPressed = onButtonPressed,
+                    tappedIncorrectAnchor = tappedIncorrectAnchor,
+                    correctAnchor
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -247,7 +250,9 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPresse
 @Composable
 private fun DialPadKeys(
     onKey: (String) -> Unit,
-    onButtonPressed: (String) -> Unit = {}
+    onButtonPressed: (String) -> Unit = {},
+    tappedIncorrectAnchor:String? = null,
+    correctAnchor: String?
 
 ) {
     val rows = listOf(
@@ -270,10 +275,14 @@ private fun DialPadKeys(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 row.forEach { key ->
-                    DialKey(label = key, modifier = Modifier.weight(1f).anchorId("DialPad.key$key"))
+                    DialKey(label = key, modifier = Modifier.weight(1f).anchorId("DialPad.key$key").flash(tappedIncorrectAnchor,"DialPad.key$key"))
                     {
-                        onKey(key)
                         onButtonPressed("DialPad.key$key")
+                        if(correctAnchor == "DialPad.key$key"){
+                            onKey(key)
+                        }
+
+
                     }
                 }
             }

@@ -70,12 +70,8 @@ class LessonViewModel(
         if (!isEventTypeCorrect) {
             // user pressed a totally unrelated button (wrong type)
             uiState = s.copy(feedback = ".",
-                tappedIncorrectAnchorId = when (evt) {
-                    is UserEvent.TapOnAnchor -> evt.anchorId
-                    is UserEvent.Toggle -> evt.anchorId
-                    is UserEvent.SelectOption -> evt.optionId
-                    else -> null
-                })
+                tappedIncorrectAnchorId = buildWrongTapId(evt)
+            )
             return
         }
 
@@ -142,12 +138,7 @@ class LessonViewModel(
         if (!ok) {
             errorCount++
             uiState = s.copy(feedback = "Try again.",
-                    tappedIncorrectAnchorId = when (evt) {
-                        is UserEvent.TapOnAnchor -> evt.anchorId
-                        is UserEvent.Toggle -> evt.anchorId
-                        is UserEvent.SelectOption -> evt.optionId
-                        else -> null
-                    }
+                    tappedIncorrectAnchorId = buildWrongTapId(evt)
             )
 
             return
@@ -183,6 +174,18 @@ class LessonViewModel(
             tappedIncorrectAnchorId = null
         )
     }
+
+    private fun buildWrongTapId(evt: UserEvent): String? {
+        val base = when (evt) {
+            is UserEvent.TapOnAnchor -> evt.anchorId
+            is UserEvent.Toggle -> evt.anchorId
+            is UserEvent.SelectOption -> evt.optionId
+            else -> null
+        }
+        // Append a timestamp so each wrong tap is unique
+        return base?.let { "$it#${System.currentTimeMillis()}" }
+    }
+
 
     fun isButtonAllowed(anchorId: String): Boolean {
         val step = uiState.steps.getOrNull(uiState.currentIndex) ?: return false
