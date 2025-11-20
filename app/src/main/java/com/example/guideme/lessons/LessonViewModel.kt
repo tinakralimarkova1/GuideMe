@@ -45,7 +45,9 @@ class LessonViewModel(
                 steps = steps,
                 currentIndex = 0,
                 completed = false,
-                feedback = null
+                feedback = null,
+                correctAnchor = steps.getOrNull(0)?.anchorId,
+
             )
         }
     }
@@ -53,6 +55,8 @@ class LessonViewModel(
     fun onUserEvent(evt: UserEvent) {
         val s = uiState
         val step = s.steps.getOrNull(s.currentIndex) ?: return
+
+
 
         // --- 1. Handle WRONG EVENT TYPE early ---
         val isEventTypeCorrect = when(step.type) {
@@ -64,8 +68,10 @@ class LessonViewModel(
         }
 
         if (!isEventTypeCorrect) {
-            // user pressed a totally unrelated button (wrong type)
-            uiState = s.copy(feedback = "That's not the right action.")
+            uiState = s.copy(
+                feedback = "Try again.",
+                tappedIncorrectAnchorId = buildWrongTapId(evt)
+            )
             return
         }
 
@@ -100,6 +106,7 @@ class LessonViewModel(
                 }
             }
 
+
             StepType.Select -> {
                 val sel = evt as UserEvent.SelectOption
                 sel.optionId == step.anchorId
@@ -131,7 +138,10 @@ class LessonViewModel(
         // ---- 3. Wrong action (right event type, wrong target) ----
         if (!ok) {
             errorCount++
-            uiState = s.copy(feedback = "Try again.")
+            uiState = s.copy(feedback = "Try again.",
+                    tappedIncorrectAnchorId = buildWrongTapId(evt)
+            )
+
             return
         } else {
             uiState = s.copy(feedback = null)
@@ -140,6 +150,7 @@ class LessonViewModel(
         // ---- 4. Correct action ----
         val next = s.currentIndex + 1
         val finished = next >= s.steps.size
+        val nextAnchor = s.steps.getOrNull((next))
 
         if (finished && !s.completed) {
             val duration = ((System.currentTimeMillis() - lessonStartTimeMillis) / 1000).toInt()
@@ -159,15 +170,54 @@ class LessonViewModel(
         uiState = s.copy(
             currentIndex = next,
             completed = finished,
-            feedback = null
+            feedback = null,
+            correctAnchor = nextAnchor?.anchorId,
+            tappedIncorrectAnchorId = null
         )
     }
 
+    private fun buildWrongTapId(evt: UserEvent): String? {
+        val base = when (evt) {
+            is UserEvent.TapOnAnchor -> evt.anchorId
+            is UserEvent.Toggle -> evt.anchorId
+            is UserEvent.SelectOption -> evt.optionId
+            else -> null
+        }
+        // Append a timestamp so each wrong tap is unique
+        return base?.let { "$it#${System.currentTimeMillis()}" }
+    }
+
+
     fun isButtonAllowed(anchorId: String): Boolean {
         val step = uiState.steps.getOrNull(uiState.currentIndex) ?: return false
+
         return when (step.type) {
-            StepType.TapTarget, StepType.Select, StepType.Toggle -> step.anchorId == anchorId
-            else -> true // other types (Text, Acknowledge) are always allowed
+            StepType.TapTarget,
+            StepType.Select,
+            StepType.Toggle -> {
+                // Only the specific target is allowed
+                step.anchorId == anchorId
+            }
+
+            StepType.EnterText -> {
+                // Typing steps (like lesson 2002)
+                when {
+                    // Always allow backspace during typing steps
+                    anchorId == "DialPad.Backspace" -> true
+
+                    // Free-typing step (lesson 2002 step 11 has anchorId = null) :contentReference[oaicite:2]{index=2}
+                    step.anchorId == null -> anchorId.startsWith("DialPad.key")
+
+                    // Guided typing steps (7–10): only the highlighted key is allowed
+                    else -> anchorId == step.anchorId
+                }
+            }
+
+            StepType.Acknowledge -> {
+                // User is just reading / pressing OK, don't block fake UI
+                false
+            }
         }
     }
+
 }

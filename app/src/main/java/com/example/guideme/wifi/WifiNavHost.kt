@@ -28,6 +28,9 @@ import com.example.guideme.tts.TTS
 fun WifiNavHost(
     onAnchorTapped: (String) -> Unit = {},
     onToggle: (String, Boolean) -> Unit = {_,_ ->},
+    correctAnchor: String? = null,
+    tappedIncorrectAnchor: String? = null,
+    isAnchorAllowed: (String) -> Boolean = { true }
 ) {
     val nav = rememberNavController()
     var showIntro by remember { mutableStateOf(false) }
@@ -94,7 +97,10 @@ fun WifiNavHost(
             },
             onTogglePressed = { anchorId, value ->
                 onToggle(anchorId, value)
-            }
+            },
+            correctAnchor = correctAnchor,
+            tappedIncorrectAnchor = tappedIncorrectAnchor,
+            isAnchorAllowed = isAnchorAllowed
 
         )
 
