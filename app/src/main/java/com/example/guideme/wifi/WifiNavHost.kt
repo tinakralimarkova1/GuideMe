@@ -100,7 +100,7 @@ fun WifiNavHost(
             },
             correctAnchor = correctAnchor,
             tappedIncorrectAnchor = tappedIncorrectAnchor,
-            isAnchorAllowed = isAnchorAllowed
+            isAnchorAllowed
 
         )
 
