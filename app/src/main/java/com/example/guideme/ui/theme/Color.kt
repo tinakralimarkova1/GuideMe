@@ -30,6 +30,8 @@ val NoticeColor = Color(0xFFC53957)
 
 val Transparent = Color.Transparent
 
+val InstructionTextBoxColor = Color(0xF5FFFFFF)
+
 
 
 

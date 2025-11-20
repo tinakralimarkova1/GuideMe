@@ -6,9 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,11 +21,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.guideme.phone.CameraScreen
 import com.example.guideme.phone.PhoneNavHost
+import com.example.guideme.ui.theme.InstructionTextBoxColor
 import com.example.guideme.ui.theme.MainBackgroundGradient
+import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.wifi.WifiNavHost
 
 
@@ -71,11 +78,21 @@ fun LessonHost(
                     },
                    onToggle = { id, on ->
                        vm.onUserEvent(UserEvent.Toggle(id, on))
-                   }
+                   },
+                    correctAnchor = state.correctAnchor,
+                    tappedIncorrectAnchor = state.tappedIncorrectAnchorId,
+                    isAnchorAllowed = { anchorId ->
+                        vm.isButtonAllowed(anchorId)
+                    }
                 )
                 "Camera" -> CameraScreen(
                     onAnchorTapped = { anchorID ->
                         vm.onUserEvent(UserEvent.TapOnAnchor(anchorID))
+                    },
+                    correctAnchor = state.correctAnchor,
+                    tappedIncorrectAnchor = state.tappedIncorrectAnchorId,
+                    isAnchorAllowed = { anchorId ->
+                        vm.isButtonAllowed(anchorId)
                     }
 
                 )
@@ -110,20 +127,72 @@ private fun InstructionOverlay(
     showOk: Boolean = false,
     onOk: (() -> Unit)? = null
 ) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-        Surface(tonalElevation = 2.dp, shadowElevation = 6.dp) {
-            Column(Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text, style = MaterialTheme.typography.bodyLarge)
+    Box(
+        Modifier
+            .fillMaxSize()
+            .padding(
+                start = 20.dp,
+                end = 20.dp,
+                top = 55.dp,
+                bottom = 10.dp       // 👈 prevents covering the Call button
+            )
+            ,
+
+        contentAlignment = Alignment.BottomCenter
+    ) {
+
+        Surface(
+            shape = RoundedCornerShape(24.dp),
+            color = InstructionTextBoxColor,
+            tonalElevation = 4.dp,
+            shadowElevation = 8.dp,
+            modifier = Modifier
+                    .fillMaxWidth()
+                // 👇 FIXED SIZE BEHAVIOR
+                .heightIn(min = 140.dp, max = 160.dp)
+
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                // Instruction text
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MainButtonContentColor
+                    ),
+                    textAlign = TextAlign.Center
+                )
+
+                // Error / feedback text
                 if (feedback != null) {
+                    Spacer(Modifier.height(10.dp))
                     Text(
                         text = feedback,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
                     )
                 }
+
+                // OK button (for Acknowledge step)
                 if (showOk && onOk != null) {
-                    Spacer(Modifier.height(12.dp))
-                    Button(onClick = onOk) { Text("OK") }
+                    Spacer(Modifier.height(18.dp))
+                    Button(
+                        onClick = onOk,
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth(0.6f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Text("OK")
+                    }
                 }
             }
         }

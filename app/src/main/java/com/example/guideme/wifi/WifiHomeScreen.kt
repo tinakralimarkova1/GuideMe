@@ -48,6 +48,9 @@ data class FakeWifi(val ssid: String, val secured: Boolean, val strength: Int)
 fun WifiHomeScreen(nav: NavController,
                    onButtonPressed: (String) -> Unit = {},
                    onTogglePressed: (String, Boolean) -> Unit = {_,_ ->},
+                   correctAnchor: String? = null,
+                   tappedIncorrectAnchor: String? = null,
+                   isAnchorAllowed: (String) -> Boolean = { true }
 
 
 
