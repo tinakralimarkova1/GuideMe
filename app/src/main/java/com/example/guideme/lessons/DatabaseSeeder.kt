@@ -343,7 +343,7 @@ object DatabaseSeeder {
                         lessonsId = 2002,
                         stepNo = 7,
                         text = "The number is 112 345. First type in 1.",
-                        anchorId = "Dial.key1",
+                        anchorId = "DialPad.key1",
                         type = StepType.EnterText.name,
                         outlineColor = null,
                         expectedText = "1"
@@ -353,7 +353,7 @@ object DatabaseSeeder {
                         lessonsId = 2002,
                         stepNo = 8,
                         text = "The number is 112 345. Now type in 1 again.",
-                        anchorId = "Dial.key1",
+                        anchorId = "DialPad.key1",
                         type = StepType.EnterText.name,
                         outlineColor = null,
                         expectedText = "11"
@@ -363,7 +363,7 @@ object DatabaseSeeder {
                         lessonsId = 2002,
                         stepNo = 9,
                         text = "The number is 112 345. Now type in 2.",
-                        anchorId = "Dial.key2",
+                        anchorId = "DialPad.key2",
                         type = StepType.EnterText.name,
                         outlineColor = null,
                         expectedText = "112"
@@ -373,7 +373,7 @@ object DatabaseSeeder {
                         lessonsId = 2002,
                         stepNo = 10,
                         text = "The number is 112 345. Now type in 3.",
-                        anchorId = "Dial.key3",
+                        anchorId = "DialPad.key3",
                         type = StepType.EnterText.name,
                         outlineColor = null,
                         expectedText = "1123"

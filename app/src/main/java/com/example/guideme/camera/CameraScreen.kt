@@ -60,7 +60,10 @@ private enum class FlashSim { AUTO, ON, OFF }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(
-    onAnchorTapped: (String) -> Unit = {}
+    onAnchorTapped: (String) -> Unit = {},
+    correctAnchor: String? = null,
+    tappedIncorrectAnchor: String? = null,
+    isAnchorAllowed: (String) -> Boolean = { true }
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

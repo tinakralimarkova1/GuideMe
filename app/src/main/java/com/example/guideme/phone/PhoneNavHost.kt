@@ -1,18 +1,17 @@
 package com.example.guideme.phone
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.guideme.tts.TTS
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,7 +19,10 @@ import com.example.guideme.tts.TTS
 fun PhoneNavHost(
     modifier: Modifier = Modifier,
     onAnchorTapped: (String) -> Unit = {},
-    onNumberCommitted: (String) -> Unit = {}
+    onNumberCommitted: (String) -> Unit = {},
+    correctAnchor: String? = null,
+    tappedIncorrectAnchor: String? = null,
+    isAnchorAllowed: (String) -> Boolean = { true }
 
 ) {
     val navController = rememberNavController()
@@ -108,7 +110,11 @@ fun PhoneNavHost(
                 },
                 onNumberCommitted = { number ->
                     onNumberCommitted(number)         // 🔁 bubble up to LessonHost
-                }
+                },
+                correctAnchor = correctAnchor,
+                tappedIncorrectAnchor = tappedIncorrectAnchor,
+                isAnchorAllowed = isAnchorAllowed
+
             )
         }
     }

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.guideme.lessons.anchorId
+import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.delay
 
@@ -52,7 +53,10 @@ fun DialPadScreen(
     navController: NavController,
     initialNumber: String = "",
     onButtonPressed: (String) -> Unit = {},
-    onNumberCommitted: (String) -> Unit = {}
+    onNumberCommitted: (String) -> Unit = {},
+    correctAnchor: String? = null,
+    tappedIncorrectAnchor: String? = null,
+    isAnchorAllowed: (String) -> Boolean = { true }
 ) {
     var number by remember { mutableStateOf("") }
     var isCalling by remember { mutableStateOf(false) }
@@ -125,13 +129,26 @@ fun DialPadScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     IconButton(
-                        onClick = { if (number.isNotEmpty()) number = number.dropLast(1)
-                            onNumberCommitted(number)
-                            onButtonPressed("DialPad.Backspace")
+                        onClick = {
+                            val anchor = "DialPad.Backspace"
 
+                            if (!isAnchorAllowed(anchor)) {
+                                // Wrong time to use backspace → send as wrong tap, no delete
+                                onButtonPressed(anchor)
+                                return@IconButton
+                            }
+
+                            if (number.isNotEmpty()) {
+                                number = number.dropLast(1)
+                                onNumberCommitted(number)
+                            }
+                            // For the "correct" step 2002-5, we still want the event to hit the VM
+                            onButtonPressed(anchor)
                         },
-                        modifier = Modifier.size(40.dp).anchorId("DialPad.Backspace")
-                    ) {
+                        modifier = Modifier
+                            .size(40.dp)
+                            .anchorId("DialPad.Backspace")
+                    ){
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Backspace,
                             contentDescription = "Delete"
@@ -154,30 +171,41 @@ fun DialPadScreen(
                             )
                             onNumberCommitted(number)
                         }
-                    }
+                    },
+                    onButtonPressed = onButtonPressed,
+                    tappedIncorrectAnchor = tappedIncorrectAnchor,
+                    correctAnchor,
+                    isAnchorAllowed
                 )
 
                 Spacer(Modifier.height(16.dp))
 
-                Button(
-
-                    onClick = {
-
-                        onButtonPressed("DialPad.Call")
-                        if (number.isEmpty()) {
-                            TTS.speak("Please enter a number.")
-                        } else {
-                            TTS.speak("Phone dialing.")
-                            isCalling = true
-                        }
-                    },
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .anchorId("DialPad.Call"),
-                    shape = RoundedCornerShape(16.dp)
+                        .flash(tappedIncorrectAnchor, "DialPad.Call")   // ← apply here
+                        .clip(RoundedCornerShape(16.dp))                // so the flash matches the button shape
                 ) {
-                    Text("Call", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                    Button(
+                        onClick = {
+                            onButtonPressed("DialPad.Call")
+                            if (correctAnchor == "DialPad.Call") {
+                                if (number.isEmpty()) {
+                                    TTS.speak("Please enter a number.")
+                                } else {
+                                    TTS.speak("Phone dialing.")
+                                    isCalling = true
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()                              // button fills the flashing box
+                            .anchorId("DialPad.Call"),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text("Call", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                    }
                 }
             }
         }
@@ -185,7 +213,7 @@ fun DialPadScreen(
 }
 
 @Composable
-private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPressed: (String) -> Unit = {}) {
+private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPressed: (String) -> Unit = {}, tappedIncorrectAnchor:String? = null) {
     var isConnected by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -224,7 +252,8 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPresse
 
 
                     }
-                    .anchorId("DialPad.EndCall"),
+                    .anchorId("DialPad.EndCall")
+                    .flash(tappedIncorrectAnchor,"DialPad.EndCall"),
                 contentAlignment = Alignment.Center
             ) {
                 Text("End", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -236,8 +265,10 @@ private fun IncomingCallUI(number: String, onEndCall: () -> Unit, onButtonPresse
 @Composable
 private fun DialPadKeys(
     onKey: (String) -> Unit,
-    onButtonPressed: (String) -> Unit = {}
-
+    onButtonPressed: (String) -> Unit = {},
+    tappedIncorrectAnchor: String? = null,
+    correctAnchor: String?,
+    isAnchorAllowed: (String) -> Boolean   // 👈 new
 ) {
     val rows = listOf(
         listOf("1", "2", "3"),
@@ -245,6 +276,7 @@ private fun DialPadKeys(
         listOf("7", "8", "9"),
         listOf("*", "0", "#"),
     )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -259,16 +291,29 @@ private fun DialPadKeys(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 row.forEach { key ->
-                    DialKey(label = key, modifier = Modifier.weight(1f).anchorId("DialPad.key$key"))
-                    {
-                        onKey(key)
-                        onButtonPressed("DialPad.key$key")
+                    val anchor = "DialPad.key$key"
+
+                    DialKey(
+                        label = key,
+                        modifier = Modifier
+                            .weight(1f)
+                            .anchorId(anchor)
+                            .flash(tappedIncorrectAnchor, anchor)
+                    ) {
+                        if (!isAnchorAllowed(anchor)) {
+                            // Wrong key for this step → send as wrong tap, no typing
+                            onButtonPressed(anchor)
+                        } else {
+                            // Allowed by VM → do the actual typing behaviour
+                            onKey(key)
+                        }
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun DialKey(
