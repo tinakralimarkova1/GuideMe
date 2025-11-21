@@ -63,7 +63,8 @@ fun CameraScreen(
     onAnchorTapped: (String) -> Unit = {},
     correctAnchor: String? = null,
     tappedIncorrectAnchor: String? = null,
-    isAnchorAllowed: (String) -> Boolean = { true }
+    isAnchorAllowed: (String) -> Boolean = { true },
+    defaultStates: Map<String, String> = emptyMap()
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -81,6 +82,15 @@ fun CameraScreen(
     }
 
     val flashAlpha = remember { Animatable(0f) }
+
+    val zoomDefault = defaultStates["Camera.ZoomSlider"]?.toFloatOrNull() ?: 1.0f
+    val flashDefault = when (defaultStates["Camera.FlashButton"]?.uppercase()) {
+        "ON" -> FlashSim.ON
+        "OFF" -> FlashSim.OFF
+        "AUTO", null, "" -> FlashSim.AUTO
+        else -> FlashSim.AUTO
+    }
+
     var flash by remember { mutableStateOf(FlashSim.AUTO) }
     var zoom by remember { mutableStateOf(1.0f) }
     var lastThumbRes by remember { mutableStateOf(R.drawable.ash_tree___geograph_org_uk___590710) }
