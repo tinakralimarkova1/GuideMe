@@ -397,7 +397,7 @@ object DatabaseSeeder {
                         type = StepType.TapTarget.name,
                         outlineColor = null,
 
-                    ),
+                        ),
                     DbInstruction(
                         lessonsId = 2002,
                         stepNo = 13,
@@ -407,7 +407,7 @@ object DatabaseSeeder {
                         outlineColor = null,
 
 
-                    ),
+                        ),
                     DbInstruction(
                         lessonsId = 2002,
                         stepNo = 14,
@@ -451,7 +451,7 @@ object DatabaseSeeder {
                         lessonsId = 3001,
                         stepNo = 4,
                         text = "Here are located all the available WiFi networks in your area.",
-                        anchorId =  "Wifi.NetworkBox",
+                        anchorId = "Wifi.NetworkBox",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
 
@@ -533,9 +533,27 @@ object DatabaseSeeder {
 
                     ),
 
+                    )
+            )
+        }
+
+        // --- Seed default Button ---
+
+        val defaultButtonDao = db.defaultButtonDao()
+        val existingDefaults = defaultButtonDao.getDefaultsForLesson(lessonId = 3003) // for example
+        if (existingDefaults.isEmpty()) {
+            defaultButtonDao.insertAll(
+                listOf(
+                    // Connect to Wi-Fi lesson: Wi-Fi toggle should start ON
+                    DbDefaultButton(
+                        lessonsId = 3003,
+                        buttonName = "Wifi.OnOffButton",
+                        state = "true"
+                    )
                 )
             )
         }
+
 
         // --- Seed demo customer ---
         val customerDao = db.customerDao()

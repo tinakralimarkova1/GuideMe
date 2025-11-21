@@ -6,7 +6,9 @@ package com.example.guideme.lessons
 
 class RoomLessonsRepository(
     private val instructionDao: InstructionDao,
-    private val completionDao: CompletionDao
+    private val completionDao: CompletionDao,
+    private val defaultButtonDao: DefaultButtonDao
+
 ) : LessonsRepository {
 
     // 1) Read instructions for a lesson from SQLite
@@ -28,6 +30,11 @@ class RoomLessonsRepository(
                 expectedText = db.expectedText
             )
         }
+    }
+
+    override suspend fun getDefaultButtonStates(lessonId: Int): Map<String, String> {
+        val rows = defaultButtonDao.getDefaultsForLesson(lessonId)
+        return rows.associate { it.buttonName to it.state }
     }
 
     // 2) Save / update completion info in the Completion table

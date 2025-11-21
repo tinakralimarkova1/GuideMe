@@ -20,6 +20,7 @@ data class LessonState(
     val completed: Boolean = false,
     val feedback: String? = null,
     val correctAnchor: String? = null,
-    val tappedIncorrectAnchorId: String? = null
+    val tappedIncorrectAnchorId: String? = null,
+    val defaultButtonStates: Map<String, String> = emptyMap()
 
 )
