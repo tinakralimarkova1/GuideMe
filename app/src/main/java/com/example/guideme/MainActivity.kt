@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -85,6 +86,11 @@ import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.core.content.ContextCompat
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -310,7 +316,7 @@ fun MainScreen(
                         modifier = modifier
                             .fillMaxSize()
                             .padding(24.dp),
-                        onVoiceSearch = { TTS.speak("Voice search coming soon. Say your question after the beep.") },
+                        onVoiceSearch = { TTS.speak("Say your question after the beep.") },
                         onTextSearch = { TTS.speak("Opening text search.") }
                     )
 
@@ -771,6 +777,36 @@ private fun SearchMenu(
 
     val scope = rememberCoroutineScope()
 
+    // for handling permissions
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                speech.start()
+            } else {
+                errorText = "Microphone permission is required for voice search"
+            }
+        }
+    )
+    fun handleVoiceSearchClick() {
+        // reset UI state
+        errorText = null
+        resultText = null
+        queryText = ""
+
+        // check if permission is already granted
+        when (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)){
+            PackageManager.PERMISSION_GRANTED -> {
+                // permission is already available
+                speech.start()
+            }
+            else -> {
+                // permission has not been granted so we launch the request
+                permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            }
+        }
+    }
+
     // collect speech results
     LaunchedEffect(Unit) {
         speech.results.collect { text ->
@@ -812,11 +848,9 @@ private fun SearchMenu(
             // voice button
             Button(
                 onClick = {
+                    // call function that handles permission
+                    handleVoiceSearchClick()
                     onVoiceSearch()
-                    errorText = null
-                    resultText = null
-                    queryText = ""
-                    speech.start() // starts listening
                 },
                 modifier = Modifier
                     .fillMaxWidth()

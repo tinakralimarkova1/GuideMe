@@ -40,8 +40,19 @@ class STT(private val activity: Activity) {
                 }
 
                 // called if recognition fails or user cancels
-                override fun onError(error: Int) { /* ignore for now */ }
-
+                override fun onError(error: Int) { val errorMessage = when (error) {
+                    SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Insufficient permissions"
+                    SpeechRecognizer.ERROR_NETWORK -> "Network error"
+                    SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network timeout"
+                    SpeechRecognizer.ERROR_NO_MATCH -> "No match found"
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Recognition service busy"
+                    SpeechRecognizer.ERROR_SERVER -> "Error from server"
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
+                    else -> "Unknown speech recognition error"
+                }
+                    results.tryEmit(errorMessage)
+                }
                 // detailed state updates
                 override fun onReadyForSpeech(p0: Bundle?) {}
                 override fun onBeginningOfSpeech() {}
