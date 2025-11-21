@@ -30,10 +30,13 @@ fun WifiNavHost(
     onToggle: (String, Boolean) -> Unit = {_,_ ->},
     correctAnchor: String? = null,
     tappedIncorrectAnchor: String? = null,
-    isAnchorAllowed: (String) -> Boolean = { true }
+    isAnchorAllowed: (String) -> Boolean = { true },
+    defaultStates: Map<String, String> = emptyMap()
 ) {
     val nav = rememberNavController()
     var showIntro by remember { mutableStateOf(false) }
+
+    val wifiOnDefault = defaultStates["Wifi.OnOffButton"]?.toBoolean()
 
     LaunchedEffect(Unit) {
         TTS.speak("You are now in Wi-Fi. This screen looks like your phone's Wi-Fi settings.")
@@ -100,7 +103,8 @@ fun WifiNavHost(
             },
             correctAnchor = correctAnchor,
             tappedIncorrectAnchor = tappedIncorrectAnchor,
-            isAnchorAllowed = isAnchorAllowed
+            isAnchorAllowed = isAnchorAllowed,
+            initialWifiOn = wifiOnDefault
 
         )
 

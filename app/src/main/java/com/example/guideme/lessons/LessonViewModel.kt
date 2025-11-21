@@ -39,6 +39,7 @@ class LessonViewModel(
 
         viewModelScope.launch {
             val steps = repo.getLessonInstructions(appName, lessonId)
+            val defaults = repo.getDefaultButtonStates(lessonId)
             uiState = LessonState(
                 appName = appName,
                 lessonId = lessonId,
@@ -47,6 +48,7 @@ class LessonViewModel(
                 completed = false,
                 feedback = null,
                 correctAnchor = steps.getOrNull(0)?.anchorId,
+                defaultButtonStates = defaults
 
             )
         }
