@@ -87,7 +87,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // for TFLite model
     implementation("org.tensorflow:tensorflow-lite:2.12.0")
+    // for STT
+    implementation("androidx.activity:activity-compose:1.8.0")
 
     //ui?
     implementation("me.nikhilchaudhari:composeNeumorphism:1.0.0-alpha02")

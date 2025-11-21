@@ -83,7 +83,8 @@ fun LessonHost(
                     tappedIncorrectAnchor = state.tappedIncorrectAnchorId,
                     isAnchorAllowed = { anchorId ->
                         vm.isButtonAllowed(anchorId)
-                    }
+                    },
+                    defaultStates = state.defaultButtonStates
                 )
                 "Camera" -> CameraScreen(
                     onAnchorTapped = { anchorID ->

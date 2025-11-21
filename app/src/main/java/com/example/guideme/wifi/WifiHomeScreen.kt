@@ -50,12 +50,14 @@ fun WifiHomeScreen(nav: NavController,
                    onTogglePressed: (String, Boolean) -> Unit = {_,_ ->},
                    correctAnchor: String? = null,
                    tappedIncorrectAnchor: String? = null,
-                   isAnchorAllowed: (String) -> Boolean = { true }
+                   isAnchorAllowed: (String) -> Boolean = { true },
+                   initialWifiOn: Boolean? = null
 
 
 
 ) {
-    var wifiOn by remember { mutableStateOf(true) }
+    //can change back later to true !!!!!!!!!!
+    var wifiOn by remember { mutableStateOf(false) }
 
     val networks = remember {
         listOf(
