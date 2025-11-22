@@ -52,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.guideme.R
 import com.example.guideme.lessons.anchorId
+import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.launch
 
@@ -140,15 +141,24 @@ fun CameraScreen(
             )
             val flashButtonAnchorId = "Camera.FlashButton"
             FilledTonalIconButton(onClick = {
-                onAnchorTapped(flashButtonAnchorId)
-                flash = when (flash) {
-                    FlashSim.AUTO -> FlashSim.ON
-                    FlashSim.ON -> FlashSim.OFF
-                    FlashSim.OFF -> FlashSim.AUTO
+                if (!isAnchorAllowed(flashButtonAnchorId)) {
+                    // Wrong for this lesson step: tell the VM and do nothing else
+                    onAnchorTapped(flashButtonAnchorId)
+                } else {
+                    // Correct button: tell the VM and perform the real behavior
+                    onAnchorTapped(flashButtonAnchorId)
+                    flash = when (flash) {
+                        FlashSim.AUTO -> FlashSim.ON
+                        FlashSim.ON -> FlashSim.OFF
+                        FlashSim.OFF -> FlashSim.AUTO
+                    }
+                    TTS.speak("Flash ${flash.name.lowercase()}")
                 }
-                TTS.speak("Flash ${flash.name.lowercase()}")
             },
-                modifier = Modifier.anchorId("Camera.FlashButton")){
+                modifier = Modifier
+                    .anchorId(flashButtonAnchorId)
+                    .flash(tappedIncorrectAnchor, flashButtonAnchorId))
+            {
                 when (flash) {
                     FlashSim.AUTO -> Icon(Icons.Filled.FlashAuto, contentDescription = "Flash Auto")
                     FlashSim.ON -> Icon(Icons.Filled.FlashOn, contentDescription = "Flash On")
@@ -167,11 +177,20 @@ fun CameraScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            val switchAnchorId = "Camera.SwitchCamera"
             FilledTonalIconButton(
                 onClick = {
-                    onAnchorTapped("Camera.SwitchCamera")
-                    TTS.speak("Switched camera") },
-                modifier = Modifier.anchorId("Camera.SwitchCamera")) {
+                    if (!isAnchorAllowed(switchAnchorId)) {
+                        onAnchorTapped(switchAnchorId)
+                    } else {
+                        onAnchorTapped(switchAnchorId)
+                        TTS.speak("Switched camera")
+                    }
+                },
+                modifier = Modifier
+                    .anchorId(switchAnchorId)
+                    .flash(tappedIncorrectAnchor, switchAnchorId)
+            ) {
                 Icon(Icons.Filled.Cameraswitch, contentDescription = "Switch camera")
             }
 
@@ -219,16 +238,23 @@ fun CameraScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Thumbnail
+                val galleryAnchorId = "Camera.Gallery"
+
                 Box(
                     modifier = Modifier
                         .size(54.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable {
-                            onAnchorTapped("Camera.Gallery")
-                            TTS.speak("This opens your last photo in a real camera app.")
+                            if (!isAnchorAllowed(galleryAnchorId)) {
+                                onAnchorTapped(galleryAnchorId)
+                            } else {
+                                onAnchorTapped(galleryAnchorId)
+                                TTS.speak("This opens your last photo in a real camera app.")
+                            }
                         }
-                        .anchorId("Camera.Gallery"),
+                        .anchorId(galleryAnchorId)
+                        .flash(tappedIncorrectAnchor, galleryAnchorId),
                     contentAlignment = Alignment.Center
                 ) {
                     if (hasPhoto) {
@@ -243,22 +269,29 @@ fun CameraScreen(
                     }
                 }
 
+
                 // Capture button
+                val captureAnchorId = "Camera.Capture"
+
                 Box(
                     modifier = Modifier
                         .size(84.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                         .clickable {
-                            onAnchorTapped("Camera.Capture")
-                            scope.launch {
-                                flashAlpha.snapTo(1f)
-                                flashAlpha.animateTo(0f, tween(300))
-                                TTS.speak("Photo captured!")
-                                hasPhoto = true
+                            if (!isAnchorAllowed(captureAnchorId)) {
+                                onAnchorTapped(captureAnchorId)
+                            } else {
+                                onAnchorTapped(captureAnchorId)
+                                scope.launch {
+                                    flashAlpha.snapTo(1f)
+                                    flashAlpha.animateTo(0f, tween(300))
+                                    TTS.speak("Photo captured!")
+                                    hasPhoto = true
+                                }
                             }
                         }
-                        .anchorId("Camera.Capture"),
+                        .anchorId(captureAnchorId),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("●", style = MaterialTheme.typography.titleLarge, color = Color.White)

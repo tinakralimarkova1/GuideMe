@@ -123,7 +123,6 @@ fun LessonHost(
                 }
                 InstructionOverlay(
                     text = current.text,
-                    feedback = if (current.type == StepType.Acknowledge) null else state.feedback,
                     showOk = current.type == StepType.Acknowledge,
                     onOk = if (current.type == StepType.Acknowledge) {
                         { vm.onUserEvent(UserEvent.Acknowledge) }
@@ -144,7 +143,6 @@ fun LessonHost(
 @Composable
 private fun InstructionOverlay(
     text: String,
-    feedback: String? = null,
     showOk: Boolean = false,
     onOk: (() -> Unit)? = null
 ) {
