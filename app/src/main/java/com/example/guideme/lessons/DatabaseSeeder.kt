@@ -571,7 +571,7 @@ object DatabaseSeeder {
                         lessonsId = 3002,
                         stepNo = 1,
                         text = "Turn Wifi on",
-                        anchorId = "Wifi.OnOffButton",
+                        anchorId = "Wifi.WifiToggle",
                         type = StepType.Toggle.name,
                         outlineColor = null,
                         expectedText = "true"

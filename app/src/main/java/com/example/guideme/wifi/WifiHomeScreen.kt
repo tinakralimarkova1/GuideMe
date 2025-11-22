@@ -57,7 +57,7 @@ fun WifiHomeScreen(nav: NavController,
 
 ) {
     //can change back later to true !!!!!!!!!!
-    var wifiOn by remember { mutableStateOf(true) }
+    var wifiOn by remember { mutableStateOf(false) }
 
     val networks = remember {
         listOf(
@@ -99,7 +99,7 @@ fun WifiHomeScreen(nav: NavController,
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .anchorId("Wifi.OnOffButton")
+                    .anchorId("Wifi.OnOffRow")
             ) {
                 Row(
                     modifier = Modifier
@@ -125,7 +125,7 @@ fun WifiHomeScreen(nav: NavController,
                         onCheckedChange = {
                             wifiOn = it
                             TTS.speak(if (it) "Wi-Fi turned on." else "Wi-Fi turned off.")
-                            onTogglePressed("Wifi.OnOffButton", it)
+                            onTogglePressed("Wifi.WifiToggle", it)
                         }
 
                     )
