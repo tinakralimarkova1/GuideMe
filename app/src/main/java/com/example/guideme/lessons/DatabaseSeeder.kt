@@ -36,13 +36,13 @@ object DatabaseSeeder {
 
                         ),
                     DbLesson(
-                        id = 2002,
+                        id = 1002,
                         name =  "Taking a Picture",
                         difficulty = 1,
 
                         ),
                     DbLesson(
-                        id = 2003,
+                        id = 1003,
                         name =  "Zooming in",
                         difficulty = 2,
 
@@ -201,7 +201,43 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 1002,
                         stepNo = 1,
-                        text = "press capture.",
+                        text = "This lesson will teach you how to take a picture",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 2,
+                        text = "This is the pretend camera app. In the real app, instead of the tree, the real environment would show up.",
+                        anchorId = "Camera.Screen",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 3,
+                        text = "Your phone has 2 cameras: one in the front and one in the back. The app will use the back camera by default.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 4,
+                        text = "This lesson will teach you how to take a photo, later we will learn how to switch cameras.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 5,
+                        text = "To take a photo, you need to press this button. It's called the capture button. Press the capture button to take a photo.",
                         anchorId = "Camera.Capture",
                         type = StepType.TapTarget.name,
                         outlineColor = null
@@ -209,10 +245,37 @@ object DatabaseSeeder {
                     ),
                     DbInstruction(
                         lessonsId = 1002,
-                        stepNo = 2,
-                        text = "flash",
-                        anchorId = "Camera.FlashButton",
+                        stepNo = 6,
+                        text = "Good job! You have taken a photo",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 7,
+                        text = "In the real app, you can press this button, the gallery button, to look through the photos you have taken.",
+                        anchorId = "Camera.Gallery",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 8,
+                        text = "Tap the gallery button, it won't do anything since we didn't really take a photo. If you did this in the real app it would open the photo gallery.",
+                        anchorId = "Camera.Gallery",
                         type = StepType.TapTarget.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 9,
+                        text = "Exellent! You now know how to take a photo and how to view your photo gallery.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
                         outlineColor = null
 
                     ),
