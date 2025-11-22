@@ -109,7 +109,7 @@ fun LessonHost(
                 )
                 InstructionOverlay(
                     text = current.text,
-                    feedback = state.feedback,
+                    feedback = if (current.type == StepType.Acknowledge) null else state.feedback,
                     showOk = current.type == StepType.Acknowledge,
                     onOk = if (current.type == StepType.Acknowledge) {
                         { vm.onUserEvent(UserEvent.Acknowledge) }

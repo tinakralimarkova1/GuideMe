@@ -57,7 +57,7 @@ fun WifiHomeScreen(nav: NavController,
 
 ) {
     //can change back later to true !!!!!!!!!!
-    var wifiOn by remember { mutableStateOf(false) }
+    var wifiOn by remember { mutableStateOf(true) }
 
     val networks = remember {
         listOf(
