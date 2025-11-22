@@ -279,6 +279,64 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------Camera Lesson 1003: Zooming in-------
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 1,
+                        text = "This lesson will teach you how to zoom in before taking a picture.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 2,
+                        text = "Sometimes your subject is far away. Zooming in makes it look closer without you moving.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 3,
+                        text = "This is the zoom slider. Sliding it up will zoom in.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 4,
+                        text = "Slide the zoom slider up to zoom in.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 5,
+                        text = "Great job. Now the picture looks closer because you zoomed in.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 6,
+                        text = "Now tap the capture button to take a zoomed-in photo.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 7,
+                        text = "Excellent! You have learned how to zoom in and take a picture.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
 
                     //-------Phone Lesson 2001 Instrucitons-------
