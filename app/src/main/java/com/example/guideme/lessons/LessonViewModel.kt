@@ -58,7 +58,10 @@ class LessonViewModel(
         val s = uiState
         val step = s.steps.getOrNull(s.currentIndex) ?: return
 
-
+        if (step.type == StepType.Acknowledge && evt !is UserEvent.Acknowledge) {
+            // Do not set feedback, do not increment errors; just ignore.
+            return
+        }
 
         // --- 1. Handle WRONG EVENT TYPE early ---
         val isEventTypeCorrect = when(step.type) {
@@ -219,6 +222,15 @@ class LessonViewModel(
                 // User is just reading / pressing OK, don't block fake UI
                 false
             }
+        }
+    }
+    fun clearFeedback() {
+        val s = uiState
+        if (s.feedback != null || s.tappedIncorrectAnchorId != null) {
+            uiState = s.copy(
+                feedback = null,
+                tappedIncorrectAnchorId = null
+            )
         }
     }
 

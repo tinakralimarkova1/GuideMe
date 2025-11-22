@@ -15,13 +15,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -39,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.guideme.lessons.anchorId
+import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
 
 data class FakeWifi(val ssid: String, val secured: Boolean, val strength: Int)
@@ -71,19 +69,8 @@ fun WifiHomeScreen(nav: NavController,
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Wi-Fi", fontWeight = FontWeight.SemiBold) },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        TTS.speak("Returning to previous screen.")
-                        nav.popBackStack()
-                    }) { Icon(Icons.Default.ArrowBack, contentDescription = "Back") }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        TTS.speak("Open Wi-Fi tips.")
-                        nav.navigate("tips")
-                    }) { Icon(Icons.Default.Settings, contentDescription = "Tips") }
-                }
+                title = { Text("", fontWeight = FontWeight.SemiBold) },
+
             )
         }
     ) { padding ->
@@ -99,7 +86,7 @@ fun WifiHomeScreen(nav: NavController,
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .anchorId("Wifi.OnOffButton")
+                    .anchorId("Wifi.OnOffRow")
             ) {
                 Row(
                     modifier = Modifier
@@ -120,12 +107,14 @@ fun WifiHomeScreen(nav: NavController,
                         }
                     }
                     Switch(
-                        modifier = Modifier.anchorId("Wifi.WifiToggle"),
+                        modifier = Modifier
+                            .anchorId("Wifi.WifiToggle")
+                            .flash(tappedIncorrectAnchor,"Wifi.WifiToggle"),
                         checked = wifiOn,
                         onCheckedChange = {
                             wifiOn = it
                             TTS.speak(if (it) "Wi-Fi turned on." else "Wi-Fi turned off.")
-                            onTogglePressed("Wifi.OnOffButton", it)
+                            onTogglePressed("Wifi.WifiToggle", it)
                         }
 
                     )
@@ -143,14 +132,20 @@ fun WifiHomeScreen(nav: NavController,
                         ElevatedCard(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .anchorId(networkAnchorId)
+                                .flash(tappedIncorrectAnchor, networkAnchorId)
                                 .clickable {
-                                    onButtonPressed(networkAnchorId)
-
-                                    TTS.speak("Opening connect screen for ${n.ssid}.")
-                                    val encoded = java.net.URLEncoder.encode(n.ssid, "UTF-8")
-                                    nav.navigate("connect?ssid=$encoded")
+                                    if (!isAnchorAllowed(networkAnchorId)) {
+                                        // Wrong step: report tap only
+                                        onButtonPressed(networkAnchorId)
+                                    } else {
+                                        //Correct step: report + navigate
+                                        onButtonPressed(networkAnchorId)
+                                        TTS.speak("Opening connect screen for ${n.ssid}.")
+                                        val encoded = java.net.URLEncoder.encode(n.ssid, "UTF-8")
+                                        nav.navigate("connect?ssid=$encoded")
+                                    }
                                 }
-                                .anchorId("Wifi.Network.${n.ssid}")
                         ) {
                             Row(
                                 modifier = Modifier
