@@ -570,17 +570,18 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 3002,
                         stepNo = 1,
-                        text = "Turn Wifi on",
-                        anchorId = "Wifi.WifiToggle",
-                        type = StepType.Toggle.name,
+                        text = "In this lesson, you will learn how to turn on the WiFi.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
                         outlineColor = null,
-                        expectedText = "true"
+
 
                     ),
+
                     DbInstruction(
                         lessonsId = 3002,
                         stepNo = 2,
-                        text = "In order to access the internet, you must be connected to the WiFi.",
+                        text = "Wifi is a wireless connection that allows your phone to access the Internet.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
@@ -589,7 +590,53 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 3002,
                         stepNo = 3,
+                        text = "In order to access the internet, you must be connected to the WiFi.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 4,
                         text = "Many apps need to be connected to Wifi to work. Such apps include Google, What's App, Google Maps, and others",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 5,
+                        text = "Currently, the Wifi is off. You can tell it is off because no Wifi networks are showing and it says 'off'.",
+                        anchorId = "Wifi.OnOffRow",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 6,
+                        text = "In order to turn it on, you must tap this toggle. Give it a try!",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = null,
+                        expectedText = "true"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 7,
+                        text = "Good job! You have turned on the Wifi. However, this does not mean you are already connected to the Wifi.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 8,
+                        text = "You will learn how to connect to the Wifi and gain Internet access in the next lesson.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
