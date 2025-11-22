@@ -134,7 +134,7 @@ fun CameraScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Camera",
+                "",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
@@ -240,7 +240,7 @@ fun CameraScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(bottom = 148.dp, start = 16.dp, end = 16.dp),
+                .padding(bottom = 188.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(

@@ -16,9 +16,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,6 +44,7 @@ import com.example.guideme.phone.CameraScreen
 import com.example.guideme.phone.PhoneNavHost
 import com.example.guideme.ui.theme.InstructionTextBoxColor
 import com.example.guideme.ui.theme.MainBackgroundGradient
+import com.example.guideme.ui.theme.MainButtonColor
 import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.delay
@@ -56,6 +63,8 @@ fun LessonHost(
     )
 
     val state = vm.uiState
+
+    var showExitDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(appName, lessonId) { vm.loadLesson(appName, lessonId) }
 
@@ -114,6 +123,7 @@ fun LessonHost(
             // Instruction overlay + highlight while not completed
             if (state.steps.isNotEmpty()) {
                 val current = state.steps[state.currentIndex]
+                //show button
                 LessonHighlightOverlay(
                     anchorId = current.anchorId,
                     outlineColor = current.outlineColor?.let { Color(it) } ?: Color(0xFFFFC107)
@@ -121,6 +131,7 @@ fun LessonHost(
                 if (current.type == StepType.Acknowledge) {
                     TapBlockerOverlay()
                 }
+                //display instructions
                 InstructionOverlay(
                     text = current.text,
                     showOk = current.type == StepType.Acknowledge,
@@ -128,12 +139,32 @@ fun LessonHost(
                         { vm.onUserEvent(UserEvent.Acknowledge) }
                     } else null
                 )
+                //display feedbacj
                 if (state.feedback != null) {
                     FeedbackOverlay(
                         message = state.feedback,
                         onDismiss = { vm.clearFeedback() }
                     )
                 }
+                //back button
+                IconButton(
+                    onClick = { showExitDialog = true },
+                    colors = IconButtonColors(containerColor = MainButtonContentColor, contentColor = MainButtonContentColor,MainButtonColor,MainButtonContentColor ),
+
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(vertical = 30.dp, horizontal = 15.dp)
+                        .height(50.dp)
+                        .width(100.dp)
+
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Back to menu",
+                        tint = MainButtonColor
+                    )
+                }
+
             }
         }
     }
@@ -182,7 +213,8 @@ private fun InstructionOverlay(
                 Text(
                     text = text,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MainButtonContentColor
+                        color = MainButtonContentColor,
+
                     ),
                     textAlign = TextAlign.Center
                 )
@@ -198,7 +230,7 @@ private fun InstructionOverlay(
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.fillMaxWidth(0.6f),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
+                            containerColor = MainButtonContentColor,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
