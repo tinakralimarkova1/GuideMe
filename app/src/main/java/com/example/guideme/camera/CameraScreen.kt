@@ -194,30 +194,41 @@ fun CameraScreen(
                 Icon(Icons.Filled.Cameraswitch, contentDescription = "Switch camera")
             }
 
+            val zoomAnchorId = "Camera.ZoomSlider"
+
             Box(
                 modifier = Modifier
                     .height(150.dp)
                     .width(140.dp)
-                    .anchorId("Camera.ZoomSlider")
-
+                    .anchorId(zoomAnchorId)
+                    .flash(tappedIncorrectAnchor, zoomAnchorId)   // 🔹 add flash here
             ) {
                 Slider(
                     value = zoom,
-                    onValueChange = { zoom = it },
+                    onValueChange = { newValue ->
+                        if (isAnchorAllowed(zoomAnchorId)) {
+                            zoom = newValue
+                        }
+                    },
                     valueRange = 1.0f..5.0f,
                     steps = 3,
                     modifier = Modifier
                         .fillMaxSize()
                         .height(100.dp)
-
                         .graphicsLayer(rotationZ = -90f)
                         .height(60.dp),
                     onValueChangeFinished = {
-                        onAnchorTapped("Camera.ZoomValue$zoom")
-                        TTS.speak(String.format("%.1fx", zoom))
+                        // 🔹 Use the SAME anchor ID as the Box above
+                        if (!isAnchorAllowed(zoomAnchorId)) {
+                            onAnchorTapped(zoomAnchorId)
+                        } else {
+                            onAnchorTapped(zoomAnchorId)
+                            TTS.speak(String.format("%.1fx", zoom))
+                        }
                     }
                 )
             }
+
             Text(
                 String.format("%.1fx", zoom),
                 color = Color.White,
@@ -291,7 +302,8 @@ fun CameraScreen(
                                 }
                             }
                         }
-                        .anchorId(captureAnchorId),
+                        .anchorId(captureAnchorId)
+                        .flash(tappedIncorrectAnchor,captureAnchorId),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("●", style = MaterialTheme.typography.titleLarge, color = Color.White)
