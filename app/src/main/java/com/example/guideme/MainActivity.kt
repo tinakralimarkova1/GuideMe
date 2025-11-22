@@ -1,9 +1,12 @@
 package com.example.guideme
 
+import android.Manifest
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,10 +33,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +49,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +64,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.guideme.NLP.IntentClassifier
@@ -69,7 +75,6 @@ import com.example.guideme.lessons.CompletionDao
 import com.example.guideme.lessons.CustomerDao
 import com.example.guideme.lessons.DatabaseSeeder
 import com.example.guideme.lessons.DbCustomer
-import com.example.guideme.lessons.DbMissingLesson
 import com.example.guideme.lessons.GuideMeDatabase
 import com.example.guideme.lessons.LessonDao
 import com.example.guideme.lessons.LessonHost
@@ -86,10 +91,6 @@ import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.core.content.ContextCompat
 
 
 class MainActivity : ComponentActivity() {
@@ -113,7 +114,9 @@ class MainActivity : ComponentActivity() {
 
         val lessonsRepo: LessonsRepository = RoomLessonsRepository(
             instructionDao = db.instructionDao(),
-            completionDao = db.completionDao()
+            completionDao = db.completionDao(),
+            defaultButtonDao = db.defaultButtonDao()
+
         )
 
 
@@ -287,62 +290,16 @@ fun MainScreen(
                         lessonTitles = lessonDao.getAllLessons().map { it.name }
                     }
 
-                    val recommender = remember(lessonTitles) {
-                        com.example.guideme.NLP.IntentLessonRecommender(lessonTitles)
-                    }
-
                     var showTextDialog by remember { mutableStateOf(false) }
                     var typedQuery by remember { mutableStateOf("") }
-
-                    fun handleUserQuery(query: String) {
-                        val suggestion: String? = recommender.recommendLesson(query)
-                        if (suggestion != null) {
-                            TTS.speak("I found a lesson: $suggestion.")
-                            scope.launch {
-                                val match = lessonDao.getAllLessons().firstOrNull { it.name == suggestion }
-                                if (match != null) {
-                                    selectedApp = inferAppFromId(match.id)
-                                    selectedLessonId = match.id
-                                    currentScreen = "lesson"
-                                }
-                            }
-                        } else {
-                            TTS.speak("Sorry, we currently don't have a lesson on this.")
-                            scope.launch { missingLessonDao.insertMissingLesson(DbMissingLesson(queryText = query)) }
-                        }
-                    }
 
                     SearchMenu(
                         modifier = modifier
                             .fillMaxSize()
                             .padding(24.dp),
-                        onVoiceSearch = { TTS.speak("Say your question after the beep.") },
+                        onVoiceSearch = {  },
                         onTextSearch = { TTS.speak("Opening text search.") }
                     )
-
-                    if (showTextDialog) {
-                        AlertDialog(
-                            onDismissRequest = { showTextDialog = false },
-                            title = { Text("Type your question") },
-                            text = {
-                                OutlinedTextField(
-                                    value = typedQuery,
-                                    onValueChange = { typedQuery = it },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            },
-                            confirmButton = {
-                                TextButton(onClick = {
-                                    showTextDialog = false
-                                    if (typedQuery.isNotBlank()) handleUserQuery(typedQuery)
-                                    typedQuery = ""
-                                }) { Text("OK") }
-                            },
-                            dismissButton = {
-                                TextButton(onClick = { showTextDialog = false; typedQuery = "" }) { Text("Cancel") }
-                            }
-                        )
-                    }
                 }
 
                 BackHandler {
@@ -774,6 +731,7 @@ private fun SearchMenu(
     var resultText by rememberSaveable { mutableStateOf<String?>(null) }
     var errorText by rememberSaveable { mutableStateOf<String?>(null) }
     var typingMode by rememberSaveable { mutableStateOf(false) }
+    var isClassifying by rememberSaveable { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
@@ -793,11 +751,13 @@ private fun SearchMenu(
         errorText = null
         resultText = null
         queryText = ""
+        typingMode = false
 
         // check if permission is already granted
         when (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)){
             PackageManager.PERMISSION_GRANTED -> {
                 // permission is already available
+                TTS.speak("Say your question after the beep...")
                 speech.start()
             }
             else -> {
@@ -813,17 +773,21 @@ private fun SearchMenu(
             queryText = text
             errorText = null
             resultText = "Thinking..."
+            isClassifying = true
             scope.launch {
-                val prediction = classifier.classify(text)
-                if (prediction == null || prediction.confidence < 0.6f) {
-                    resultText = null
-                    errorText = "Sorry, we do not have a lesson on that yet"
-                } else {
-                    // map label to lesson name
-                    val lessonName = prediction.label
-                    print(lessonName)
-
-                    resultText = "I found a lesson for what you need:\n$lessonName\n"
+                try {
+                    val prediction = classifier.classify(text)
+                    if (prediction == null || prediction.confidence < 0.6f) {
+                        resultText = null
+                        errorText = "Sorry, we do not have a lesson on that yet"
+                    } else {
+                        // map label to lesson name
+                        val lessonName = prediction.label
+                        print(lessonName)
+                        resultText = "Lesson suggested:\n$lessonName\n"
+                    }
+                } finally {
+                    isClassifying = false
                 }
             }
         }
@@ -882,6 +846,9 @@ private fun SearchMenu(
             // text button
             Button(
                 onClick = {
+                    errorText = null
+                    resultText = null
+                    queryText = ""
                     onTextSearch()
                     typingMode = true
                 },
@@ -910,6 +877,7 @@ private fun SearchMenu(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 30.dp)
+
                 ){
                     OutlinedTextField(
                         value = queryText,
@@ -924,30 +892,42 @@ private fun SearchMenu(
                     Button(
                         onClick = {
                             val text = queryText.trim()
-                            if (text.isNotEmpty()) {
+                            if (text.isNotEmpty() && !isClassifying) { // prevent re-clicks
                                 errorText = null
-                                resultText = "Thinking..."
+                                resultText = null // clear previous card results
+                                isClassifying = true
                                 scope.launch {
-                                    val prediction = classifier.classify(text)
-                                    if (prediction == null || prediction.confidence < 0.6f) {
-                                        resultText = null
-                                        errorText = "Sorry, we don't have a lesson on that yet"
-                                    } else {
-                                        val lessonName = prediction.label
-                                        resultText = "Suggested lesson:\n$lessonName\n"
+                                    try { // use try-finally to guarantee state is reset
+                                        val prediction = classifier.classify(text)
+                                        if (prediction == null || prediction.confidence < 0.6f) {
+                                            resultText = null
+                                            errorText = "Sorry, we don't have a lesson on that yet"
+                                        } else {
+                                            val lessonName = prediction.label
+                                            resultText = "Suggested lesson:\n$lessonName\n"
+                                        }
+                                    } finally {
+                                        isClassifying = false
                                     }
                                 }
                             }
-                        }
+                        },
+                        enabled = !isClassifying,
+                        modifier = Modifier.width(550.dp),
+                        shape = RoundedCornerShape(40.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MainButtonColor,
+                            contentColor = MainButtonContentColor
+                        )
                     ) {
-                        Text("Search")
+                        Text(if (isClassifying) "Thinking..." else "Search")
                     }
                 }
             }
             // result or error display
             if (!queryText.isBlank()) {
                 Text(
-                    text = "You asked: \"$queryText\"",
+                    text = "You asked: \"$queryText\"" ,
                     color = MainButtonContentColor,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(horizontal = 30.dp)
@@ -958,13 +938,16 @@ private fun SearchMenu(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 30.dp),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MainButtonColor
+                    )
                 ) {
                     Text(
                         text = msg,
                         modifier = Modifier.padding(16.dp),
                         color = MainButtonContentColor,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.labelMedium
                     )
                 }
             }
@@ -1011,10 +994,22 @@ fun PreviewLessonsMenu() {
     }
 }
 
-@Preview(showBackground = true, name = "Search Menu")
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewSearchMenu() {
-    GuideMeTheme {
-        SearchMenu(onVoiceSearch = {}, onTextSearch = {})
+private fun PreviewSearchMenu() {
+    // Fake activity wrapper so `context as Activity` inside SearchMenu does NOT crash
+    val fakeActivity = object : Activity() {}
+
+    CompositionLocalProvider(
+        LocalContext provides fakeActivity
+    ) {
+        MaterialTheme {
+            SearchMenu(
+                modifier = Modifier.fillMaxSize(),
+                onVoiceSearch = {},
+                onTextSearch = {},
+
+            )
+        }
     }
 }
