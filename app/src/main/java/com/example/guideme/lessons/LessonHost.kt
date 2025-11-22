@@ -1,6 +1,10 @@
 package com.example.guideme.lessons
 
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,7 +24,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +40,7 @@ import com.example.guideme.ui.theme.InstructionTextBoxColor
 import com.example.guideme.ui.theme.MainBackgroundGradient
 import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.wifi.WifiNavHost
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -121,6 +129,12 @@ fun LessonHost(
                         { vm.onUserEvent(UserEvent.Acknowledge) }
                     } else null
                 )
+                if (state.feedback != null) {
+                    FeedbackOverlay(
+                        message = state.feedback,
+                        onDismiss = { vm.clearFeedback() }
+                    )
+                }
             }
         }
     }
@@ -175,16 +189,8 @@ private fun InstructionOverlay(
                     textAlign = TextAlign.Center
                 )
 
-                // Error / feedback text
-                if (feedback != null) {
-                    Spacer(Modifier.height(10.dp))
-                    Text(
-                        text = feedback,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center
-                    )
-                }
+
+
 
                 // OK button (for Acknowledge step)
                 if (showOk && onOk != null) {
@@ -237,3 +243,48 @@ private fun TapBlockerOverlay() {
     )
 }
 
+@Composable
+private fun FeedbackOverlay(
+    message: String,
+    onDismiss: () -> Unit,
+    displayDurationMillis: Long = 1500L,
+    fadeDurationMillis: Int = 300
+) {
+    var visible by remember(message) { mutableStateOf(true) }
+
+    // Handle timing: show → wait → fade out → then clear feedback in VM
+    LaunchedEffect(message) {
+
+        visible = true                // ensure it's visible when message changes
+        delay(displayDurationMillis)  // keep fully visible
+        visible = false               // trigger fade out
+        delay(fadeDurationMillis.toLong())
+        onDismiss()                   // actually clear state.feedback in VM
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(animationSpec = tween(durationMillis = fadeDurationMillis)),
+            exit = fadeOut(animationSpec = tween(durationMillis = fadeDurationMillis))
+        ) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.96f),
+                tonalElevation = 6.dp,
+                shadowElevation = 10.dp
+            ) {
+                Text(
+                    text = message,
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 14.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}

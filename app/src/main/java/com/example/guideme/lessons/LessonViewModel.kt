@@ -224,5 +224,14 @@ class LessonViewModel(
             }
         }
     }
+    fun clearFeedback() {
+        val s = uiState
+        if (s.feedback != null || s.tappedIncorrectAnchorId != null) {
+            uiState = s.copy(
+                feedback = null,
+                tappedIncorrectAnchorId = null
+            )
+        }
+    }
 
 }
