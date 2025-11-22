@@ -45,6 +45,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -287,7 +288,9 @@ fun MainScreen(
                     SearchMenu(
                         modifier = modifier.fillMaxSize().padding(24.dp),
                         onVoiceSearch = { TTS.speak("Voice search coming soon.") },
-                        onTextSearch = { TTS.speak("Text search coming soon.") }
+                        onTextSearch = { TTS.speak("Text search coming soon.") },
+                        onBack = {TTS.speak("Returning to welcome.")
+                            currentScreen = "welcome"}
                     )
                 } else {
                     val scope = rememberCoroutineScope()
@@ -306,7 +309,9 @@ fun MainScreen(
                             .fillMaxSize()
                             .padding(24.dp),
                         onVoiceSearch = {  },
-                        onTextSearch = { TTS.speak("Opening text search.") }
+                        onTextSearch = { TTS.speak("Opening text search.") },
+                        onBack = {TTS.speak("Returning to welcome.")
+                            currentScreen = "welcome"}
                     )
                 }
 
@@ -756,7 +761,8 @@ private fun ExpandableLessonSection(
 private fun SearchMenu(
     modifier: Modifier = Modifier,
     onVoiceSearch: () -> Unit,
-    onTextSearch: () -> Unit
+    onTextSearch: () -> Unit,
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = context as Activity
@@ -835,6 +841,31 @@ private fun SearchMenu(
             .fillMaxSize()
             .background(MainBackgroundGradient)
     ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(vertical = 30.dp, horizontal = 15.dp)
+                .height(35.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MainButtonContentColor)
+                .clickable { onBack() }
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = MainButtonColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Back",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MainButtonColor,
+                    fontSize = 20.sp
+                )
+            )
+        }
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically),
@@ -923,9 +954,16 @@ private fun SearchMenu(
                             queryText = it
                             errorText = null
                         },
-                        label = { Text("Type here") },
+                        label = { Text("Type here", color = MainButtonContentColor) },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MainButtonContentColor,
+                            unfocusedBorderColor = MainButtonContentColor,
+                            disabledBorderColor = MainButtonContentColor.copy(alpha = 0.5f),
+                            errorBorderColor = MaterialTheme.colorScheme.error
+                        )
+
                     )
                     Button(
                         onClick = {
@@ -1046,6 +1084,7 @@ private fun PreviewSearchMenu() {
                 modifier = Modifier.fillMaxSize(),
                 onVoiceSearch = {},
                 onTextSearch = {},
+                onBack = {}
 
             )
         }
