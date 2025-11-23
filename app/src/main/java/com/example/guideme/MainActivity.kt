@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Mic
@@ -43,6 +45,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -59,11 +62,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
@@ -255,6 +260,10 @@ fun MainScreen(
                         selectedLessonId = lessonId
                         currentScreen = "lesson"
                     },
+                    onBack = {
+                        TTS.speak("Returning to welcome.")
+                        currentScreen = "welcome"
+                    }
 //                    onOpenCamera = {
 //                        TTS.speak("Opening Camera.")
 //                        currentScreen = "camera"
@@ -279,7 +288,9 @@ fun MainScreen(
                     SearchMenu(
                         modifier = modifier.fillMaxSize().padding(24.dp),
                         onVoiceSearch = { TTS.speak("Voice search coming soon.") },
-                        onTextSearch = { TTS.speak("Text search coming soon.") }
+                        onTextSearch = { TTS.speak("Text search coming soon.") },
+                        onBack = {TTS.speak("Returning to welcome.")
+                            currentScreen = "welcome"}
                     )
                 } else {
                     val scope = rememberCoroutineScope()
@@ -298,7 +309,9 @@ fun MainScreen(
                             .fillMaxSize()
                             .padding(24.dp),
                         onVoiceSearch = {  },
-                        onTextSearch = { TTS.speak("Opening text search.") }
+                        onTextSearch = { TTS.speak("Opening text search.") },
+                        onBack = {TTS.speak("Returning to welcome.")
+                            currentScreen = "welcome"}
                     )
                 }
 
@@ -574,6 +587,7 @@ private fun LessonsMenu(
     modifier: Modifier = Modifier,
     lessonDao: LessonDao? = null,
     onStartLesson: (appName: String, lessonId: Int) -> Unit,
+    onBack: () -> Unit = {}
     //if need to check ui of apps seperately
 //    onOpenCamera: () -> Unit = {},
 //    onOpenPhone: () -> Unit = {},
@@ -603,9 +617,36 @@ private fun LessonsMenu(
         modifier = modifier
             .fillMaxSize()
             .background(MainBackgroundGradient)
+
     ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(vertical = 30.dp, horizontal = 15.dp)
+                .height(35.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MainButtonContentColor)
+                .clickable { onBack() }
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = MainButtonColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Back",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MainButtonColor,
+                    fontSize = 20.sp
+                )
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(top = 50.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -635,7 +676,9 @@ private fun LessonsMenu(
                 label = { label(it) },
             ) { id -> onStartLesson("WiFi", id) }
 
-            Spacer(Modifier.height(12.dp))
+
+
+
         }
     }
 }
@@ -718,7 +761,8 @@ private fun ExpandableLessonSection(
 private fun SearchMenu(
     modifier: Modifier = Modifier,
     onVoiceSearch: () -> Unit,
-    onTextSearch: () -> Unit
+    onTextSearch: () -> Unit,
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = context as Activity
@@ -797,6 +841,31 @@ private fun SearchMenu(
             .fillMaxSize()
             .background(MainBackgroundGradient)
     ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(vertical = 30.dp, horizontal = 15.dp)
+                .height(35.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MainButtonContentColor)
+                .clickable { onBack() }
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = MainButtonColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Back",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MainButtonColor,
+                    fontSize = 20.sp
+                )
+            )
+        }
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically),
@@ -885,9 +954,16 @@ private fun SearchMenu(
                             queryText = it
                             errorText = null
                         },
-                        label = { Text("Type here") },
+                        label = { Text("Type here", color = MainButtonContentColor) },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MainButtonContentColor,
+                            unfocusedBorderColor = MainButtonContentColor,
+                            disabledBorderColor = MainButtonContentColor.copy(alpha = 0.5f),
+                            errorBorderColor = MaterialTheme.colorScheme.error
+                        )
+
                     )
                     Button(
                         onClick = {
@@ -1008,6 +1084,7 @@ private fun PreviewSearchMenu() {
                 modifier = Modifier.fillMaxSize(),
                 onVoiceSearch = {},
                 onTextSearch = {},
+                onBack = {}
 
             )
         }

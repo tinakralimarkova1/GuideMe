@@ -284,14 +284,22 @@ private fun InstructionOverlay(
 fun LessonCompleteScreen(onExit: () -> Unit) {
     // Full-screen, independent of the fake app UI
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.surface
+        modifier = Modifier.fillMaxSize().background(MainBackgroundGradient),
+        //color = MainBackgroundGradient
     ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxSize().background(MainBackgroundGradient), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Lesson complete!", style = MaterialTheme.typography.headlineSmall)
-                Spacer(Modifier.height(12.dp))
-                Button(onClick = onExit) { Text("Back to menu") }
+                Text("Lesson complete!", style = MaterialTheme.typography.headlineMedium, color = MainButtonContentColor)
+                Spacer(Modifier.height(30.dp))
+                Button(
+                    onClick = onExit,
+                    colors = ButtonDefaults.buttonColors(
+                        contentColor = MainButtonColor,
+                        containerColor = MainButtonContentColor
+                    )
+
+                ) { Text("Back to menu",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 25.sp) ) }
             }
         }
     }
