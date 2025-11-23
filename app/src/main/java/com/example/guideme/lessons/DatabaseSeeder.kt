@@ -714,11 +714,17 @@ object DatabaseSeeder {
                 listOf(
                     // Connect to Wi-Fi lesson: Wi-Fi toggle should start ON
                     DbDefaultButton(
-                        lessonsId = 3003,
+                        lessonsId = 3002,
                         buttonName = "Wifi.OnOffButton",
-                        state = "true"
+                        state = "false"
+                    ),
+                    DbDefaultButton(
+                        lessonsId = 2001,                // your lesson id
+                        buttonName = "DialPad.NumberField",
+                        state = "112345"
+                    ),
+
                     )
-                )
             )
         }
 
