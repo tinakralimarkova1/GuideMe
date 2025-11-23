@@ -59,7 +59,9 @@ fun LessonHost(
     lessonId: Int,
     repo: LessonsRepository,
     userEmail: String,
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    onStartLesson: (String, Int) -> Unit
+
 ) {
     val vm: LessonViewModel = viewModel(
         factory = LessonViewModelFactory(repo, userEmail)
@@ -77,7 +79,9 @@ fun LessonHost(
         if (state.completed) {
             // 🔁 Once done, show a *separate full-screen* screen
             LessonCompleteScreen(
-                onExit = onExit
+                state = state,
+                onExit = onExit,
+                onStartLesson = onStartLesson
             )
         } else {
             // 🚧 Only show your fake UI while in-progress
@@ -283,29 +287,88 @@ private fun InstructionOverlay(
 }
 
 @Composable
-fun LessonCompleteScreen(onExit: () -> Unit) {
-    // Full-screen, independent of the fake app UI
-    Surface(
-        modifier = Modifier.fillMaxSize().background(MainBackgroundGradient),
-        //color = MainBackgroundGradient
+fun LessonCompleteScreen(
+    state: LessonState,
+    onExit: () -> Unit,
+    onStartLesson: (String, Int) -> Unit
+) {
+    // Outer Box: gradient already provided by LessonHost
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Box(Modifier.fillMaxSize().background(MainBackgroundGradient), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Lesson complete!", style = MaterialTheme.typography.headlineMedium, color = MainButtonContentColor)
-                Spacer(Modifier.height(30.dp))
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 260.dp),
+            shape = RoundedCornerShape(24.dp),
+            tonalElevation = 6.dp,
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Lesson complete!",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                Text("Time spent: ${state.timeSpentSeconds ?: 0} seconds")
+                Text("Errors: ${state.errorCount}")
+                Text("Attempts: ${state.attempts}")
+
+                Spacer(Modifier.height(20.dp))
+
+                if (state.recommendedLessons.isNotEmpty()) {
+                    Text(
+                        text = "We recommend trying these next:",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(Modifier.height(8.dp))
+
+                    state.recommendedLessons.forEach { rec ->
+                        Button(
+                            onClick = { onStartLesson(rec.appName, rec.id) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MainButtonColor,
+                                contentColor = MainButtonContentColor
+                            )
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(rec.name, style = MaterialTheme.typography.titleSmall)
+                                Text(rec.appName, style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+                }
+
                 Button(
                     onClick = onExit,
                     colors = ButtonDefaults.buttonColors(
-                        contentColor = MainButtonColor,
-                        containerColor = MainButtonContentColor
+                        containerColor = MainButtonColor,
+                        contentColor = MainButtonContentColor
                     )
-
-                ) { Text("Back to menu",
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 25.sp) ) }
+                ) {
+                    Text("Back to lessons")
+                }
             }
         }
     }
 }
+
+
 
 @Composable
 private fun TapBlockerOverlay() {

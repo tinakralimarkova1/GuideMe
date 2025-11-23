@@ -772,6 +772,51 @@ object DatabaseSeeder {
                         lessonId = 2,    // Wi-Fi
                         prereqId = 1,    // Phone
                         priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 1002,
+                        prereqId = 1001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 1003,
+                        prereqId = 1002,
+                        priority = 2
+                    ),
+                    DbPreReq(
+                        lessonId = 1003,
+                        prereqId = 1001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 2002,
+                        prereqId = 2001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 2003,
+                        prereqId = 2002,
+                        priority = 2
+                    ),
+                    DbPreReq(
+                        lessonId = 2003,
+                        prereqId = 2001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 3002,
+                        prereqId = 1001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 3003,
+                        prereqId = 1002,
+                        priority = 2
+                    ),
+                    DbPreReq(
+                        lessonId =3003,
+                        prereqId = 1001,
+                        priority = 1
                     )
                 )
             )

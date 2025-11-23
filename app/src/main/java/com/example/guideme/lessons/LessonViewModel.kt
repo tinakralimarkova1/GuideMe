@@ -155,19 +155,29 @@ class LessonViewModel(
         // ---- 4. Correct action ----
         val next = s.currentIndex + 1
         val finished = next >= s.steps.size
-        val nextAnchor = s.steps.getOrNull((next))
+        val nextAnchor = s.steps.getOrNull(next)
+
+        var duration: Int? = null
 
         if (finished && !s.completed) {
-            val duration = ((System.currentTimeMillis() - lessonStartTimeMillis) / 1000).toInt()
+            duration = ((System.currentTimeMillis() - lessonStartTimeMillis) / 1000).toInt()
+            val timeValue = duration
 
             viewModelScope.launch {
+                // Save completion record
                 repo.saveCompletion(
                     lessonId = s.lessonId,
                     status = "Completed",
-                    timeSpentSeconds = duration,
+                    timeSpentSeconds = timeValue ?: 0,
                     errorCount = errorCount,
                     attempts = attempts,
                     customerEmail = userEmail
+                )
+
+                // Compute recommendations and push into state
+                val recLessons = computeRecommendations(s.lessonId)
+                uiState = uiState.copy(
+                    recommendedLessons = recLessons
                 )
             }
         }
@@ -177,8 +187,12 @@ class LessonViewModel(
             completed = finished,
             feedback = null,
             correctAnchor = nextAnchor?.anchorId,
-            tappedIncorrectAnchorId = null
+            tappedIncorrectAnchorId = null,
+            timeSpentSeconds = duration ?: s.timeSpentSeconds,
+            errorCount = errorCount,
+            attempts = attempts
         )
+
     }
 
     private fun buildWrongTapId(evt: UserEvent): String? {
@@ -233,5 +247,52 @@ class LessonViewModel(
             )
         }
     }
+
+     //Recommend 3 lessons based on current and what user has finished
+     private suspend fun computeRecommendations(currentLessonId: Int): List<RecommendedLesson> {
+         val buckets = listOf(1000, 2000, 3000)          // 1xxx, 2xxx, 3xxx groups
+         val base = (currentLessonId / 1000) * 1000      // e.g. 2000
+         val index = currentLessonId % 1000              // e.g. 1, 2, 3
+         val email = userEmail
+
+         val recIds = mutableListOf<Int>()
+
+         // 1) Next lesson in same app (if any)
+         if (index > 0) {
+             recIds.add(base + index + 1)
+         }
+
+         // 2) For each other bucket, intro (…1) or …2 if intro is done
+         for (bucket in buckets) {
+             if (bucket == base) continue
+
+             val introId = bucket + 1          // 1001, 2001, 3001
+             val introDone = repo.hasCompletedLesson(introId, email)
+             val candidate = if (!introDone) introId else introId + 1
+
+             if (!recIds.contains(candidate)) {
+                 recIds.add(candidate)
+             }
+         }
+
+         // Map to names + app names
+         val recLessons = recIds.take(3).mapNotNull { id ->
+             val db = repo.getLessonById(id) ?: return@mapNotNull null
+             val appName = when (id / 1000) {
+                 1 -> "Camera"
+                 2 -> "Phone"
+                 3 -> "WiFi"
+                 else -> "Phone"
+             }
+             RecommendedLesson(
+                 id = id,
+                 appName = appName,
+                 name = db.name
+             )
+         }
+
+         return recLessons
+     }
+
 
 }
