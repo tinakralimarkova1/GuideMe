@@ -118,7 +118,8 @@ fun LessonHost(
                     tappedIncorrectAnchor = state.tappedIncorrectAnchorId,
                     isAnchorAllowed = { anchorId ->
                         vm.isButtonAllowed(anchorId)
-                    }
+                    },
+                    defaultStates = state.defaultButtonStates
 
                 )
                 else -> Text("No fake UI for $appName")
