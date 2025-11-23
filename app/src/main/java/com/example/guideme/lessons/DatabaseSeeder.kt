@@ -36,13 +36,13 @@ object DatabaseSeeder {
 
                         ),
                     DbLesson(
-                        id = 2002,
+                        id = 1002,
                         name =  "Taking a Picture",
                         difficulty = 1,
 
                         ),
                     DbLesson(
-                        id = 2003,
+                        id = 1003,
                         name =  "Zooming in",
                         difficulty = 2,
 
@@ -201,7 +201,43 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 1002,
                         stepNo = 1,
-                        text = "press capture.",
+                        text = "This lesson will teach you how to take a picture",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 2,
+                        text = "This is the pretend camera app. In the real app, instead of the tree, the real environment would show up.",
+                        anchorId = "Camera.Screen",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 3,
+                        text = "Your phone has 2 cameras: one in the front and one in the back. The app will use the back camera by default.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 4,
+                        text = "This lesson will teach you how to take a photo, later we will learn how to switch cameras.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 5,
+                        text = "To take a photo, you need to press this button. It's called the capture button. Press the capture button to take a photo.",
                         anchorId = "Camera.Capture",
                         type = StepType.TapTarget.name,
                         outlineColor = null
@@ -209,13 +245,98 @@ object DatabaseSeeder {
                     ),
                     DbInstruction(
                         lessonsId = 1002,
-                        stepNo = 2,
-                        text = "flash",
-                        anchorId = "Camera.FlashButton",
+                        stepNo = 6,
+                        text = "Good job! You have taken a photo",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 7,
+                        text = "In the real app, you can press this button, the gallery button, to look through the photos you have taken.",
+                        anchorId = "Camera.Gallery",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 8,
+                        text = "Tap the gallery button, it won't do anything since we didn't really take a photo. If you did this in the real app it would open the photo gallery.",
+                        anchorId = "Camera.Gallery",
                         type = StepType.TapTarget.name,
                         outlineColor = null
 
                     ),
+                    DbInstruction(
+                        lessonsId = 1002,
+                        stepNo = 9,
+                        text = "Exellent! You now know how to take a photo and how to view your photo gallery.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    //-------Camera Lesson 1003: Zooming in-------
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 1,
+                        text = "This lesson will teach you how to zoom in before taking a picture.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 2,
+                        text = "Sometimes your subject is far away. Zooming in makes it look closer without you moving.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 3,
+                        text = "This is the zoom slider. Sliding it up will zoom in.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 4,
+                        text = "Slide the zoom slider up to zoom in.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 5,
+                        text = "Great job. Now the picture looks closer because you zoomed in.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 6,
+                        text = "Now tap the capture button to take a zoomed-in photo.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1003,
+                        stepNo = 7,
+                        text = "Excellent! You have learned how to zoom in and take a picture.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
 
                     //-------Phone Lesson 2001 Instrucitons-------
@@ -507,17 +628,18 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 3002,
                         stepNo = 1,
-                        text = "Turn Wifi on",
-                        anchorId = "Wifi.OnOffButton",
-                        type = StepType.Toggle.name,
+                        text = "In this lesson, you will learn how to turn on the WiFi.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
                         outlineColor = null,
-                        expectedText = "true"
+
 
                     ),
+
                     DbInstruction(
                         lessonsId = 3002,
                         stepNo = 2,
-                        text = "In order to access the internet, you must be connected to the WiFi.",
+                        text = "Wifi is a wireless connection that allows your phone to access the Internet.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
@@ -526,7 +648,53 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 3002,
                         stepNo = 3,
+                        text = "In order to access the internet, you must be connected to the WiFi.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 4,
                         text = "Many apps need to be connected to Wifi to work. Such apps include Google, What's App, Google Maps, and others",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 5,
+                        text = "Currently, the Wifi is off. You can tell it is off because no Wifi networks are showing and it says 'off'.",
+                        anchorId = "Wifi.OnOffRow",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 6,
+                        text = "In order to turn it on, you must tap this toggle. Give it a try!",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = null,
+                        expectedText = "true"
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 7,
+                        text = "Good job! You have turned on the Wifi. However, this does not mean you are already connected to the Wifi.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 3002,
+                        stepNo = 8,
+                        text = "You will learn how to connect to the Wifi and gain Internet access in the next lesson.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null

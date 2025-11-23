@@ -87,7 +87,7 @@ fun DialPadScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Dial Pad", fontWeight = FontWeight.SemiBold) },
+                    title = { Text("", fontWeight = FontWeight.SemiBold) },
                     navigationIcon = {
                         IconButton(onClick = {
                             TTS.speak("Returning to previous screen.")
