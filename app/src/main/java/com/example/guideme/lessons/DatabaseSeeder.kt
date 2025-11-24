@@ -731,7 +731,7 @@ object DatabaseSeeder {
                     DbDefaultButton(
                         lessonsId = 1001,
                         buttonName = "Camera.ZoomSlider",
-                        state = "3.0"
+                        state = "1.0"
                     ),
                     DbDefaultButton(
                         lessonsId = 1001,
