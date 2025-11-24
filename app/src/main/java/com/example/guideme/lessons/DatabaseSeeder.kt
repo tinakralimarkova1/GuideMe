@@ -724,6 +724,11 @@ object DatabaseSeeder {
                         state = "112345"
                     ),
                     DbDefaultButton(
+                        lessonsId = 2002,
+                        buttonName = "DialPad.NumberField",
+                        state = ""
+                    ),
+                    DbDefaultButton(
                         lessonsId = 1001,
                         buttonName = "Camera.SwitchCamera",
                         state = "BACK"

@@ -655,7 +655,9 @@ private fun LessonsMenu(
         }
         Spacer(modifier = Modifier.height(10.dp))
         Column(
-            modifier = Modifier.fillMaxSize().padding(top = 50.dp).verticalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxSize()
+                .padding(top = 50.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

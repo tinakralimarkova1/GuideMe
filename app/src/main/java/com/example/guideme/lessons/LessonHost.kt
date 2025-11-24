@@ -312,6 +312,7 @@ fun LessonCompleteScreen(
                     .fillMaxWidth()
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
+
             ) {
                 Text(
                     text = "Lesson complete!",

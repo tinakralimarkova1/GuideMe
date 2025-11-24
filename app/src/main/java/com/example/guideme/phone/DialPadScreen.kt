@@ -116,27 +116,28 @@ fun DialPadScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                    ,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = if (number.isEmpty()) "Enter number" else number.chunked(3).joinToString(" "),
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = if (number.isEmpty()) 0.35f else 1f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 16.dp)
-                        .anchorId("DialPad.NumberField")
-                )
+
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
+                    Text(
+                        text = if (number.isEmpty()) "Enter number" else number.chunked(3).joinToString(" "),
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = if (number.isEmpty()) 0.35f else 1f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                            .anchorId("DialPad.NumberField")
+                    )
                     IconButton(
                         onClick = {
                             val anchor = "DialPad.Backspace"
@@ -160,7 +161,8 @@ fun DialPadScreen(
                     ){
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Backspace,
-                            contentDescription = "Delete"
+                            contentDescription = "Delete",
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -288,15 +290,15 @@ private fun DialPadKeys(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(14.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 4.dp)
             .anchorId("DialPad.KeysGrid")
     ) {
         rows.forEach { row ->
             Row(
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 row.forEach { key ->
@@ -334,8 +336,10 @@ private fun DialKey(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
+            .padding(4.dp)
             .aspectRatio(1f)
             .clip(CircleShape)
+            .size(20.dp)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable { onClick(
 
@@ -344,7 +348,7 @@ private fun DialKey(
     ) {
         Text(
             text = label,
-            fontSize = 24.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
