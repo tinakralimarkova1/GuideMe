@@ -714,11 +714,32 @@ object DatabaseSeeder {
                 listOf(
                     // Connect to Wi-Fi lesson: Wi-Fi toggle should start ON
                     DbDefaultButton(
-                        lessonsId = 3003,
+                        lessonsId = 3002,
                         buttonName = "Wifi.OnOffButton",
-                        state = "true"
+                        state = "false"
+                    ),
+                    DbDefaultButton(
+                        lessonsId = 2001,
+                        buttonName = "DialPad.NumberField",
+                        state = "112345"
+                    ),
+                    DbDefaultButton(
+                        lessonsId = 1001,
+                        buttonName = "Camera.SwitchCamera",
+                        state = "BACK"
+                    ),
+                    DbDefaultButton(
+                        lessonsId = 1001,
+                        buttonName = "Camera.ZoomSlider",
+                        state = "3.0"
+                    ),
+                    DbDefaultButton(
+                        lessonsId = 1001,
+                        buttonName = "Camera.FlashButton",
+                        state = "OFF"
                     )
-                )
+
+                    )
             )
         }
 
@@ -750,6 +771,51 @@ object DatabaseSeeder {
                     DbPreReq(
                         lessonId = 2,    // Wi-Fi
                         prereqId = 1,    // Phone
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 1002,
+                        prereqId = 1001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 1003,
+                        prereqId = 1002,
+                        priority = 2
+                    ),
+                    DbPreReq(
+                        lessonId = 1003,
+                        prereqId = 1001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 2002,
+                        prereqId = 2001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 2003,
+                        prereqId = 2002,
+                        priority = 2
+                    ),
+                    DbPreReq(
+                        lessonId = 2003,
+                        prereqId = 2001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 3002,
+                        prereqId = 1001,
+                        priority = 1
+                    ),
+                    DbPreReq(
+                        lessonId = 3003,
+                        prereqId = 1002,
+                        priority = 2
+                    ),
+                    DbPreReq(
+                        lessonId =3003,
+                        prereqId = 1001,
                         priority = 1
                     )
                 )

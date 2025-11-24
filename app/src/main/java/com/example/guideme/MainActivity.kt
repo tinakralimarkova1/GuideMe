@@ -120,7 +120,8 @@ class MainActivity : ComponentActivity() {
         val lessonsRepo: LessonsRepository = RoomLessonsRepository(
             instructionDao = db.instructionDao(),
             completionDao = db.completionDao(),
-            defaultButtonDao = db.defaultButtonDao()
+            defaultButtonDao = db.defaultButtonDao(),
+            lessonDao = db.lessonDao()
 
         )
 
@@ -357,6 +358,12 @@ fun MainScreen(
                     onExit = {
                         TTS.speak("Returning to lessons menu.")
                         currentScreen = "main"
+                    },
+                    onStartLesson = { nextApp, nextLessonId ->
+                        TTS.speak("Starting $nextApp lesson.")
+                        selectedApp = nextApp
+                        selectedLessonId = nextLessonId
+                        currentScreen = "lesson"
                     }
                 )
                 BackHandler {
