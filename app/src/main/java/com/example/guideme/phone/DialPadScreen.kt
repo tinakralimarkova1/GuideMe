@@ -52,6 +52,7 @@ import kotlinx.coroutines.delay
 fun DialPadScreen(
     navController: NavController,
     initialNumber: String = "",
+    autoDialOnStart: Boolean = false,
     onButtonPressed: (String) -> Unit = {},
     onNumberCommitted: (String) -> Unit = {},
     correctAnchor: String? = null,
@@ -62,12 +63,20 @@ fun DialPadScreen(
     var isCalling by remember { mutableStateOf(false) }
 
     // Prefill & auto-dial if number provided, else speak intro
-    LaunchedEffect(initialNumber) {
+    LaunchedEffect(initialNumber, autoDialOnStart) {
         if (initialNumber.isNotBlank()) {
             number = initialNumber
-            TTS.speak("Phone dialing.")
-            isCalling = true
+
+            if (autoDialOnStart) {
+                // Coming from Recents/Contacts → auto-dial
+                TTS.speak("Phone dialing.")
+                isCalling = true
+            } else {
+                // Coming from a lesson default → just prefilled, no call yet
+                TTS.speak("The number $initialNumber is already typed in. Follow the instructions on the screen.")
+            }
         } else {
+            // No preset at all
             TTS.speak("You are now in the dial pad. You can type numbers and press call.")
         }
     }

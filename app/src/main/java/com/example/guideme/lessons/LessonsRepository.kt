@@ -14,4 +14,14 @@ interface LessonsRepository {
         attempts: Int,
         customerEmail: String = "demo@guideme.app"   // temp until real user
     )
+
+    //used for recommendations
+    suspend fun hasCompletedLesson(
+        lessonId: Int,
+        customerEmail: String = "demo@guideme.app"
+    ): Boolean
+
+    suspend fun getLessonById(lessonId: Int): DbLesson?
+
+
 }

@@ -84,16 +84,32 @@ fun CameraScreen(
 
     val flashAlpha = remember { Animatable(0f) }
 
+// 🔹 Default zoom: from lesson, else baseline 1.0x
     val zoomDefault = defaultStates["Camera.ZoomSlider"]?.toFloatOrNull() ?: 1.0f
+
+// 🔹 Default flash: from lesson, else AUTO
     val flashDefault = when (defaultStates["Camera.FlashButton"]?.uppercase()) {
-        "ON" -> FlashSim.ON
+//        "ON" -> FlashSim.ON
+//        "OFF" -> FlashSim.OFF
+//        "AUTO", null, "" -> FlashSim.AUTO
+        "ON", null, "" -> FlashSim.ON   // baseline = ON
         "OFF" -> FlashSim.OFF
-        "AUTO", null, "" -> FlashSim.AUTO
+        "AUTO" -> FlashSim.AUTO
         else -> FlashSim.AUTO
     }
 
-    var flash by remember { mutableStateOf(FlashSim.AUTO) }
-    var zoom by remember { mutableStateOf(1.0f) }
+// 🔹 Default camera side: from lesson, else BACK (outside camera)
+    val isFrontDefault = when (defaultStates["Camera.SwitchCamera"]?.uppercase()) {
+        "FRONT" -> true
+        "BACK", null, "" -> false
+        else -> false
+    }
+
+// State that respects lesson defaults and resets per lesson
+    var flash by remember(flashDefault) { mutableStateOf(flashDefault) }
+    var zoom by remember(zoomDefault) { mutableStateOf(zoomDefault) }
+    var isFrontCamera by remember(isFrontDefault) { mutableStateOf(isFrontDefault) }
+
     var lastThumbRes by remember { mutableStateOf(R.drawable.ash_tree___geograph_org_uk___590710) }
     var hasPhoto by remember { mutableStateOf(false) }
 
@@ -108,9 +124,8 @@ fun CameraScreen(
             contentDescription = "Simulated camera preview",
             modifier = Modifier
                 .fillMaxSize()
-                // Add smooth zoom based on the slider
                 .graphicsLayer(
-                    scaleX = zoom,
+                    scaleX = if (isFrontCamera) -zoom else zoom, // 👈 mirror when front
                     scaleY = zoom,
                     transformOrigin = androidx.compose.ui.graphics.TransformOrigin.Center
                 ),
@@ -184,7 +199,9 @@ fun CameraScreen(
                         onAnchorTapped(switchAnchorId)
                     } else {
                         onAnchorTapped(switchAnchorId)
-                        TTS.speak("Switched camera")
+                        isFrontCamera = !isFrontCamera                     // 👈 flip state
+                        val which = if (isFrontCamera) "front camera" else "back camera"
+                        TTS.speak("Switched to $which")
                     }
                 },
                 modifier = Modifier
