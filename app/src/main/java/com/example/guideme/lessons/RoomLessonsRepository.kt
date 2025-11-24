@@ -7,7 +7,8 @@ package com.example.guideme.lessons
 class RoomLessonsRepository(
     private val instructionDao: InstructionDao,
     private val completionDao: CompletionDao,
-    private val defaultButtonDao: DefaultButtonDao
+    private val defaultButtonDao: DefaultButtonDao,
+    private val lessonDao: LessonDao
 
 ) : LessonsRepository {
 
@@ -75,4 +76,19 @@ class RoomLessonsRepository(
             )
         }
     }
+
+    override suspend fun hasCompletedLesson(
+        lessonId: Int,
+        customerEmail: String
+    ): Boolean {
+        val existing = completionDao.getCompletion(customerEmail, lessonId)
+        return existing?.status == "Completed"
+    }
+
+    override suspend fun getLessonById(lessonId: Int): DbLesson? {
+        return lessonDao.getLessonById(lessonId)
+    }
 }
+
+
+

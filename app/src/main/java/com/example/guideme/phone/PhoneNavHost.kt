@@ -22,7 +22,8 @@ fun PhoneNavHost(
     onNumberCommitted: (String) -> Unit = {},
     correctAnchor: String? = null,
     tappedIncorrectAnchor: String? = null,
-    isAnchorAllowed: (String) -> Boolean = { true }
+    isAnchorAllowed: (String) -> Boolean = { true },
+    defaultStates: Map<String, String> = emptyMap()
 
 ) {
     val navController = rememberNavController()
@@ -93,29 +94,43 @@ fun PhoneNavHost(
         composable("recents") { RecentsScreen(navController) }
         composable("contacts") { ContactsScreen(navController) }
 
-        // dial pad can accept an optional number and auto-dial it
+        // dial pad can accept an optional number AND lesson-defined defaults
         composable(
             route = "dialpad?number={number}",
             arguments = listOf(navArgument("number") {
                 type = NavType.StringType
                 defaultValue = ""
             })
-        ) {  backStackEntry ->
-            val initialNumber = backStackEntry.arguments?.getString("number") ?: ""
+        ) { backStackEntry ->
+
+            // 1) Number passed from Recents / Contacts
+            val numberFromArgs = backStackEntry.arguments?.getString("number") ?: ""
+            val numberFromLesson = defaultStates["DialPad.NumberField"] ?: ""
+
+// If nav arg present (Recents/Contacts), that wins and auto-dials.
+// Otherwise we use lesson default (if any) but do NOT auto-dial.
+            val (initialNumber, autoDialOnStart) = if (numberFromArgs.isNotBlank()) {
+                numberFromArgs to true
+            } else {
+                numberFromLesson to false
+            }
+
             DialPadScreen(
                 navController = navController,
                 initialNumber = initialNumber,
+                autoDialOnStart = autoDialOnStart,
                 onButtonPressed = { anchorId ->
-                    onAnchorTapped(anchorId)          // 🔁 bubble up to LessonHost
+                    onAnchorTapped(anchorId)
                 },
                 onNumberCommitted = { number ->
-                    onNumberCommitted(number)         // 🔁 bubble up to LessonHost
+                    onNumberCommitted(number)
                 },
                 correctAnchor = correctAnchor,
                 tappedIncorrectAnchor = tappedIncorrectAnchor,
                 isAnchorAllowed = isAnchorAllowed
-
             )
+
+
         }
     }
 }
