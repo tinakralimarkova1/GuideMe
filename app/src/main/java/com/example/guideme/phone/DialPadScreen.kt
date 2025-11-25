@@ -194,7 +194,7 @@ fun DialPadScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
+                        .height(56.dp)// issue here i think?
                         .flash(tappedIncorrectAnchor, "DialPad.Call")   // ← apply here
                         .clip(RoundedCornerShape(16.dp))                // so the flash matches the button shape
                 ) {

@@ -98,6 +98,7 @@ import com.example.guideme.ui.theme.MainButtonContentColor
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
+import me.nikhilchaudhari.library.BuildConfig
 
 
 class MainActivity : ComponentActivity() {
@@ -178,6 +179,23 @@ fun GuideMeRoot(
     completionDao: CompletionDao
 ) {
     var currentUser by rememberSaveable { mutableStateOf<DbCustomer?>(null) }
+
+    //FOR DEBUG - ALLOWS MONKEY TESTING WITH NO LOG IN
+
+//    LaunchedEffect(Unit) {
+//        if (BuildConfig.DEBUG && currentUser == null) {
+//            val demo = customerDao.getCustomer("demo")
+//            if (demo != null) {
+//                currentUser = demo
+//                TTS.speak(
+//                    "Welcome to Guide Me. " +
+//                            "Click learn to go to the lessons menu, or click search to find a specific lesson."
+//                )
+//            }
+//        }
+//    }
+    /// END OF DEBUG
+
 
     if (currentUser == null) {
         // Login / Register
@@ -552,7 +570,14 @@ private fun WelcomeScreen(
             }
 
             Button(
-                onClick = onLogoutClick,
+                onClick = {
+                    if (!BuildConfig.DEBUG) {
+                        onLogoutClick()
+                    } else {
+                        // debug build – just ignore to keep Monkey from going to login
+                        TTS.speak("Logout is disabled in testing mode.")
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(130.dp),
@@ -701,7 +726,7 @@ private fun LessonButton(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp)
-            .height(48.dp),
+            .height(48.dp), // issue here ,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MainButtonColor,
