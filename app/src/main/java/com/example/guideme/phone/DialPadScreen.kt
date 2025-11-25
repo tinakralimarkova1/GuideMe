@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -202,7 +202,7 @@ fun DialPadScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 26.dp)// issue here i think?
+                        .height(56.dp)// issue here i think?
                         .flash(tappedIncorrectAnchor, "DialPad.Call")   // ← apply here
                         .clip(RoundedCornerShape(16.dp))                // so the flash matches the button shape
                 ) {
@@ -220,7 +220,8 @@ fun DialPadScreen(
                         },
                         modifier = Modifier
                             .fillMaxSize()                              // button fills the flashing box
-                            .anchorId("DialPad.Call"),
+                            .anchorId("DialPad.Call") // take equal horizontal space
+                          ,
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Text("Call", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
@@ -287,7 +288,7 @@ private fun DialPadKeys(
     onButtonPressed: (String) -> Unit = {},
     tappedIncorrectAnchor: String? = null,
     correctAnchor: String?,
-    isAnchorAllowed: (String) -> Boolean   // 👈 new
+    isAnchorAllowed: (String) -> Boolean
 ) {
     val rows = listOf(
         listOf("1", "2", "3"),
@@ -298,16 +299,15 @@ private fun DialPadKeys(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
+            .padding(horizontal = 8.dp)
             .anchorId("DialPad.KeysGrid")
     ) {
         rows.forEach { row ->
             Row(
-                horizontalArrangement = Arrangement.Center,
-                //horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 row.forEach { key ->
@@ -316,15 +316,14 @@ private fun DialPadKeys(
                     DialKey(
                         label = key,
                         modifier = Modifier
-                            .size(105.dp)
+                            .weight(1f)              // 3 equal columns
+                            .aspectRatio(1f)         // square → circle after clip
                             .anchorId(anchor)
                             .flash(tappedIncorrectAnchor, anchor)
                     ) {
                         if (!isAnchorAllowed(anchor)) {
-                            // Wrong key for this step → send as wrong tap, no typing
                             onButtonPressed(anchor)
                         } else {
-                            // Allowed by VM → do the actual typing behaviour
                             onKey(key)
                         }
                     }
