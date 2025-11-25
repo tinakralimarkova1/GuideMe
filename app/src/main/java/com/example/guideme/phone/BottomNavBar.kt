@@ -18,7 +18,12 @@ import com.example.guideme.tts.TTS
 
 @Composable
 fun BottomNavBar(navController: NavController, currentRoute: String) {
-    NavigationBar(tonalElevation = 8.dp, modifier = Modifier.padding(bottom = 110.dp, top = 5.dp)) {
+    NavigationBar(tonalElevation = 8.dp,
+        modifier = Modifier
+            .padding(bottom = 140.dp, top = 5.dp))
+
+
+    {
 
         NavigationBarItem(
             selected = currentRoute == "favorites",

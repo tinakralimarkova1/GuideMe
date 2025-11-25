@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -46,6 +46,9 @@ import com.example.guideme.lessons.anchorId
 import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
 import kotlinx.coroutines.delay
+
+private val InstructionOverlaySpace = 10.dp
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -116,7 +119,12 @@ fun DialPadScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                    .padding(
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 6.dp,
+                        bottom = InstructionOverlaySpace   // ⬅️ reserve room for the overlay
+                    )
                     ,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -194,7 +202,7 @@ fun DialPadScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)// issue here i think?
+                        .heightIn(min = 26.dp)// issue here i think?
                         .flash(tappedIncorrectAnchor, "DialPad.Call")   // ← apply here
                         .clip(RoundedCornerShape(16.dp))                // so the flash matches the button shape
                 ) {
@@ -298,7 +306,8 @@ private fun DialPadKeys(
     ) {
         rows.forEach { row ->
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.Center,
+                //horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 row.forEach { key ->
@@ -307,7 +316,7 @@ private fun DialPadKeys(
                     DialKey(
                         label = key,
                         modifier = Modifier
-                            .weight(1f)
+                            .size(105.dp)
                             .anchorId(anchor)
                             .flash(tappedIncorrectAnchor, anchor)
                     ) {
@@ -337,9 +346,7 @@ private fun DialKey(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .padding(4.dp)
-            .aspectRatio(1f)
             .clip(CircleShape)
-            .size(20.dp)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable { onClick(
 
