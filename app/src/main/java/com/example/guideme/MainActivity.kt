@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -657,7 +658,7 @@ private fun LessonsMenu(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(vertical = 30.dp, horizontal = 15.dp)
-                .height(35.dp)
+                .heightIn(min = 40.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(MainButtonContentColor)
                 .clickable { onBack() }
@@ -680,37 +681,46 @@ private fun LessonsMenu(
         }
         Spacer(modifier = Modifier.height(10.dp))
         Column(
-            modifier = Modifier.fillMaxSize()
-                .padding(top = 50.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 80.dp, bottom = 24.dp)   // leave room for back chip
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Lesson Menu",
-                color = MainButtonContentColor,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(top = 60.dp, bottom = 12.dp)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 600.dp)               // ✅ keeps it nice on tablets / big phones
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(18.dp)
+            ) {
+                Text(
+                    text = "Lesson Menu",
+                    color = MainButtonContentColor,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 12.dp)
+                )
 
-            // CAMERA group header (optional: still keep quick open)
-            ExpandableLessonSection(
-                title = "Camera",
-                ids = cameraIds,
-                label = { label(it) },
-            ) { id -> onStartLesson("Camera", id) }
+                // CAMERA group header (optional: still keep quick open)
+                ExpandableLessonSection(
+                    title = "Camera",
+                    ids = cameraIds,
+                    label = { label(it) },
+                ) { id -> onStartLesson("Camera", id) }
 
-            ExpandableLessonSection(
-                title = "Phone",
-                ids = phoneIds,
-                label = { label(it) },
-            ) { id -> onStartLesson("Phone", id) }
+                ExpandableLessonSection(
+                    title = "Phone",
+                    ids = phoneIds,
+                    label = { label(it) },
+                ) { id -> onStartLesson("Phone", id) }
 
-            ExpandableLessonSection(
-                title = "Wi-Fi",
-                ids = wifiIds,
-                label = { label(it) },
-            ) { id -> onStartLesson("WiFi", id) }
+                ExpandableLessonSection(
+                    title = "Wi-Fi",
+                    ids = wifiIds,
+                    label = { label(it) },
+                ) { id -> onStartLesson("WiFi", id) }
+            }
 
 
 
@@ -726,14 +736,18 @@ private fun LessonButton(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp)
-            .height(48.dp), // issue here ,
+            .heightIn(min = 48.dp), // issue here ,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MainButtonColor,
             contentColor = MainButtonContentColor
+        ),
+        contentPadding = PaddingValues(
+            horizontal = 20.dp,
+            vertical = 10.dp          // let it breathe vertically
         )
     ) {
-        Text(text, style = MaterialTheme.typography.bodyLarge)
+        Text(text, style = MaterialTheme.typography.bodyLarge,maxLines = 2      )
     }
 }
 
@@ -758,11 +772,15 @@ private fun ExpandableLessonSection(
             onClick = { expanded = !expanded },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(54.dp),
+                .heightIn(min = 54.dp),
             shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MainButtonColor,
                 contentColor = MainButtonContentColor
+            ),
+            contentPadding = PaddingValues(
+                horizontal = 20.dp,
+                vertical = 10.dp
             )
         ) {
             Row(
@@ -770,7 +788,7 @@ private fun ExpandableLessonSection(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(title, style = MaterialTheme.typography.titleLarge)
+                Text(title, style = MaterialTheme.typography.titleLarge,maxLines = 2)
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = null
@@ -881,11 +899,11 @@ private fun SearchMenu(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(vertical = 30.dp, horizontal = 15.dp)
-                .height(35.dp)
+                .heightIn(min = 40.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(MainButtonContentColor)
                 .clickable { onBack() }
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 12.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -903,173 +921,188 @@ private fun SearchMenu(
             )
         }
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterVertically),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 80.dp, bottom = 24.dp)
+                .verticalScroll(rememberScrollState()),     // ✅ scroll if it doesn’t fit
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Search",
-                color = MainButtonContentColor,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(top = 60.dp, bottom = 40.dp)
-            )
-
-            // voice button
-            Button(
-                onClick = {
-                    // call function that handles permission
-                    handleVoiceSearchClick()
-                    onVoiceSearch()
-                },
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 30.dp)
-                    .height(130.dp),
-                shape = RoundedCornerShape(40.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MainButtonColor,
-                    contentColor = MainButtonContentColor
-                )
+                    .widthIn(max = 600.dp)
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Mic,
-                        contentDescription = "Microphone",
-                        modifier = Modifier.size(52.dp)
+                Text(
+                    text = "Search",
+                    color = MainButtonContentColor,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+                )
+
+
+                // voice button
+                Button(
+                    onClick = {
+                        // call function that handles permission
+
+
+                        handleVoiceSearchClick()
+                        onVoiceSearch()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+
+                        .heightIn(min = 100.dp),
+                    shape = RoundedCornerShape(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MainButtonColor,
+                        contentColor = MainButtonContentColor
                     )
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Mic,
+                            contentDescription = "Microphone",
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Text(
+                            "Say your question",
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                // text button
+                Button(
+                    onClick = {
+                        errorText = null
+                        resultText = null
+                        queryText = ""
+                        onTextSearch()
+                        typingMode = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 100.dp),
+                    shape = RoundedCornerShape(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MainButtonColor,
+                        contentColor = MainButtonContentColor
+                    )
+                ) {
                     Text(
-                        "Say your question",
+                        "Type your question",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center
                     )
                 }
-            }
 
-            // text button
-            Button(
-                onClick = {
-                    errorText = null
-                    resultText = null
-                    queryText = ""
-                    onTextSearch()
-                    typingMode = true
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp)
-                    .height(130.dp),
-                shape = RoundedCornerShape(40.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MainButtonColor,
-                    contentColor = MainButtonContentColor
-                )
-            ) {
-                Text(
-                    "Type your question",
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center
-                )
-            }
+                // typing area (shown after pressing "type your question" button)
+                if (typingMode) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
 
-            // typing area (shown after pressing "type your question" button)
-            if (typingMode) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 30.dp)
 
-                ){
-                    OutlinedTextField(
-                        value = queryText,
-                        onValueChange = {
-                            queryText = it
-                            errorText = null
-                        },
-                        label = { Text("Type here", color = MainButtonContentColor) },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MainButtonContentColor,
-                            unfocusedBorderColor = MainButtonContentColor,
-                            disabledBorderColor = MainButtonContentColor.copy(alpha = 0.5f),
-                            errorBorderColor = MaterialTheme.colorScheme.error
-                        )
-
-                    )
-                    Button(
-                        onClick = {
-                            val text = queryText.trim()
-                            if (text.isNotEmpty() && !isClassifying) { // prevent re-clicks
+                    ) {
+                        OutlinedTextField(
+                            value = queryText,
+                            onValueChange = {
+                                queryText = it
                                 errorText = null
-                                resultText = null // clear previous card results
-                                isClassifying = true
-                                scope.launch {
-                                    try { // use try-finally to guarantee state is reset
-                                        val prediction = classifier.classify(text)
-                                        if (prediction == null || prediction.confidence < 0.6f) {
-                                            resultText = null
-                                            errorText = "Sorry, we don't have a lesson on that yet"
-                                        } else {
-                                            val lessonName = prediction.label
-                                            resultText = "Suggested lesson:\n$lessonName\n"
+                            },
+                            label = { Text("Type here", color = MainButtonContentColor) },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MainButtonContentColor,
+                                unfocusedBorderColor = MainButtonContentColor,
+                                disabledBorderColor = MainButtonContentColor.copy(alpha = 0.5f),
+                                errorBorderColor = MaterialTheme.colorScheme.error
+                            )
+
+                        )
+                        Button(
+                            onClick = {
+                                val text = queryText.trim()
+                                if (text.isNotEmpty() && !isClassifying) { // prevent re-clicks
+                                    errorText = null
+                                    resultText = null // clear previous card results
+                                    isClassifying = true
+                                    scope.launch {
+                                        try { // use try-finally to guarantee state is reset
+                                            val prediction = classifier.classify(text)
+                                            if (prediction == null || prediction.confidence < 0.6f) {
+                                                resultText = null
+                                                errorText =
+                                                    "Sorry, we don't have a lesson on that yet"
+                                            } else {
+                                                val lessonName = prediction.label
+                                                resultText = "Suggested lesson:\n$lessonName\n"
+                                            }
+                                        } finally {
+                                            isClassifying = false
                                         }
-                                    } finally {
-                                        isClassifying = false
                                     }
                                 }
-                            }
-                        },
-                        enabled = !isClassifying,
-                        modifier = Modifier.width(550.dp),
-                        shape = RoundedCornerShape(40.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MainButtonColor,
-                            contentColor = MainButtonContentColor
-                        )
-                    ) {
-                        Text(if (isClassifying) "Thinking..." else "Search")
+                            },
+                            enabled = !isClassifying,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .widthIn(max = 550.dp),
+                            shape = RoundedCornerShape(40.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MainButtonColor,
+                                contentColor = MainButtonContentColor
+                            )
+                        ) {
+                            Text(if (isClassifying) "Thinking..." else "Search")
+                        }
                     }
                 }
-            }
-            // result or error display
-            if (!queryText.isBlank()) {
-                Text(
-                    text = "You asked: \"$queryText\"" ,
-                    color = MainButtonContentColor,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 30.dp)
-                )
-            }
-            resultText?.let { msg ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 30.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MainButtonColor
-                    )
-                ) {
+                // result or error display
+                if (!queryText.isBlank()) {
                     Text(
-                        text = msg,
-                        modifier = Modifier.padding(16.dp),
+                        text = "You asked: \"$queryText\"",
                         color = MainButtonContentColor,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 30.dp)
                     )
                 }
-            }
-            errorText?.let { msg ->
-                Text(
-                    text = msg,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = 30.dp)
-                )
+                resultText?.let { msg ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MainButtonColor
+                        )
+                    ) {
+                        Text(
+                            text = msg,
+                            modifier = Modifier.padding(16.dp),
+                            color = MainButtonContentColor,
+                            style = MaterialTheme.typography.labelMedium.copy(fontSize = 25.sp)
+                        )
+                    }
+                }
+                errorText?.let { msg ->
+                    Text(
+                        text = msg,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(horizontal = 30.dp)
+                    )
+                }
             }
         }
     }
