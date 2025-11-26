@@ -302,7 +302,7 @@ fun LessonCompleteScreen(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 260.dp),
+                .heightIn(min = 460.dp),
             shape = RoundedCornerShape(24.dp),
             tonalElevation = 6.dp,
             color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f)
@@ -312,24 +312,27 @@ fun LessonCompleteScreen(
                     .fillMaxWidth()
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
+
             ) {
                 Text(
                     text = "Lesson complete!",
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MainButtonContentColor
                 )
 
                 Spacer(Modifier.height(12.dp))
 
-                Text("Time spent: ${state.timeSpentSeconds ?: 0} seconds")
-                Text("Errors: ${state.errorCount}")
-                Text("Attempts: ${state.attempts}")
+                Text("Time spent: ${state.timeSpentSeconds ?: 0} seconds", color = MainButtonContentColor)
+                Text("Errors: ${state.errorCount}", color = MainButtonContentColor)
+                Text("Attempts: ${state.attempts}", color = MainButtonContentColor)
 
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(30.dp))
 
                 if (state.recommendedLessons.isNotEmpty()) {
                     Text(
                         text = "We recommend trying these next:",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MainButtonContentColor
                     )
                     Spacer(Modifier.height(8.dp))
 
@@ -340,8 +343,8 @@ fun LessonCompleteScreen(
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MainButtonColor,
-                                contentColor = MainButtonContentColor
+                                containerColor = MainButtonContentColor,
+                                contentColor = MainButtonColor
                             )
                         ) {
                             Column(modifier = Modifier.fillMaxWidth()) {
@@ -357,8 +360,8 @@ fun LessonCompleteScreen(
                 Button(
                     onClick = onExit,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MainButtonColor,
-                        contentColor = MainButtonContentColor
+                        containerColor = MainButtonContentColor,
+                        contentColor = MainButtonColor
                     )
                 ) {
                     Text("Back to lessons")
