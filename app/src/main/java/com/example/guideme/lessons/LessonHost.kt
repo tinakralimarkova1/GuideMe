@@ -243,7 +243,7 @@ private fun InstructionOverlay(
             modifier = Modifier
                     .fillMaxWidth()
                 // 👇 FIXED SIZE BEHAVIOR
-                .heightIn(min = 140.dp, max = 160.dp)
+                .heightIn(min = 140.dp)
 
 
         ) {
