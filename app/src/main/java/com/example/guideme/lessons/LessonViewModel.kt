@@ -73,6 +73,8 @@ class LessonViewModel(
         }
 
         if (!isEventTypeCorrect) {
+            errorCount++
+            
             uiState = s.copy(
                 feedback = "Try again.",
                 tappedIncorrectAnchorId = buildWrongTapId(evt)

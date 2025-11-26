@@ -7,16 +7,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,16 +37,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.guideme.lessons.anchorId
 import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
+import com.example.guideme.ui.theme.GuideMeTheme
 import kotlinx.coroutines.delay
+
+private val InstructionOverlaySpace = 10.dp
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,130 +102,164 @@ fun DialPadScreen(
         )
     } else {
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("", fontWeight = FontWeight.SemiBold) },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            TTS.speak("Returning to previous screen.")
-                            navController.popBackStack()
-                        }) {
+
+            modifier = Modifier.fillMaxSize(),
+
+//            bottomBar = {
+//                Spacer(modifier = Modifier.height(70.dp))
+//                Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)){
+//                    BottomNavBar(navController, "dialpad")
+//
+//                    // 👇 Reserve an empty band at the bottom for the lesson overlay
+//                    Spacer(Modifier.heightIn(min =280.dp))
+//                }
+//                        },
+            contentWindowInsets = WindowInsets(0.dp, bottom = 0.dp)
+        ) { padding ->
+
+            val configuration = LocalConfiguration.current
+            val screenHeightPx = configuration.screenHeightDp.dp
+            val fakeUiSpace = screenHeightPx * 0.80f
+
+
+            Column(modifier = Modifier.heightIn(max= fakeUiSpace)
+                ,
+            verticalArrangement = Arrangement.spacedBy(10.dp)) {
+
+
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .padding(
+
+                            top = 74.dp,
+                            bottom = 0.dp   // ⬅️ reserve room for the overlay
+                        )
+                        .padding(horizontal = 20.dp)
+                        .weight(1f)
+
+
+                        ,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text = if (number.isEmpty()) "Enter number" else number.chunked(3)
+                                .joinToString(" "),
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.Medium
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = if (number.isEmpty()) 0.35f else 1f),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .weight(1f)
+                                .anchorId("DialPad.NumberField")
+                        )
+                        IconButton(
+                            onClick = {
+                                val anchor = "DialPad.Backspace"
+
+                                if (!isAnchorAllowed(anchor)) {
+                                    // Wrong time to use backspace → send as wrong tap, no delete
+                                    onButtonPressed(anchor)
+                                    return@IconButton
+                                }
+
+                                if (number.isNotEmpty()) {
+                                    number = number.dropLast(1)
+                                    onNumberCommitted(number)
+                                }
+                                // For the "correct" step 2002-5, we still want the event to hit the VM
+                                onButtonPressed(anchor)
+                            },
+                            modifier = Modifier
+                                .size(40.dp)
+                                .anchorId("DialPad.Backspace")
+                        ) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
+                                imageVector = Icons.AutoMirrored.Filled.Backspace,
+                                contentDescription = "Delete",
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
-                )
-            },
-            bottomBar = { BottomNavBar(navController, "dialpad") }
-        ) { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = if (number.isEmpty()) "Enter number" else number.chunked(3).joinToString(" "),
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = if (number.isEmpty()) 0.35f else 1f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 16.dp)
-                        .anchorId("DialPad.NumberField")
-                )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    IconButton(
-                        onClick = {
-                            val anchor = "DialPad.Backspace"
+                    Spacer(Modifier.height(10.dp))
+                    Box(modifier = Modifier.weight(7f)) {
 
-                            if (!isAnchorAllowed(anchor)) {
-                                // Wrong time to use backspace → send as wrong tap, no delete
-                                onButtonPressed(anchor)
-                                return@IconButton
-                            }
-
-                            if (number.isNotEmpty()) {
-                                number = number.dropLast(1)
-                                onNumberCommitted(number)
-                            }
-                            // For the "correct" step 2002-5, we still want the event to hit the VM
-                            onButtonPressed(anchor)
-                        },
-                        modifier = Modifier
-                            .size(40.dp)
-                            .anchorId("DialPad.Backspace")
-                    ){
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Backspace,
-                            contentDescription = "Delete"
+                        DialPadKeys(
+                            onKey = { key ->
+                                if (number.length < 20) {
+                                    number += key
+                                    TTS.speak(
+                                        when (key) {
+                                            "*" -> "star"
+                                            "#" -> "pound"
+                                            else -> key
+                                        }
+                                    )
+                                    onNumberCommitted(number)
+                                }
+                            },
+                            onButtonPressed = onButtonPressed,
+                            tappedIncorrectAnchor = tappedIncorrectAnchor,
+                            correctAnchor,
+                            isAnchorAllowed
                         )
                     }
-                }
 
-                Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(10.dp))
 
-                DialPadKeys(
-                    onKey = { key ->
-                        if (number.length < 20) {
-                            number += key
-                            TTS.speak(
-                                when (key) {
-                                    "*" -> "star"
-                                    "#" -> "pound"
-                                    else -> key
-                                }
-                            )
-                            onNumberCommitted(number)
-                        }
-                    },
-                    onButtonPressed = onButtonPressed,
-                    tappedIncorrectAnchor = tappedIncorrectAnchor,
-                    correctAnchor,
-                    isAnchorAllowed
-                )
-
-                Spacer(Modifier.height(16.dp))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .flash(tappedIncorrectAnchor, "DialPad.Call")   // ← apply here
-                        .clip(RoundedCornerShape(16.dp))                // so the flash matches the button shape
-                ) {
-                    Button(
-                        onClick = {
-                            onButtonPressed("DialPad.Call")
-                            if (correctAnchor == "DialPad.Call") {
-                                if (number.isEmpty()) {
-                                    TTS.speak("Please enter a number.")
-                                } else {
-                                    TTS.speak("Phone dialing.")
-                                    isCalling = true
-                                }
-                            }
-                        },
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()                              // button fills the flashing box
-                            .anchorId("DialPad.Call"),
-                        shape = RoundedCornerShape(16.dp)
+                            .fillMaxWidth()
+                            .weight(1f)
+                            //.heightIn(min = 42.dp, max = 50.dp)// issue here i think?
+                            .flash(tappedIncorrectAnchor, "DialPad.Call")   // ← apply here
+                            .clip(RoundedCornerShape(16.dp))                // so the flash matches the button shape
                     ) {
-                        Text("Call", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                        Button(
+                            onClick = {
+                                onButtonPressed("DialPad.Call")
+                                if (correctAnchor == "DialPad.Call") {
+                                    if (number.isEmpty()) {
+                                        TTS.speak("Please enter a number.")
+                                    } else {
+                                        TTS.speak("Phone dialing.")
+                                        isCalling = true
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()                              // button fills the flashing box
+                                .anchorId("DialPad.Call"),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Text("Call", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                        }
                     }
+                    // 👇 THIS is now the controlled gap between Call and the nav bar
+
+
+                }
+                Row(modifier = Modifier.fillMaxWidth().heightIn(max=80.dp)){
+                    BottomNavBar(navController, "dialpad")
+
+                    // 👇 Reserve an empty band at the bottom for the lesson overlay
+
                 }
             }
         }
+
+
+
+
     }
 }
 
@@ -288,26 +330,41 @@ private fun DialPadKeys(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(14.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+            .fillMaxSize()
+            .padding(horizontal = 4.dp)
             .anchorId("DialPad.KeysGrid")
+
+            //.heightIn(max=600.dp)
+
+            //.heightIn(max=400.dp)
     ) {
         rows.forEach { row ->
             Row(
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
+                //horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+
+                ) {
                 row.forEach { key ->
                     val anchor = "DialPad.key$key"
 
                     DialKey(
                         label = key,
                         modifier = Modifier
-                            .weight(1f)
+
+                            .fillMaxHeight(0.8f)   // take ~80% of row height
+                            
+                            .aspectRatio(1f)       // keep it square → circle after clip
                             .anchorId(anchor)
+                            .weight(1f)
                             .flash(tappedIncorrectAnchor, anchor)
+
+
+
                     ) {
                         if (!isAnchorAllowed(anchor)) {
                             // Wrong key for this step → send as wrong tap, no typing
@@ -334,7 +391,7 @@ private fun DialKey(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .aspectRatio(1f)
+            .padding(10.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable { onClick(
@@ -344,15 +401,32 @@ private fun DialKey(
     ) {
         Text(
             text = label,
-            fontSize = 24.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "Dial Pad"
+)
 @Composable
 private fun DialPadPreview() {
-    MaterialTheme { }
+    GuideMeTheme {
+        val navController = rememberNavController()
+
+        DialPadScreen(
+            navController = navController,
+            initialNumber = "123 456 7890",
+            autoDialOnStart = false,
+            onButtonPressed = {},
+            onNumberCommitted = {},
+            correctAnchor = null,
+            tappedIncorrectAnchor = null,
+            isAnchorAllowed = { true }
+        )
+    }
 }
