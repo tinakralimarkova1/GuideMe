@@ -140,7 +140,9 @@ fun DialPadScreen(
 
 
                         ,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    //verticalArrangement = Arrangement.spacedBy(0.dp)
+
                 ) {
 
 
@@ -248,11 +250,21 @@ fun DialPadScreen(
 
 
                 }
-                Row(modifier = Modifier.fillMaxWidth().heightIn(max=95.dp)){
-                    BottomNavBar(navController, "dialpad")
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 80.dp)
+                ) {
+                    BottomNavBar(
+                        navController = navController,
+                        currentRoute = "dialpad",
+                        onAnchorTapped = onButtonPressed,
+                        tappedIncorrectAnchor = tappedIncorrectAnchor,
+                        correctAnchor = correctAnchor,
+                        isAnchorAllowed = isAnchorAllowed
+                    )
 
                     // 👇 Reserve an empty band at the bottom for the lesson overlay
-
                 }
             }
         }
@@ -344,9 +356,11 @@ private fun DialPadKeys(
             Row(
                 //horizontalArrangement = Arrangement.Center,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
+
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    ,
 
                 ) {
                 row.forEach { key ->

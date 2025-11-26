@@ -539,6 +539,25 @@ object DatabaseSeeder {
 
 
                         ),
+                    // -------tester contacts
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 1,
+                        text = "Tap contacts to go to contacts",
+                        anchorId =  "Phone.BottomNav.Contacts",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+
+                    ),
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 2,
+                        text = "Tap on contact ",
+                        anchorId = "Contacts",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+
+                    ),
 
                     //-------Wifi Lesson 3001 Instructions-------
                     DbInstruction(

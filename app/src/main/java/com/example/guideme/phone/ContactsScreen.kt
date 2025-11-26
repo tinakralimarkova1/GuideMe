@@ -44,13 +44,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.guideme.lessons.anchorId
+import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
 
 data class Contact(val name: String, val phone: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactsScreen(navController: NavController) {
+fun ContactsScreen(
+    navController: NavController,
+    // 🔗 Lesson wiring
+    onAnchorTapped: (String) -> Unit = {},
+    onNumberCommitted:(String) -> Unit ={},
+    correctAnchor: String? = null,
+    tappedIncorrectAnchor: String? = null,
+    isAnchorAllowed: (String) -> Boolean = { true }
+) {
     LaunchedEffect(Unit) { TTS.speak("You are now in contacts.") }
 
     val contacts = remember {
@@ -79,39 +89,63 @@ fun ContactsScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-
-                title = { Text("", fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center,) },
+                title = {
+                    Text(
+                        "",
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                    )
+                },
                 actions = {
-                    IconButton(onClick = {
-                        TTS.speak("Add new contact.")
-                        showAddDialog = true
-                    }) {
+                    val addAnchor = "Contacts.AddContact"
+                    IconButton(
+                        onClick = {
+                            // gate for lesson
+                            if (!isAnchorAllowed(addAnchor)) {
+                                onAnchorTapped(addAnchor)
+                            } else {
+                                onAnchorTapped(addAnchor)
+                                TTS.speak("Add new contact.")
+                                showAddDialog = true
+                            }
+                        },
+                        modifier = Modifier
+                            .anchorId(addAnchor)
+                            .flash(tappedIncorrectAnchor, addAnchor)
+                    ) {
                         Icon(Icons.Filled.Add, contentDescription = "Add contact")
                     }
                 }
             )
         },
-        // ⬇️ We do NOT use bottomBar here anymore, to avoid the nav bar taking over the screen
-        // bottomBar = { BottomNavBar(navController, "contacts") },
+        // bottomBar is NOT used → we keep manual Row for nav bar at bottom
         floatingActionButton = {
+            val fabAnchor = "Contacts.OpenDialPad"
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 310.dp), // pushes FAB up
+                    .padding(bottom = 310.dp), // pushes FAB up visually
                 contentAlignment = Alignment.BottomEnd
             ) {
                 FloatingActionButton(
                     onClick = {
-                        TTS.speak("Opening dial pad.")
-                        navController.navigate("dialpad")
+                        if (!isAnchorAllowed(fabAnchor)) {
+                            onAnchorTapped(fabAnchor)
+                        } else {
+                            onAnchorTapped(fabAnchor)
+                            TTS.speak("Opening dial pad.")
+                            navController.navigate("dialpad")
+                        }
                     },
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .anchorId(fabAnchor)
+                        .flash(tappedIncorrectAnchor, fabAnchor)
                 ) {
                     Text("⌨️")
                 }
             }
         },
-       // floatingActionButtonPosition = FabPosition.Center,
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { padding ->
         Column(
@@ -124,6 +158,8 @@ fun ContactsScreen(navController: NavController) {
                 modifier = Modifier
                     .weight(8f)
                     .fillMaxWidth()
+                    // anchor for “this is the contacts list” highlight-only steps
+                    .anchorId("Contacts.List")
             ) {
                 if (contacts.isEmpty()) {
                     Box(
@@ -163,9 +199,15 @@ fun ContactsScreen(navController: NavController) {
                     .fillMaxWidth()
                     .heightIn(max = 80.dp)
                     .weight(5f)
-
             ) {
-                BottomNavBar(navController, "contacts")
+                BottomNavBar(
+                    navController = navController,
+                    currentRoute = "contacts",
+                    onAnchorTapped = onAnchorTapped,
+                    tappedIncorrectAnchor = tappedIncorrectAnchor,
+                    correctAnchor = correctAnchor,
+                    isAnchorAllowed = isAnchorAllowed
+                )
             }
         }
     }
@@ -177,6 +219,7 @@ private fun ContactRow(c: Contact, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
+            .anchorId("Contacts") // temp change later
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -241,4 +284,3 @@ fun ContactsScreenPreview() {
         ContactsScreen(navController = nav)
     }
 }
-
