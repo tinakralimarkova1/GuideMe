@@ -248,7 +248,7 @@ fun DialPadScreen(
 
 
                 }
-                Row(modifier = Modifier.fillMaxWidth().heightIn(max=80.dp)){
+                Row(modifier = Modifier.fillMaxWidth().heightIn(max=95.dp)){
                     BottomNavBar(navController, "dialpad")
 
                     // 👇 Reserve an empty band at the bottom for the lesson overlay

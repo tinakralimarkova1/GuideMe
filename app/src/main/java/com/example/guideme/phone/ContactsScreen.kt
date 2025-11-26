@@ -2,18 +2,48 @@ package com.example.guideme.phone
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.guideme.tts.TTS
 
 data class Contact(val name: String, val phone: String)
@@ -49,54 +79,93 @@ fun ContactsScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Contacts", fontWeight = FontWeight.SemiBold) },
+
+                title = { Text("", fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center,) },
                 actions = {
                     IconButton(onClick = {
                         TTS.speak("Add new contact.")
                         showAddDialog = true
-                    }) { Icon(Icons.Filled.Add, contentDescription = "Add contact") }
+                    }) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add contact")
+                    }
                 }
             )
         },
-        bottomBar = { BottomNavBar(navController, "contacts") },
+        // ⬇️ We do NOT use bottomBar here anymore, to avoid the nav bar taking over the screen
+        // bottomBar = { BottomNavBar(navController, "contacts") },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    TTS.speak("Opening dial pad.")
-                    navController.navigate("dialpad")
-                },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) { Text("⌨️") }
-        },
-        floatingActionButtonPosition = FabPosition.End
-    ) { padding ->
-        if (contacts.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
+                    .padding(bottom = 310.dp), // pushes FAB up
+                contentAlignment = Alignment.BottomEnd
             ) {
-                Text("No contacts yet. Tap + to add one.", style = MaterialTheme.typography.titleMedium)
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(contacts) { c ->
-                    ContactRow(
-                        c,
-                        onClick = {
-                            TTS.speak("Dialing ${c.name}.")
-                            val encoded = Uri.encode(c.phone)
-                            navController.navigate("dialpad?number=$encoded")
-                        }
-                    )
+                FloatingActionButton(
+                    onClick = {
+                        TTS.speak("Opening dial pad.")
+                        navController.navigate("dialpad")
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Text("⌨️")
                 }
+            }
+        },
+       // floatingActionButtonPosition = FabPosition.Center,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Main contacts content takes up available space above the bottom nav
+            Box(
+                modifier = Modifier
+                    .weight(8f)
+                    .fillMaxWidth()
+            ) {
+                if (contacts.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "No contacts yet. Tap + to add one.",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(contacts) { c ->
+                            ContactRow(
+                                c,
+                                onClick = {
+                                    TTS.speak("Dialing ${c.name}.")
+                                    val encoded = Uri.encode(c.phone)
+                                    navController.navigate("dialpad?number=$encoded")
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Bottom nav bar anchored at the bottom in its own row,
+            // leaving the usual empty band above for the lesson overlay.
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 80.dp)
+                    .weight(5f)
+
+            ) {
+                BottomNavBar(navController, "contacts")
             }
         }
     }
@@ -110,7 +179,11 @@ private fun ContactRow(c: Contact, onClick: () -> Unit) {
             .clickable { onClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(c.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                c.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
             Spacer(Modifier.height(4.dp))
             Text(c.phone, style = MaterialTheme.typography.bodyMedium)
         }
@@ -130,11 +203,42 @@ private fun AddContactDialog(
         title = { Text("Add contact", fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, singleLine = true)
-                OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("Phone number") }, singleLine = true)
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = { phone = it },
+                    label = { Text("Phone number") },
+                    singleLine = true
+                )
             }
         },
-        confirmButton = { TextButton(onClick = { onAdd(name, phone) }) { Text("Add") } },
-        dismissButton = { TextButton(onClick = { TTS.speak("Canceled."); onDismiss() }) { Text("Cancel") } }
+        confirmButton = {
+            TextButton(onClick = { onAdd(name, phone) }) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    TTS.speak("Canceled.")
+                    onDismiss()
+                }
+            ) { Text("Cancel") }
+        }
     )
 }
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun ContactsScreenPreview() {
+    val nav = rememberNavController()
+    MaterialTheme {
+        ContactsScreen(navController = nav)
+    }
+}
+

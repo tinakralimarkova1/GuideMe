@@ -3,7 +3,6 @@ package com.example.guideme.phone
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,14 +27,14 @@ fun BottomNavBar(navController: NavController, currentRoute: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .heightIn(min= 80.dp, max =90.dp)
+            //.heightIn(min= 80.dp, max =95.dp)
             //.padding(top=10.dp)// ⬅️ increase from 56dp → 64/72/80dp as needed
     ) {
 
         NavigationBar(
             tonalElevation = 8.dp,
             modifier = Modifier
-                .padding(bottom = 5.dp, top = 5.dp)
+                .padding(bottom = 0.dp, top = 4.dp)
                 .clip(RoundedCornerShape(16.dp))
             //.heightIn(min = 50.dp, max = 80.dp)
 
@@ -43,13 +42,12 @@ fun BottomNavBar(navController: NavController, currentRoute: String) {
 
 
         {
-            Row(modifier = Modifier.padding(top=14.dp)
+            Row(modifier = Modifier.padding(top = 10.dp)
 
             ) {
 
 
                 NavigationBarItem(
-
                     selected = currentRoute == "favorites",
                     onClick = {
                         TTS.speak("You are entering favorites.")
