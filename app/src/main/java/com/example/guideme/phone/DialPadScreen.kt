@@ -119,7 +119,7 @@ fun DialPadScreen(
 
             val configuration = LocalConfiguration.current
             val screenHeightPx = configuration.screenHeightDp.dp
-            val fakeUiSpace = screenHeightPx * 0.80f
+            val fakeUiSpace = screenHeightPx * 0.82f
 
 
             Column(modifier = Modifier.heightIn(max= fakeUiSpace)
@@ -250,22 +250,18 @@ fun DialPadScreen(
 
 
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 80.dp)
-                ) {
-                    BottomNavBar(
-                        navController = navController,
-                        currentRoute = "dialpad",
-                        onAnchorTapped = onButtonPressed,
-                        tappedIncorrectAnchor = tappedIncorrectAnchor,
-                        correctAnchor = correctAnchor,
-                        isAnchorAllowed = isAnchorAllowed
-                    )
+
+                BottomNavBar(
+                    navController = navController,
+                    currentRoute = "dialpad",
+                    onAnchorTapped = onButtonPressed,
+                    tappedIncorrectAnchor = tappedIncorrectAnchor,
+                    correctAnchor = correctAnchor,
+                    isAnchorAllowed = isAnchorAllowed
+                )
 
                     // 👇 Reserve an empty band at the bottom for the lesson overlay
-                }
+
             }
         }
 

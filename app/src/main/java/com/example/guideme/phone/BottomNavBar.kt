@@ -1,9 +1,6 @@
 package com.example.guideme.phone
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,89 +28,80 @@ fun BottomNavBar(
     // 🔗 Lesson wiring
     onAnchorTapped: (String) -> Unit = {},
     tappedIncorrectAnchor: String? = null,
-    correctAnchor: String? = null, // kept for future if you want special styling
+    correctAnchor: String? = null,
     isAnchorAllowed: (String) -> Boolean = { true }
 ) {
-    Box(
+    NavigationBar(
+        tonalElevation = 8.dp,
         modifier = Modifier
-            .fillMaxSize()
-            .heightIn(min = 64.dp, max = 80.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 4.dp)
+            .clip(RoundedCornerShape(16.dp))
     ) {
-        NavigationBar(
-            tonalElevation = 8.dp,
+        // ⭐ Favorites
+        val favoritesAnchor = "Phone.BottomNav.Favorites"
+        NavigationBarItem(
+            selected = currentRoute == "favorites",
+            onClick = {
+                if (!isAnchorAllowed(favoritesAnchor)) {
+                    onAnchorTapped(favoritesAnchor)
+                } else {
+                    onAnchorTapped(favoritesAnchor)
+                    TTS.speak("You are entering favorites.")
+                    navController.navigate("favorites") {
+                        popUpTo("favorites") { inclusive = false }
+                    }
+                }
+            },
+            icon = { Icon(Icons.Filled.Star, contentDescription = "Favorites") },
+            label = { Text("Favorites", fontSize = 17.sp) },
             modifier = Modifier
-                .padding(bottom = 0.dp, top = 4.dp)
-                .clip(RoundedCornerShape(16.dp))
-        ) {
-            Row(
-                modifier = Modifier.padding(top = 10.dp)
-            ) {
-                // ⭐ Favorites
-                val favoritesAnchor = "Phone.BottomNav.Favorites"
-                NavigationBarItem(
-                    selected = currentRoute == "favorites",
-                    onClick = {
-                        if (!isAnchorAllowed(favoritesAnchor)) {
-                            onAnchorTapped(favoritesAnchor)
-                        } else {
-                            onAnchorTapped(favoritesAnchor)
-                            TTS.speak("You are entering favorites.")
-                            navController.navigate("favorites") {
-                                popUpTo("favorites") { inclusive = false }
-                            }
-                        }
-                    },
-                    icon = { Icon(Icons.Filled.Star, contentDescription = "Favorites") },
-                    label = { Text("Favorites", fontSize = 17.sp) },
-                    modifier = Modifier
-                        .anchorId(favoritesAnchor)
-                        .flash(tappedIncorrectAnchor, favoritesAnchor)
-                )
+                .anchorId(favoritesAnchor)
+                .flash(tappedIncorrectAnchor, favoritesAnchor)
+        )
 
-                // ⏱ Recents
-                val recentsAnchor = "Phone.BottomNav.Recents"
-                NavigationBarItem(
-                    selected = currentRoute == "recents",
-                    onClick = {
-                        if (!isAnchorAllowed(recentsAnchor)) {
-                            onAnchorTapped(recentsAnchor)
-                        } else {
-                            onAnchorTapped(recentsAnchor)
-                            TTS.speak("You are entering recents.")
-                            navController.navigate("recents") {
-                                popUpTo("recents") { inclusive = false }
-                            }
-                        }
-                    },
-                    icon = { Icon(Icons.Filled.Schedule, contentDescription = "Recents") },
-                    label = { Text("Recents", fontSize = 17.sp) },
-                    modifier = Modifier
-                        .anchorId(recentsAnchor)
-                        .flash(tappedIncorrectAnchor, recentsAnchor)
-                )
+        // ⏱ Recents
+        val recentsAnchor = "Phone.BottomNav.Recents"
+        NavigationBarItem(
+            selected = currentRoute == "recents",
+            onClick = {
+                if (!isAnchorAllowed(recentsAnchor)) {
+                    onAnchorTapped(recentsAnchor)
+                } else {
+                    onAnchorTapped(recentsAnchor)
+                    TTS.speak("You are entering recents.")
+                    navController.navigate("recents") {
+                        popUpTo("recents") { inclusive = false }
+                    }
+                }
+            },
+            icon = { Icon(Icons.Filled.Schedule, contentDescription = "Recents") },
+            label = { Text("Recents", fontSize = 17.sp) },
+            modifier = Modifier
+                .anchorId(recentsAnchor)
+                .flash(tappedIncorrectAnchor, recentsAnchor)
+        )
 
-                // 👤 Contacts
-                val contactsAnchor = "Phone.BottomNav.Contacts"
-                NavigationBarItem(
-                    selected = currentRoute == "contacts",
-                    onClick = {
-                        if (!isAnchorAllowed(contactsAnchor)) {
-                            onAnchorTapped(contactsAnchor)
-                        } else {
-                            onAnchorTapped(contactsAnchor)
-                            TTS.speak("You are entering contacts.")
-                            navController.navigate("contacts") {
-                                popUpTo("contacts") { inclusive = false }
-                            }
-                        }
-                    },
-                    icon = { Icon(Icons.Filled.Contacts, contentDescription = "Contacts") },
-                    label = { Text("Contacts", fontSize = 17.sp) },
-                    modifier = Modifier
-                        .anchorId(contactsAnchor)
-                        .flash(tappedIncorrectAnchor, contactsAnchor)
-                )
-            }
-        }
+        // 👤 Contacts
+        val contactsAnchor = "Phone.BottomNav.Contacts"
+        NavigationBarItem(
+            selected = currentRoute == "contacts",
+            onClick = {
+                if (!isAnchorAllowed(contactsAnchor)) {
+                    onAnchorTapped(contactsAnchor)
+                } else {
+                    onAnchorTapped(contactsAnchor)
+                    TTS.speak("You are entering contacts.")
+                    navController.navigate("contacts") {
+                        popUpTo("contacts") { inclusive = false }
+                    }
+                }
+            },
+            icon = { Icon(Icons.Filled.Contacts, contentDescription = "Contacts") },
+            label = { Text("Contacts", fontSize = 17.sp) },
+            modifier = Modifier
+                .anchorId(contactsAnchor)
+                .flash(tappedIncorrectAnchor, contactsAnchor)
+        )
     }
 }
