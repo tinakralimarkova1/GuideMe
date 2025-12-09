@@ -47,6 +47,12 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
+                    DbLesson(
+                        id = 1004,
+                        name =  "Flipping the camera",
+                        difficulty = 2,
+
+                        ),
                     //-----------Phone Lessons---------//
                     DbLesson(
                         id = 2001,
@@ -336,6 +342,82 @@ object DatabaseSeeder {
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
+
+                    //-------Camera Lesson 1004: Flipping the camera-------
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 1,
+                        text = "This lesson will teach you how to flip between the front and the back camera.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 2,
+                        text = "Your phone has two cameras: the back camera, which points away from you, and the front camera, which points towards you for selfies.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 3,
+                        text = "This is the switch camera button. It lets you change between the front and back camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 4,
+                        text = "Tap the switch camera button once to change from the back camera to the front camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 5,
+                        text = "Now you are using the front camera. In a real app, you would see yourself on the screen, like taking a selfie.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 6,
+                        text = "Let's take a selfie. Press the capture button.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 7,
+                        text = "You can switch back to the back camera the same way. Tap the switch camera button again to go back.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 8,
+                        text = "Great job. You are now back on the back camera. You have learned how to flip between the front and back cameras.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 9,
+                        text = "Remember: use the back camera for things in front of you, and the front camera when you want to take a picture of yourself.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
 
 

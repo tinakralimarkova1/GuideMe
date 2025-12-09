@@ -2,6 +2,7 @@ package com.example.guideme
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -100,7 +101,6 @@ import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
 import me.nikhilchaudhari.library.BuildConfig
-import android.content.Context
 
 
 class MainActivity : ComponentActivity() {
@@ -637,7 +637,7 @@ private fun LessonsMenu(
 //    onOpenPhone: () -> Unit = {},
 //    onOpenWifi: () -> Unit = {}
 ) {
-    val cameraIds = listOf(1001, 1002, 1003)
+    val cameraIds = listOf(1001, 1002, 1003,1004)
     val phoneIds  = listOf(2001, 2002, 2003)
     val wifiIds   = listOf(3001, 3002, 3003)
 
