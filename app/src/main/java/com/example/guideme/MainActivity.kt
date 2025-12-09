@@ -100,6 +100,7 @@ import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
 import me.nikhilchaudhari.library.BuildConfig
+import android.content.Context
 
 
 class MainActivity : ComponentActivity() {
@@ -179,24 +180,23 @@ fun GuideMeRoot(
     missingLessonDao: MissingLessonDao? = null,
     completionDao: CompletionDao
 ) {
-    var currentUser by rememberSaveable { mutableStateOf<DbCustomer?>(null) }
+    val context = LocalContext.current
+    // SharedPreferences where we remember who is logged in
+    val prefs = remember {
+        context.getSharedPreferences("guideme_prefs", Context.MODE_PRIVATE)
+    }
 
-    //FOR DEBUG - ALLOWS MONKEY TESTING WITH NO LOG IN
+    // In-memory current user
+    var currentUser by remember { mutableStateOf<DbCustomer?>(null) }
 
-//    LaunchedEffect(Unit) {
-//        if (BuildConfig.DEBUG && currentUser == null) {
-//            val demo = customerDao.getCustomer("demo")
-//            if (demo != null) {
-//                currentUser = demo
-//                TTS.speak(
-//                    "Welcome to Guide Me. " +
-//                            "Click learn to go to the lessons menu, or click search to find a specific lesson."
-//                )
-//            }
-//        }
-//    }
-    /// END OF DEBUG
-
+    // On first composition, try to restore the saved user
+    LaunchedEffect(Unit) {
+        val savedEmail = prefs.getString("logged_in_email", null)
+        if (!savedEmail.isNullOrBlank()) {
+            val user = customerDao.getCustomer(savedEmail)
+            currentUser = user
+        }
+    }
 
     if (currentUser == null) {
         // Login / Register
@@ -205,6 +205,10 @@ fun GuideMeRoot(
             customerDao = customerDao,
             onAuthSuccess = { customer ->
                 currentUser = customer
+
+                // Persist login
+                prefs.edit().putString("logged_in_email", customer.email).apply()
+
                 TTS.speak(
                     "Welcome to Guide Me. " +
                             "Click learn to go to the lessons menu, or click search to find a specific lesson."
@@ -217,7 +221,11 @@ fun GuideMeRoot(
             modifier = modifier,
             lessonsRepo = lessonsRepo,
             userEmail = currentUser!!.email,
-            onLogout = { currentUser = null },
+            onLogout = {
+                // ✅ Clear persisted login on explicit logout
+                prefs.edit().remove("logged_in_email").apply()
+                currentUser = null
+            },
             lessonDao = lessonDao,
             missingLessonDao = missingLessonDao,
             completionDao = completionDao,
@@ -225,6 +233,7 @@ fun GuideMeRoot(
         )
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -1159,3 +1168,4 @@ private fun PreviewSearchMenu() {
         }
     }
 }
+

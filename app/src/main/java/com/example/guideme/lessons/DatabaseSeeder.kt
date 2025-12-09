@@ -539,6 +539,80 @@ object DatabaseSeeder {
 
 
                         ),
+                    // -------tester contacts
+                    // -------Phone Lesson 2003: Adding a new contact-------
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 1,
+                        text = "This lesson will teach you how to add a new contact so you don’t have to remember phone numbers.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 2,
+                        text = "We start on the dial screen. At the bottom you can see three options: Favorites, Recents, and Contacts.",
+                        anchorId = "Phone.BottomNav.Contacts",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 3,
+                        text = "To add a contact, you first need to go to your contacts list. Tap the Contacts button at the bottom of the screen.",
+                        anchorId = "Phone.BottomNav.Contacts",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 4,
+                        text = "This is the contacts screen. Here you will see people whose phone numbers you have already saved.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 5,
+                        text = "To add someone new, look for the Add contact button with a plus sign. In the real app, tapping this button opens a form to create a new contact.",
+                        anchorId = "Contacts.AddContact",   // later you can attach something like \"Contacts.AddButton\"
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 6,
+                        text = "The form has a box for the person’s name. This is where you would type who the contact is, for example “Daughter” or “Dr. Chen”.",
+                        anchorId = "Contacts.NameField",   // e.g. \"Contacts.NameField\" once you anchor the TextField
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 7,
+                        text = "Below the name box is a box for the phone number. This is where you type the person’s phone number.",
+                        anchorId = null,   // e.g. \"Contacts.PhoneField\"
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 8,
+                        text = "After you type the name and phone number, you tap the Add button to save the contact. Next time, you can call them directly from your contacts list.",
+                        anchorId = null,   // e.g. \"Contacts.ConfirmAdd\"
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
                     //-------Wifi Lesson 3001 Instructions-------
                     DbInstruction(
