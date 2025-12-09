@@ -87,6 +87,16 @@ fun LessonHost(
                 Sfx.playWrong()
                 vm.clearSoundEvent()
             }
+
+            is SoundEvent.Complete ->{
+                Sfx.playComplete()
+                vm.clearSoundEvent()
+            }
+
+            is SoundEvent.Click ->{
+                Sfx.playClick()
+                vm.clearSoundEvent()
+            }
             null -> {}
         }
     }

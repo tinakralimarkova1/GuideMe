@@ -22,6 +22,10 @@ sealed class UserEvent {
 sealed class SoundEvent {
     object Correct : SoundEvent()
     object Wrong : SoundEvent()
+
+    object Click : SoundEvent()
+
+    object Complete : SoundEvent()
 }
 class LessonViewModel(
     private val repo: LessonsRepository,
@@ -170,6 +174,9 @@ class LessonViewModel(
             if (step.type != StepType.Acknowledge) {
                 _soundEvent.value = SoundEvent.Correct
             }
+            else{
+                _soundEvent.value = SoundEvent.Click
+            }
         }
 
         // ---- 4. Correct action ----
@@ -200,6 +207,8 @@ class LessonViewModel(
                     recommendedLessons = recLessons
                 )
             }
+
+            _soundEvent.value = SoundEvent.Complete
         }
 
         uiState = s.copy(
