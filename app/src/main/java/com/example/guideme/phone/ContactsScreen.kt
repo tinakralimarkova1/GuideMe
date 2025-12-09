@@ -1,5 +1,6 @@
 package com.example.guideme.phone
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +16,10 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -26,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -47,15 +50,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.guideme.lessons.anchorId
 import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
-import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Surface
-import androidx.compose.foundation.lazy.items
-import android.net.Uri
-
-
 
 
 data class Contact(val name: String, val phone: String)
@@ -201,6 +195,9 @@ fun ContactsScreen(
                                 TTS.speak("Contact added: $name.")
                                 showAddDialog = false
                             }
+                        },
+                        onNumberCommitted ={text ->
+                            onNumberCommitted(text)
                         }
                     )
                 }
@@ -251,16 +248,19 @@ private fun ContactRow(c: Contact, onClick: () -> Unit) {
 @Composable
 private fun AddContactSheet(
     onDismiss: () -> Unit,
-    onAdd: (name: String, phone: String) -> Unit
-) {
+    onAdd: (name: String, phone: String) -> Unit,
+    onNumberCommitted:(String) -> Unit ={},
+
+    ) {
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 
-    // Full-size box over the contacts area (NOT a Dialog)
+    // Full-size overlay container
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)),
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f))
+            .anchorId("Contacts.Add.Overlay"),
         contentAlignment = Alignment.Center
     ) {
         Surface(
@@ -269,45 +269,78 @@ private fun AddContactSheet(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .heightIn(min = 260.dp)
+                .anchorId("Contacts.Add.Container")
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier
+                    .padding(24.dp)
+                    .anchorId("Contacts.Add.Content"),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                Text("Add contact", fontWeight = FontWeight.Bold)
+                Text(
+                    "Add contact",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.anchorId("Contacts.Add.Title")
+                )
 
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = {newValue ->
+                        name = newValue
+                        onNumberCommitted(newValue)},
                     label = { Text("Name") },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .anchorId("Contacts.Add.Name")
                 )
+
                 OutlinedTextField(
                     value = phone,
-                    onValueChange = { phone = it },
+                    onValueChange = {newValue ->
+                        name = newValue
+                        onNumberCommitted(newValue)},
                     label = { Text("Phone number") },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .anchorId("Contacts.Add.Phone")
                 )
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(
+                    Modifier
+                        .height(8.dp)
+                        .anchorId("Contacts.Add.Spacer")
+                )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .anchorId("Contacts.Add.ButtonRow"),
                     horizontalArrangement = Arrangement.End
                 ) {
+
                     TextButton(
                         onClick = {
                             TTS.speak("Canceled.")
                             onDismiss()
-                        }
+                        },
+                        modifier = Modifier.anchorId("Contacts.Add.Cancel")
                     ) {
                         Text("Cancel")
                     }
-                    Spacer(Modifier.width(8.dp))
-                    TextButton(onClick = { onAdd(name, phone) }) {
+
+                    Spacer(
+                        Modifier
+                            .width(8.dp)
+                            .anchorId("Contacts.Add.Spacer.Small")
+                    )
+
+                    TextButton(
+                        onClick = { onAdd(name, phone) },
+                        modifier = Modifier.anchorId("Contacts.Add.AddButton")
+                    ) {
                         Text("Add")
                     }
                 }
@@ -315,7 +348,6 @@ private fun AddContactSheet(
         }
     }
 }
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

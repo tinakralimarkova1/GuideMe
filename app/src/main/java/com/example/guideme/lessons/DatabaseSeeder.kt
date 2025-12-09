@@ -539,12 +539,11 @@ object DatabaseSeeder {
 
 
                         ),
-                    // -------tester contacts
                     // -------Phone Lesson 2003: Adding a new contact-------
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 1,
-                        text = "This lesson will teach you how to add a new contact so you don’t have to remember phone numbers.",
+                        text = "This lesson will show you how to add a new contact so you don’t have to remember phone numbers.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
@@ -572,7 +571,7 @@ object DatabaseSeeder {
                         lessonsId = 2003,
                         stepNo = 4,
                         text = "This is the contacts screen. Here you will see people whose phone numbers you have already saved.",
-                        anchorId = null,
+                        anchorId = "Contacts.List",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
@@ -580,8 +579,8 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 5,
-                        text = "To add someone new, look for the Add contact button with a plus sign. In the real app, tapping this button opens a form to create a new contact.",
-                        anchorId = "Contacts.AddContact",   // later you can attach something like \"Contacts.AddButton\"
+                        text = "To add someone new, look for the Add contact button with a plus sign. Tap this button to open the contact form.",
+                        anchorId = "Contacts.AddContact",
                         type = StepType.TapTarget.name,
                         outlineColor = null
                     ),
@@ -589,29 +588,60 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 6,
-                        text = "The form has a box for the person’s name. This is where you would type who the contact is, for example “Daughter” or “Dr. Chen”.",
-                        anchorId = "Contacts.NameField",   // e.g. \"Contacts.NameField\" once you anchor the TextField
+                        text = "At the top of the form is a box for the person’s name. This is where you type who the contact is, for example “Daughter” or “Dr. Chen”.",
+                        anchorId = "Contacts.Add.Name",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
-
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 7,
-                        text = "Below the name box is a box for the phone number. This is where you type the person’s phone number.",
-                        anchorId = null,   // e.g. \"Contacts.PhoneField\"
-                        type = StepType.Acknowledge.name,
-                        outlineColor = null
+                        text = "Let's practice adding a contact. Type in 'John Doe' in the name field",
+                        anchorId = "Contacts.Add.Name",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "John Doe"
                     ),
+
 
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 8,
-                        text = "After you type the name and phone number, you tap the Add button to save the contact. Next time, you can call them directly from your contacts list.",
-                        anchorId = null,   // e.g. \"Contacts.ConfirmAdd\"
+                        text = "Below the name box is a box for the phone number. This is where you type the person’s phone number.",
+                        anchorId = "Contacts.Add.Phone",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 9,
+                        text = "Now type in '987654' in the phone number field",
+                        anchorId = "Contacts.Add.Phone",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "987654"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 10,
+                        text = "After you enter the name and phone number, tap the Add button to save the contact. Next time, you can call them directly from your contacts list.",
+                        anchorId = "Contacts.Add.AddButton",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 11,
+                        text = "Awesome! You have added a new contact John Doe.",
+                        anchorId = "Contacts.Add.Name",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null,
+
+                    ),
+
+
 
 
                     //-------Wifi Lesson 3001 Instructions-------
