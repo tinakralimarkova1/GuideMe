@@ -1,6 +1,6 @@
 package com.example.guideme.phone
 
-import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -47,6 +47,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.guideme.lessons.anchorId
 import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.lazy.items
+import android.net.Uri
+
+
+
 
 data class Contact(val name: String, val phone: String)
 
@@ -71,20 +81,7 @@ fun ContactsScreen(
     }
     var showAddDialog by remember { mutableStateOf(false) }
 
-    if (showAddDialog) {
-        AddContactDialog(
-            onDismiss = { showAddDialog = false },
-            onAdd = { name, phone ->
-                if (name.isBlank() || phone.isBlank()) {
-                    TTS.speak("Please enter a name and a phone number.")
-                } else {
-                    contacts.add(Contact(name.trim(), phone.trim()))
-                    TTS.speak("Contact added: $name.")
-                    showAddDialog = false
-                }
-            }
-        )
-    }
+
 
     Scaffold(
         topBar = {
@@ -158,9 +155,9 @@ fun ContactsScreen(
                 modifier = Modifier
                     .weight(8f)
                     .fillMaxWidth()
-                    // anchor for “this is the contacts list” highlight-only steps
                     .anchorId("Contacts.List")
             ) {
+                // --- existing content underneath ---
                 if (contacts.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -189,8 +186,26 @@ fun ContactsScreen(
                             )
                         }
                     }
+
+                }
+
+                // --- "fake dialog" overlay, drawn on top but still under Lesson overlay ---
+                if (showAddDialog) {
+                    AddContactSheet(
+                        onDismiss = { showAddDialog = false },
+                        onAdd = { name, phone ->
+                            if (name.isBlank() || phone.isBlank()) {
+                                TTS.speak("Please enter a name and a phone number.")
+                            } else {
+                                contacts.add(Contact(name.trim(), phone.trim()))
+                                TTS.speak("Contact added: $name.")
+                                showAddDialog = false
+                            }
+                        }
+                    )
                 }
             }
+
 
             // Bottom nav bar anchored at the bottom in its own row,
             // leaving the usual empty band above for the lesson overlay.
@@ -234,47 +249,73 @@ private fun ContactRow(c: Contact, onClick: () -> Unit) {
 }
 
 @Composable
-private fun AddContactDialog(
+private fun AddContactSheet(
     onDismiss: () -> Unit,
     onAdd: (name: String, phone: String) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add contact", fontWeight = FontWeight.Bold) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    // Full-size box over the contacts area (NOT a Dialog)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            shape = RoundedCornerShape(24.dp),
+            tonalElevation = 8.dp,
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .heightIn(min = 260.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text("Add contact", fontWeight = FontWeight.Bold)
+
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name") },
-                    singleLine = true
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = phone,
                     onValueChange = { phone = it },
                     label = { Text("Phone number") },
-                    singleLine = true
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = { onAdd(name, phone) }) {
-                Text("Add")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    TTS.speak("Canceled.")
-                    onDismiss()
+
+                Spacer(Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = {
+                            TTS.speak("Canceled.")
+                            onDismiss()
+                        }
+                    ) {
+                        Text("Cancel")
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    TextButton(onClick = { onAdd(name, phone) }) {
+                        Text("Add")
+                    }
                 }
-            ) { Text("Cancel") }
+            }
         }
-    )
+    }
 }
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
