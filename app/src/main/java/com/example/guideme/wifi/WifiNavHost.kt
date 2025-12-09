@@ -149,10 +149,12 @@ fun WifiNavHost(
             })
         ) { backStack ->
             val ssid = backStack.arguments?.getString("ssid") ?: ""
+            val secured = backStack.arguments?.getBoolean("secured") ?: true
+
             WifiConnectScreen(
                 nav = nav,
                 prefillSsid = ssid,
-                requiresPassword = true, // or look this up if you pass `secured`
+                requiresPassword = secured, // or look this up if you pass `secured`
                 onAnchorTapped = { anchorId -> onAnchorTapped(anchorId) },
                 correctAnchor = correctAnchor,
                 tappedIncorrectAnchor = tappedIncorrectAnchor,

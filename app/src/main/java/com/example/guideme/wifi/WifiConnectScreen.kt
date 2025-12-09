@@ -77,22 +77,31 @@ fun WifiConnectScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth().anchorId("Wifi.Connect.SSID")
             )
-            OutlinedTextField(
-                value = password,
-                onValueChange = {
-                        newValue ->
-                    password = newValue
-                    onNumberCommitted(newValue)
-                                },
-                label = { Text("Password") },
-                singleLine = true,
-                visualTransformation = if (show) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    TextButton(onClick = { show = !show }) { Text(if (show) "Hide" else "Show") }
-                },
-
-                modifier = Modifier.fillMaxWidth().anchorId("Wifi.Connect.Password")
-            )
+            if (requiresPassword) {
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { newValue ->
+                        password = newValue
+                        onNumberCommitted(newValue)
+                    },
+                    label = { Text("Password") },
+                    singleLine = true,
+                    visualTransformation = if (show) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        TextButton(onClick = { show = !show }) {
+                            Text(if (show) "Hide" else "Show")
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .anchorId("Wifi.Connect.Password")
+                )
+            } else {
+                Text(
+                    "This is an open network — no password is needed.",
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
             Button(
                 onClick = {
                     val anchor = "Wifi.Connect.Button"

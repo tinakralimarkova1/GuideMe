@@ -639,7 +639,7 @@ private fun LessonsMenu(
 ) {
     val cameraIds = listOf(1001, 1002, 1003,1004)
     val phoneIds  = listOf(2001, 2002, 2003,2004)
-    val wifiIds   = listOf(3001, 3002, 3003)
+    val wifiIds   = listOf(3001, 3002, 3003,3004)
 
     var lessonNames by remember { mutableStateOf<Map<Int, String>>(emptyMap()) }
 

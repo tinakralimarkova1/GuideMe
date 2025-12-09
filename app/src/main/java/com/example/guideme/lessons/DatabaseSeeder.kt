@@ -98,7 +98,15 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
-                    // add more later as needed
+
+                    DbLesson(
+                        id = 3004,
+                        name =  "Open vs Secured Wifi networks",
+                        difficulty = 2,
+
+                        ),
+
+
                 )
             )
         }
@@ -984,6 +992,87 @@ object DatabaseSeeder {
                         lessonsId = 3003,
                         stepNo = 5,
                         text = "Nice job! You practiced connecting to a secure Wi-Fi network.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    //------- Wifi Lesson 3004 — Open vs Secure Networks -------
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 1,
+                        text = "In this lesson, you will learn the difference between open and secure Wi-Fi networks.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 2,
+                        text = "This is your list of available Wi-Fi networks.",
+                        anchorId = "Wifi.NetworkBox",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 3,
+                        text = "Some networks are secure. A secure network needs a password, usually for places like your home or office. Home-5G is a secure network.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 4,
+                        text = "Other networks are open. An open network does NOT need a password, and is often used in public places like airports, coffee shops, or guest networks. Campus-Guest is an open network.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 5,
+                        text = "Secure networks are usually safer because only people with the password can join. Open networks are more convenient, but you should avoid doing banking or anything very private on them.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 6,
+                        text = "Now, let’s practice connecting to an open network. Tap on the network called Campus-Guest.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 7,
+                        text = "You are now on the connect screen for Campus-Guest. Because this is an open network, it does not need a password.",
+                        anchorId = "Wifi.Connect.SSID",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 8,
+                        text = "To connect to this open network, tap the Connect button.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 9,
+                        text = "Great job! You learned the difference between open and secure Wi-Fi, and practiced connecting to an open network.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
