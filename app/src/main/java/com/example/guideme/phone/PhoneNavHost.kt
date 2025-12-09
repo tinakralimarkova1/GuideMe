@@ -92,7 +92,19 @@ fun PhoneNavHost(
     NavHost(navController = navController, startDestination = "dialpad") {
         composable("favorites") { FavoritesScreen(navController) }
         composable("recents") { RecentsScreen(navController) }
-        composable("contacts") { ContactsScreen(navController) }
+
+
+        composable("contacts") { ContactsScreen(
+            navController,
+            onAnchorTapped = { anchorId ->
+                onAnchorTapped(anchorId)
+            },
+            onNumberCommitted = { number ->
+                onNumberCommitted(number)
+            },
+            correctAnchor = correctAnchor,
+            tappedIncorrectAnchor = tappedIncorrectAnchor,
+            isAnchorAllowed = isAnchorAllowed) }
 
         // dial pad can accept an optional number AND lesson-defined defaults
         composable(
