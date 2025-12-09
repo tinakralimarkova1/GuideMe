@@ -107,6 +107,9 @@ fun LessonHost(
                    onToggle = { id, on ->
                        vm.onUserEvent(UserEvent.Toggle(id, on))
                    },
+                    onNumberCommitted = { text ->
+                        vm.onUserEvent(UserEvent.TextEntered(text))
+                    },
                     correctAnchor = state.correctAnchor,
                     tappedIncorrectAnchor = state.tappedIncorrectAnchorId,
                     isAnchorAllowed = { anchorId ->

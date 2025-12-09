@@ -886,6 +886,55 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------WiFi Lesson 3003 Instructions-------
+                    // Goal: Connect to Home-5G with password "password"
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 1,
+                        text = "In this lesson, you'll practice connecting to your home Wi-Fi network called Home-5G.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 2,
+                        text = "First, tap the Home-5G network in the list.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 3,
+                        text = "Now type the Wi-Fi password in the password box. For practice, enter the word: password.",
+                        anchorId = "Wifi.Connect.Password",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "password"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 4,
+                        text = "Great! On a real phone, you would tap the Connect button to join Home-5G.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 5,
+                        text = "Nice job! You practiced connecting to a secure Wi-Fi network.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
                     )
             )
