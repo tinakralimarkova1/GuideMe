@@ -90,6 +90,7 @@ import com.example.guideme.lessons.LessonHost
 import com.example.guideme.lessons.LessonsRepository
 import com.example.guideme.lessons.MissingLessonDao
 import com.example.guideme.lessons.RoomLessonsRepository
+import com.example.guideme.lessons.Sfx
 import com.example.guideme.phone.CameraScreen
 import com.example.guideme.phone.PhoneNavHost
 import com.example.guideme.tts.TTS
@@ -113,6 +114,8 @@ class MainActivity : ComponentActivity() {
         TTS.init(this) {
             // We speak the welcome message after login in GuideMeRoot
         }
+        Sfx.init(this)
+
 
         // --- Room database + repository setup ---
         val db = Room.databaseBuilder(
@@ -167,6 +170,7 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         TTS.shutdown()
+        Sfx.release()
     }
 }
 

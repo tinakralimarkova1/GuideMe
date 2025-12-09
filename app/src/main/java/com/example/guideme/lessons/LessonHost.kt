@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,7 +74,27 @@ fun LessonHost(
 
     LaunchedEffect(appName, lessonId) { vm.loadLesson(appName, lessonId) }
 
-    Box(Modifier.fillMaxSize().background(MainBackgroundGradient))
+    val soundEvent by vm.soundEvent.collectAsState()
+
+    LaunchedEffect(soundEvent) {
+        when (soundEvent) {
+            is SoundEvent.Correct -> {
+                Sfx.playCorrect()
+                vm.clearSoundEvent()
+            }
+
+            is SoundEvent.Wrong   -> {
+                Sfx.playWrong()
+                vm.clearSoundEvent()
+            }
+            null -> {}
+        }
+    }
+
+
+    Box(Modifier
+        .fillMaxSize()
+        .background(MainBackgroundGradient))
     {
         // 1) Your fake app UI (emit events back to ViewModel)
         if (state.completed) {
@@ -215,6 +236,7 @@ fun LessonHost(
         )
     }
 
+
 }
 
 
@@ -244,7 +266,7 @@ private fun InstructionOverlay(
             tonalElevation = 4.dp,
             shadowElevation = 8.dp,
             modifier = Modifier
-                    .fillMaxWidth()
+                .fillMaxWidth()
                 // 👇 FIXED SIZE BEHAVIOR
                 .heightIn(min = 140.dp)
 
