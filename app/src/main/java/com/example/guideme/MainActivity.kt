@@ -97,6 +97,7 @@ import com.example.guideme.ui.theme.GuideMeTheme
 import com.example.guideme.ui.theme.MainBackgroundGradient
 import com.example.guideme.ui.theme.MainButtonColor
 import com.example.guideme.ui.theme.MainButtonContentColor
+import com.example.guideme.ui.theme.PracticeButton
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
@@ -291,22 +292,16 @@ fun MainScreen(
                         selectedLessonId = lessonId
                         currentScreen = "lesson"
                     },
+                    onStartPractice = { appName, lessonId ->
+                        TTS.speak("Opening practice menu.")
+                        selectedApp = appName
+                        selectedLessonId = lessonId
+                        currentScreen = "practice"
+                    },
                     onBack = {
                         TTS.speak("Returning to welcome.")
                         currentScreen = "welcome"
                     }
-//                    onOpenCamera = {
-//                        TTS.speak("Opening Camera.")
-//                        currentScreen = "camera"
-//                    },
-//                    onOpenPhone = {
-//                        TTS.speak("Opening Phone.")
-//                        currentScreen = "phone"
-//                    },
-//                    onOpenWifi = {
-//                        TTS.speak("Opening Wi-Fi.")
-//                        currentScreen = "wifi"
-//                    }
                 )
                 BackHandler {
                     TTS.speak("Returning to welcome.")
@@ -401,6 +396,31 @@ fun MainScreen(
                     currentScreen = "main"
                 }
             }
+
+            "practice" -> {
+                val app = selectedApp ?: return
+                val lid = selectedLessonId ?: return
+
+                PracticeLevelMenu(
+                    modifier = modifier.fillMaxSize(),
+                    appName = app,
+                    lessonId = lid,
+                    onBack = {
+                        TTS.speak("Returning to lessons menu.")
+                        currentScreen = "main"
+                    },
+                    onStartPracticeLevel = { level ->
+                        // later: map (app, lid, level) → actual practice lesson
+                        TTS.speak("Practice $level is not set up yet.")
+                    }
+                )
+
+                BackHandler {
+                    TTS.speak("Returning to lessons menu.")
+                    currentScreen = "main"
+                }
+            }
+
 
             "account" -> {
                 var user by remember { mutableStateOf<DbCustomer?>(null) }
@@ -631,11 +651,8 @@ private fun LessonsMenu(
     modifier: Modifier = Modifier,
     lessonDao: LessonDao? = null,
     onStartLesson: (appName: String, lessonId: Int) -> Unit,
+    onStartPractice: (appName: String, lessonId: Int) -> Unit,
     onBack: () -> Unit = {}
-    //if need to check ui of apps seperately
-//    onOpenCamera: () -> Unit = {},
-//    onOpenPhone: () -> Unit = {},
-//    onOpenWifi: () -> Unit = {}
 ) {
     val cameraIds = listOf(1001, 1002, 1003,1004)
     val phoneIds  = listOf(2001, 2002, 2003,2004)
@@ -716,19 +733,28 @@ private fun LessonsMenu(
                     title = "Camera",
                     ids = cameraIds,
                     label = { label(it) },
-                ) { id -> onStartLesson("Camera", id) }
+                    onStartLesson = { id -> onStartLesson("Camera", id) },
+                    onStartPractice = { id -> onStartPractice("Camera", id) },
+                    isIntro = { id -> id == 1001 } // intro has no practice
+                )
 
                 ExpandableLessonSection(
                     title = "Phone",
                     ids = phoneIds,
                     label = { label(it) },
-                ) { id -> onStartLesson("Phone", id) }
+                    onStartLesson = { id -> onStartLesson("Phone", id) },
+                    onStartPractice = { id -> onStartPractice("Phone", id) },
+                    isIntro = { id -> id == 2001 }
+                )
 
                 ExpandableLessonSection(
                     title = "Wi-Fi",
                     ids = wifiIds,
                     label = { label(it) },
-                ) { id -> onStartLesson("WiFi", id) }
+                    onStartLesson = { id -> onStartLesson("WiFi", id) },
+                    onStartPractice = { id -> onStartPractice("WiFi", id) },
+                    isIntro = { id -> id == 3001 }
+                )
             }
 
 
@@ -737,15 +763,16 @@ private fun LessonsMenu(
         }
     }
 }
-
 @Composable
-private fun LessonButton(text: String, onClick: () -> Unit) {
+private fun LessonButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 30.dp)
-            .heightIn(min = 48.dp), // issue here ,
+        modifier = modifier
+            .heightIn(min = 48.dp),
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MainButtonColor,
@@ -753,10 +780,33 @@ private fun LessonButton(text: String, onClick: () -> Unit) {
         ),
         contentPadding = PaddingValues(
             horizontal = 20.dp,
-            vertical = 10.dp          // let it breathe vertically
+            vertical = 10.dp
         )
     ) {
-        Text(text, style = MaterialTheme.typography.bodyLarge,maxLines = 2      )
+        Text(text, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
+    }
+}
+
+@Composable
+private fun PracticeButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .heightIn(min = 48.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = ButtonDefaults.buttonColors(
+            contentColor = MainButtonColor,
+            containerColor = PracticeButton
+        ),
+        contentPadding = PaddingValues(
+            horizontal = 10.dp,
+            vertical = 10.dp
+        )
+    ) {
+        Text("Practice", style = MaterialTheme.typography.bodyLarge, maxLines = 1)
     }
 }
 
@@ -765,18 +815,19 @@ private fun ExpandableLessonSection(
     title: String,
     ids: List<Int>,
     label: (Int) -> String,
-    onStartLesson: (id: Int) -> Unit
+    onStartLesson: (id: Int) -> Unit,
+    onStartPractice: (id: Int) -> Unit,
+    isIntro: (id: Int) -> Boolean = { false }
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .animateContentSize()     // smooth open/close animation
+            .padding(horizontal = 4.dp)
+            .animateContentSize()
     ) {
 
-        // The clickable group header (button style)
         Button(
             onClick = { expanded = !expanded },
             modifier = Modifier
@@ -784,20 +835,17 @@ private fun ExpandableLessonSection(
                 .heightIn(min = 54.dp),
             shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MainButtonColor,
-                contentColor = MainButtonContentColor
+                contentColor = MainButtonColor,
+                containerColor = MainButtonContentColor
             ),
-            contentPadding = PaddingValues(
-                horizontal = 20.dp,
-                vertical = 10.dp
-            )
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(title, style = MaterialTheme.typography.titleLarge,maxLines = 2)
+                Text(title, style = MaterialTheme.typography.titleLarge, maxLines = 2)
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = null
@@ -805,19 +853,136 @@ private fun ExpandableLessonSection(
             }
         }
 
-        // Expanded content (your lesson buttons)
         if (expanded) {
             Spacer(Modifier.height(8.dp))
 
             ids.forEach { id ->
-                LessonButton(text = label(id)) {
-                    onStartLesson(id)
+
+                Row(
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // big Lesson button
+                    LessonButton(
+                        text = label(id),
+                        modifier = Modifier.weight(5f)
+                    ) { onStartLesson(id) }
+
+                    // smaller Practice button (skip for intro lessons)
+                    if (!isIntro(id)) {
+                        PracticeButton(
+                            modifier = Modifier.weight(3f)
+                        ) { onStartPractice(id) }
+                    }
+                    else{
+                        //add later
+                    }
                 }
-                Spacer(Modifier.height(8.dp))
+
+                Spacer(Modifier.height(12.dp))
             }
         }
     }
 }
+@Composable
+fun PracticeLevelMenu(
+    modifier: Modifier = Modifier,
+    appName: String,
+    lessonId: Int,
+    onBack: () -> Unit,
+    onStartPracticeLevel: (Int) -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MainBackgroundGradient)
+    ) {
+        // Back chip (same style as LessonsMenu)
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(vertical = 30.dp, horizontal = 15.dp)
+                .heightIn(min = 40.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MainButtonContentColor)
+                .clickable { onBack() }
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = MainButtonColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Back",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MainButtonColor,
+                    fontSize = 20.sp
+                )
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 80.dp, bottom = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp)
+        ) {
+            Text(
+                text = "Practice",
+                color = MainButtonContentColor,
+                style = MaterialTheme.typography.headlineLarge
+            )
+
+            Text(
+                text = "Choose a practice level",
+                color = MainButtonContentColor,
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                PracticeCircleButton("Practice 1") { onStartPracticeLevel(1) }
+                PracticeCircleButton("Practice 2") { onStartPracticeLevel(2) }
+                PracticeCircleButton("Practice 3") { onStartPracticeLevel(3) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PracticeCircleButton(
+    label: String,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.size(96.dp),
+        shape = androidx.compose.foundation.shape.CircleShape,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MainButtonColor,
+            contentColor = MainButtonContentColor
+        ),
+        contentPadding = PaddingValues(0.dp)
+    ) {
+        Text(
+            text = label,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
 
 
 @Composable
@@ -1142,11 +1307,13 @@ fun PreviewWelcome() {
 fun PreviewLessonsMenu() {
     GuideMeTheme {
         LessonsMenu(
-            lessonDao = null, // previews won't query DB
-            onStartLesson = { _, _ -> }
+            lessonDao = null,
+            onStartLesson = { _, _ -> },
+            onStartPractice = { _, _ -> }
         )
     }
 }
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

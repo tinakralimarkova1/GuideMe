@@ -27,6 +27,8 @@ val SecondaryText = Color(0xFF382F64)
 
 val NoticeColor = Color(0xFFC53957)
 
+val PracticeButton = Color(0xFFA987E1)
+
 
 val Transparent = Color.Transparent
 
