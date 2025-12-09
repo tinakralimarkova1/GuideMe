@@ -634,7 +634,7 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 11,
-                        text = "Awesome! You have added a new contact John Doe.",
+                        text = "Awesome! You have added a new contact John Doe and learned how to add a contact.",
                         anchorId = "Contacts.Add.Name",
                         type = StepType.Acknowledge.name,
                         outlineColor = null,

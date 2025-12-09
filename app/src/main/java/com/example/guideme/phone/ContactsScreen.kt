@@ -198,6 +198,10 @@ fun ContactsScreen(
                         },
                         onNumberCommitted ={text ->
                             onNumberCommitted(text)
+                        },
+                        onAnchorTapped ={anchor ->
+                            onAnchorTapped(anchor)
+
                         }
                     )
                 }
@@ -250,6 +254,8 @@ private fun AddContactSheet(
     onDismiss: () -> Unit,
     onAdd: (name: String, phone: String) -> Unit,
     onNumberCommitted:(String) -> Unit ={},
+    onAnchorTapped: (String) -> Unit = {},
+
 
     ) {
     var name by remember { mutableStateOf("") }
@@ -299,7 +305,7 @@ private fun AddContactSheet(
                 OutlinedTextField(
                     value = phone,
                     onValueChange = {newValue ->
-                        name = newValue
+                        phone = newValue
                         onNumberCommitted(newValue)},
                     label = { Text("Phone number") },
                     singleLine = true,
@@ -325,6 +331,7 @@ private fun AddContactSheet(
                         onClick = {
                             TTS.speak("Canceled.")
                             onDismiss()
+                            onAnchorTapped("Contacts.Add.Cancel")
                         },
                         modifier = Modifier.anchorId("Contacts.Add.Cancel")
                     ) {
@@ -338,7 +345,10 @@ private fun AddContactSheet(
                     )
 
                     TextButton(
-                        onClick = { onAdd(name, phone) },
+                        onClick = { onAdd(name, phone)
+                            onAnchorTapped("Contacts.Add.AddButton")
+
+                        },
                         modifier = Modifier.anchorId("Contacts.Add.AddButton")
                     ) {
                         Text("Add")
