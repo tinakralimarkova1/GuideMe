@@ -170,18 +170,51 @@ fun ContactsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(contacts) { c ->
-                            ContactRow(
-                                c,
-                                onClick = {
-                                    TTS.speak("Dialing ${c.name}.")
-                                    val encoded = Uri.encode(c.phone)
-                                    navController.navigate("dialpad?number=$encoded")
+
+                            val anchor = "Contacts.Contact.${c.name}"
+
+                            ElevatedCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .anchorId(anchor)
+                                    .flash(tappedIncorrectAnchor, anchor)
+                                    .clickable {
+
+                                        // 1. Send tap event to Lesson VM
+
+
+                                        // 2. If this tap is NOT allowed right now → stop.
+                                        if (!isAnchorAllowed(anchor)) {
+                                            // VM will already show error + highlight
+                                            onAnchorTapped(anchor)
+                                        }
+                                        else{
+                                            TTS.speak("Dialing ${c.name}.")
+                                            val encoded = Uri.encode(c.phone)
+                                            onAnchorTapped(anchor)
+                                            navController.navigate("dialpad?number=$encoded")
+                                        }
+
+
+                                    }
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text(
+                                        c.name,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        c.phone,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
                                 }
-                            )
+                            }
                         }
                     }
-
                 }
+
 
                 // --- "fake dialog" overlay, drawn on top but still under Lesson overlay ---
                 if (showAddDialog) {

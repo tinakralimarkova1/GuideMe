@@ -72,6 +72,13 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
+                    DbLesson(
+                        id = 2004,
+                        name =  "Calling a saved contact",
+                        difficulty = 2,
+
+                        ),
+
                     //-----------Wifi Lessons---------//
                     DbLesson(
                         id = 3001,
@@ -722,6 +729,53 @@ object DatabaseSeeder {
                         outlineColor = null,
 
                     ),
+
+                    //------- Phone Lesson 2004 — Calling a Saved Contact -------
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 1,
+                        text = "In this lesson, you will learn how to call a saved contact.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 2,
+                        text = "First, open your saved contacts.",
+                        anchorId = "Phone.BottomNav.Contacts",   // Make sure Contacts tab has this anchor
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 3,
+                        text = "Now tap on the saved contact named 'Alice Johnson'.",
+                        anchorId = "Contacts.Contact.Alice Johnson",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 4,
+                        text = "You are now calling the saved contact of Alice Johnson. To end the call, tap the hang up button.",
+                        anchorId = "DialPad.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 5,
+                        text = "Good job! You’ve learned how to call a saved contact.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
 
 
