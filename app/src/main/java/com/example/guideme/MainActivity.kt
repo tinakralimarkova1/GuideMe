@@ -841,7 +841,7 @@ private fun PracticeButton(
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(
             contentColor = MainButtonColor,
-            containerColor = PracticeButton
+            containerColor = MainButtonContentColor
         ),
         contentPadding = PaddingValues(
             horizontal = 10.dp,
@@ -878,7 +878,7 @@ private fun ExpandableLessonSection(
             shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(
                 contentColor = MainButtonColor,
-                containerColor = MainButtonContentColor
+                containerColor = PracticeButton
             ),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
         ) {
@@ -915,14 +915,12 @@ private fun ExpandableLessonSection(
                     ) { onStartLesson(id) }
 
                     // smaller Practice button (skip for intro lessons)
-                    if (!isIntro(id)) {
-                        PracticeButton(
-                            modifier = Modifier.weight(3f)
-                        ) { onStartPractice(id) }
-                    }
-                    else{
-                        //add later
-                    }
+
+                    PracticeButton(
+                        modifier = Modifier.weight(3f)
+                    ) { onStartPractice(id) }
+
+
                 }
 
                 Spacer(Modifier.height(12.dp))
@@ -986,18 +984,14 @@ fun PracticeLevelMenu(
             Text(
                 text = "Choose a practice level",
                 color = MainButtonContentColor,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.headlineLarge
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                PracticeCircleButton("Practice 1") { onStartPracticeLevel(1) }
-                PracticeCircleButton("Practice 2") { onStartPracticeLevel(2) }
-                PracticeCircleButton("Practice 3") { onStartPracticeLevel(3) }
-            }
+
+            PracticeCircleButton("Practice I") { onStartPracticeLevel(1) }
+            PracticeCircleButton("Practice II") { onStartPracticeLevel(2) }
+            PracticeCircleButton("Practice III") { onStartPracticeLevel(3) }
+
         }
     }
 }
@@ -1009,13 +1003,13 @@ private fun PracticeCircleButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = Modifier.size(96.dp),
-        shape = androidx.compose.foundation.shape.CircleShape,
+        modifier = Modifier. fillMaxWidth().padding(horizontal = 30.dp, vertical = 10.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(36.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MainButtonColor,
-            contentColor = MainButtonContentColor
+            contentColor = MainButtonColor,
+            containerColor = MainButtonContentColor
         ),
-        contentPadding = PaddingValues(0.dp)
+        contentPadding = PaddingValues(30.dp)
     ) {
         Text(
             text = label,
