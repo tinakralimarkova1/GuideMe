@@ -2279,6 +2279,124 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //------- Wifi Practice Lesson 30021 — Turning WiFi On (with on-screen hints) -------
+                    DbInstruction(
+                        lessonsId = 30021,
+                        stepNo = 1,
+                        text = "Practice time! Let's turn the WiFi on using the on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30021,
+                        stepNo = 2,
+                        text = "This row shows whether WiFi is on or off.",
+                        anchorId = "Wifi.OnOffRow",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null,
+                    ),
+                    DbInstruction(
+                        lessonsId = 30021,
+                        stepNo = 3,
+                        text = "Tap the WiFi toggle to turn WiFi off.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = null,
+                        expectedText = "false"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30021,
+                        stepNo = 4,
+                        text = "Tap the WiFi toggle to turn WiFi on.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = null,
+                        expectedText = "true"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30021,
+                        stepNo = 5,
+                        text = "Great job! WiFi is now on.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+//------- Wifi Practice Lesson 30022 — Turning WiFi On and Off (no on-screen hints, guided) -------
+                    DbInstruction(
+                        lessonsId = 30022,
+                        stepNo = 1,
+                        text = "Now let's turn WiFi on and off with fewer on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30022,
+                        stepNo = 2,
+                        text = "Turn WiFi on using the WiFi toggle.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "true"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30022,
+                        stepNo = 3,
+                        text = "Now turn WiFi off using the same toggle.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "false"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30022,
+                        stepNo = 4,
+                        text = "Nice work! You turned WiFi on and off without on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+//------- Wifi Practice Lesson 30023 — Turning WiFi On and Off (test, no on-screen hints) -------
+                    DbInstruction(
+                        lessonsId = 30023,
+                        stepNo = 1,
+                        text = "Now try controlling WiFi on your own, without on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30023,
+                        stepNo = 2,
+                        text = "Turn WiFi on.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "true"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30023,
+                        stepNo = 3,
+                        text = "Now turn WiFi off.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "false"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30023,
+                        stepNo = 4,
+                        text = "Excellent! You turned WiFi on and off by yourself.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
                     //-------WiFi Lesson 3003 Instructions-------
                     // Goal: Connect to Home-5G with password "password"
 
@@ -2327,6 +2445,138 @@ object DatabaseSeeder {
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
+
+                    //------- Wifi Practice Lesson 30031 — Connecting to Home-5G (with on-screen hints) -------
+                    DbInstruction(
+                        lessonsId = 30031,
+                        stepNo = 1,
+                        text = "Practice time! Let's connect to your secure WiFi network called Home-5G.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30031,
+                        stepNo = 2,
+                        text = "First, tap the Home-5G network in the list.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30031,
+                        stepNo = 3,
+                        text = "Now type the WiFi password in the password box. For practice, enter: password.",
+                        anchorId = "Wifi.Connect.Password",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "password"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30031,
+                        stepNo = 4,
+                        text = "Tap the Connect button to join Home-5G.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30031,
+                        stepNo = 5,
+                        text = "Great job! You connected to a secure WiFi network using the on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+//------- Wifi Practice Lesson 30032 — Connecting to Home-5G (no on-screen hints, guided) -------
+                    DbInstruction(
+                        lessonsId = 30032,
+                        stepNo = 1,
+                        text = "Now let's connect to Home-5G again with fewer on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30032,
+                        stepNo = 2,
+                        text = "Tap the Home-5G network.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30032,
+                        stepNo = 3,
+                        text = "Enter the WiFi password: password.",
+                        anchorId = "Wifi.Connect.Password",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "password"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30032,
+                        stepNo = 4,
+                        text = "Tap the Connect button.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30032,
+                        stepNo = 5,
+                        text = "Nice work! You connected to Home-5G with fewer on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+//------- Wifi Practice Lesson 30033 — Connecting to Home-5G (test, no on-screen hints) -------
+                    DbInstruction(
+                        lessonsId = 30033,
+                        stepNo = 1,
+                        text = "Now try connecting to your secure WiFi network on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30033,
+                        stepNo = 2,
+                        text = "Connect to Home-5G which has password 'password'.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30033,
+                        stepNo = 3,
+                        text = "Connect to Home-5G which has password 'password'.",
+                        anchorId = "Wifi.Connect.Password",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "password"
+                    ),
+                    DbInstruction(
+                        lessonsId = 30033,
+                        stepNo = 4,
+                        text = "Connect to Home-5G which has password 'password'.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30033,
+                        stepNo = 5,
+                        text = "Excellent! You connected to your secure WiFi network without on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
                     //------- Wifi Lesson 3004 — Open vs Secure Networks -------
                     DbInstruction(
                         lessonsId = 3004,
@@ -2424,6 +2674,16 @@ object DatabaseSeeder {
                     // Connect to Wi-Fi lesson: Wi-Fi toggle should start ON
                     DbDefaultButton(
                         lessonsId = 3002,
+                        buttonName = "Wifi.OnOffButton",
+                        state = "false"
+                    ),
+                    DbDefaultButton(
+                        lessonsId = 30022,
+                        buttonName = "Wifi.OnOffButton",
+                        state = "false"
+                    ),
+                    DbDefaultButton(
+                        lessonsId = 30023,
                         buttonName = "Wifi.OnOffButton",
                         state = "false"
                     ),

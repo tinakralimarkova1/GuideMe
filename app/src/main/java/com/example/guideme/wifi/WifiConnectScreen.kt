@@ -34,7 +34,7 @@ import com.example.guideme.tts.TTS
 fun WifiConnectScreen(
     nav: NavController,
     prefillSsid: String = "",
-    requiresPassword: Boolean = true,
+    requiresPassword: Boolean? = true,
     onAnchorTapped: (String) -> Unit = {},
     correctAnchor: String? = null,
     tappedIncorrectAnchor: String? = null,
@@ -77,7 +77,7 @@ fun WifiConnectScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth().anchorId("Wifi.Connect.SSID")
             )
-            if (requiresPassword) {
+            if (requiresPassword == false) {
                 OutlinedTextField(
                     value = password,
                     onValueChange = { newValue ->
@@ -114,7 +114,7 @@ fun WifiConnectScreen(
 
                     if (ssid.isBlank()) {
                         TTS.speak("Please enter the network name.")
-                    } else if (requiresPassword && password.isBlank()) {
+                    } else if (requiresPassword == false && password.isBlank()) {
                         TTS.speak("Please enter the password.")
                     } else {
                         TTS.speak("Great. On a real phone, tap the network named $ssid and enter the password to connect.")
