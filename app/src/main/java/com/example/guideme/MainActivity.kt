@@ -351,6 +351,8 @@ fun MainScreen(
                 }
             }
 
+
+
             "search" -> {
                 if (lessonDao == null || missingLessonDao == null) {
                     SearchMenu(
@@ -441,19 +443,24 @@ fun MainScreen(
 
             "practice" -> {
                 val app = selectedApp ?: return
-                val lid = selectedLessonId ?: return
+                val baseLessonId = selectedLessonId ?: return
 
                 PracticeLevelMenu(
                     modifier = modifier.fillMaxSize(),
                     appName = app,
-                    lessonId = lid,
+                    lessonId = baseLessonId,
                     onBack = {
                         TTS.speak("Returning to lessons menu.")
                         currentScreen = "main"
                     },
                     onStartPracticeLevel = { level ->
-                        // later: map (app, lid, level) → actual practice lesson
-                        TTS.speak("Practice $level is not set up yet.")
+                        // For 1001, level 1 → 10011 (1001 * 10 + 1)
+                        val practiceId = baseLessonId * 10 + level
+
+                        selectedLessonId = practiceId   // e.g. 10011
+                        currentScreen = "lesson"
+
+                        TTS.speak("Starting practice level $level.")
                     }
                 )
 
@@ -991,6 +998,7 @@ fun PracticeLevelMenu(
             if (isIntro(lessonId)) {
                 // Intro lesson: only one practice level
                 PracticeCircleButton("Practice I") { onStartPracticeLevel(1) }
+                PracticeCircleButton("Practice II") { onStartPracticeLevel(2) }
             } else {
                 // Non-intro lesson: three practice levels
                 PracticeCircleButton("Practice I") { onStartPracticeLevel(1) }

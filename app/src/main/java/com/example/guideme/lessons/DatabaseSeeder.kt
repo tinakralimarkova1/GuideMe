@@ -53,6 +53,72 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
+                    //-----------Camera Practice-------//
+                    // 1001
+                    DbLesson(
+                        id = 10011,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    //1002
+                    DbLesson(
+                        id = 10021,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    DbLesson(
+                        id = 10022,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    DbLesson(
+                        id = 10023,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+
+                    //1003
+                    DbLesson(
+                        id = 10031,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    DbLesson(
+                        id = 10032,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    DbLesson(
+                        id = 10033,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    // 1004
+                    DbLesson(
+                        id = 10041,
+                        name = "Camera – Lesson 1004 Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 10042,
+                        name = "Camera – Lesson 1004 Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 10043,
+                        name = "Camera – Lesson 1004 Practice III",
+                        difficulty = 2,
+                    ),
+
+
+
                     //-----------Phone Lessons---------//
                     DbLesson(
                         id = 2001,
@@ -78,6 +144,66 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
+
+                    //-----------Phone Practice---------//
+// 2001 – Intro to Dial Pad (single practice)
+                    DbLesson(
+                        id = 20011,
+                        name = "Introduction to Dial Pad – Practice I",
+                        difficulty = 1,
+                    ),
+
+// 2002 – Calling Someone (3 practices)
+                    DbLesson(
+                        id = 20021,
+                        name = "Calling Someone – Practice I",
+                        difficulty = 1,
+                    ),
+                    DbLesson(
+                        id = 20022,
+                        name = "Calling Someone – Practice II",
+                        difficulty = 1,
+                    ),
+                    DbLesson(
+                        id = 20023,
+                        name = "Calling Someone – Practice III",
+                        difficulty = 1,
+                    ),
+
+// 2003 – Adding a new contact (3 practices)
+                    DbLesson(
+                        id = 20031,
+                        name = "Adding a new contact – Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 20032,
+                        name = "Adding a new contact – Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 20033,
+                        name = "Adding a new contact – Practice III",
+                        difficulty = 2,
+                    ),
+
+// 2004 – Calling a saved contact (3 practices)
+                    DbLesson(
+                        id = 20041,
+                        name = "Calling a saved contact – Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 20042,
+                        name = "Calling a saved contact – Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 20043,
+                        name = "Calling a saved contact – Practice III",
+                        difficulty = 2,
+                    ),
+
 
                     //-----------Wifi Lessons---------//
                     DbLesson(
@@ -105,6 +231,65 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
+
+                    //-----------Wifi Practice---------//
+// 3001 – Intro to Wifi (single practice)
+                    DbLesson(
+                        id = 30011,
+                        name = "Introduction to Wifi – Practice I",
+                        difficulty = 1,
+                    ),
+
+// 3002 – Turning Wifi On and Off (3 practices)
+                    DbLesson(
+                        id = 30021,
+                        name = "Turning Wifi On and Off – Practice I",
+                        difficulty = 1,
+                    ),
+                    DbLesson(
+                        id = 30022,
+                        name = "Turning Wifi On and Off – Practice II",
+                        difficulty = 1,
+                    ),
+                    DbLesson(
+                        id = 30023,
+                        name = "Turning Wifi On and Off – Practice III",
+                        difficulty = 1,
+                    ),
+
+// 3003 – Connecting to Wifi (3 practices)
+                    DbLesson(
+                        id = 30031,
+                        name = "Connecting to the Wifi – Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 30032,
+                        name = "Connecting to the Wifi – Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 30033,
+                        name = "Connecting to the Wifi – Practice III",
+                        difficulty = 2,
+                    ),
+
+// 3004 – Open vs Secured networks (3 practices)
+                    DbLesson(
+                        id = 30041,
+                        name = "Open vs Secured Wifi networks – Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 30042,
+                        name = "Open vs Secured Wifi networks – Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 30043,
+                        name = "Open vs Secured Wifi networks – Practice III",
+                        difficulty = 2,
+                    ),
 
 
                 )
@@ -217,6 +402,65 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------Camera Practice Lesson 10011 Instructions-------
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 1,
+                        text = "Practice time! You will see the names of camera buttons. Tap the matching button on the screen.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor =  0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 2,
+                        text = "Tap the Capture button.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        // Transparent outline so there is no visible highlight
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 3,
+                        text = "Now tap the Gallery button.",
+                        anchorId = "Camera.Gallery",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 4,
+                        text = "Find and tap the Zoom slider.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 5,
+                        text = "Tap the Flash button.",
+                        anchorId = "Camera.FlashButton",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 6,
+                        text = "Tap the Switch Camera button.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 7,
+                        text = "Great job! You’ve practiced finding the main camera buttons.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
                     //-------Camera tester 1002
                     DbInstruction(
@@ -500,6 +744,50 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------Phone Practice Lesson 20011 Instructions-------
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 1,
+                        text = "Practice time! You will see the names of phone buttons. Tap the matching button on the screen.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 2,
+                        text = "Tap the call button.",
+                        anchorId = "DialPad.Call",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 3,
+                        text = "Tap the backspace button.",
+                        anchorId = "DialPad.Backspace",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 4,
+                        text = "Tap the Key 1 button.",
+                        anchorId = "DialPad.key1",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 5,
+                        text = "Great job! You have practiced finding the main dial pad buttons.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
                     //-------Phone Lesson 2002 Instructions-------
                     DbInstruction(
                         lessonsId = 2002,
@@ -870,6 +1158,43 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+
+                    //-------Wifi Practice Lesson 30011 Instructions-------
+                    DbInstruction(
+                        lessonsId = 30011,
+                        stepNo = 1,
+                        text = "Practice time! You will see the names of WiFi controls. Tap the matching part of the screen.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30011,
+                        stepNo = 2,
+                        text = "Tap the WiFi toggle button.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 30011,
+                        stepNo = 3,
+                        text = "Tap the WiFi network named 'Campus-Guest'.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 30011,
+                        stepNo = 4,
+                        text = "Nice work! You have practiced the main parts of the WiFi screen.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
                     //------- tester wifi
 
