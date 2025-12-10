@@ -2658,6 +2658,142 @@ object DatabaseSeeder {
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
+                    //------- Wifi Practice Lesson 30041 — Open vs Secure Networks (with on-screen hints) -------
+                    DbInstruction(
+                        lessonsId = 30041,
+                        stepNo = 1,
+                        text = "Practice time! Let's review open and secure WiFi networks using the on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30041,
+                        stepNo = 2,
+                        text = "Tap the secure network called Home-5G.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30041,
+                        stepNo = 3,
+                        text = "Now tap the open network called Campus-Guest.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30041,
+                        stepNo = 4,
+                        text = "You are now on the connect screen for Campus-Guest. Because it is open, it does not need a password.",
+                        anchorId = "Wifi.Connect.SSID",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30041,
+                        stepNo = 5,
+                        text = "Tap the Connect button to join Campus-Guest.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30041,
+                        stepNo = 6,
+                        text = "Great job! You practiced choosing a secure network and connecting to an open network using the on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+//------- Wifi Practice Lesson 30042 — Open vs Secure Networks (no on-screen hints, guided) -------
+                    DbInstruction(
+                        lessonsId = 30042,
+                        stepNo = 1,
+                        text = "Now let's practice open and secure networks again with fewer on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30042,
+                        stepNo = 2,
+                        text = "Find and tap the secure network Home-5G.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30042,
+                        stepNo = 3,
+                        text = "Now find and tap the open network Campus-Guest.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30042,
+                        stepNo = 4,
+                        text = "Tap the Connect button to connect to Campus-Guest.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30042,
+                        stepNo = 5,
+                        text = "Nice work! You practiced recognizing secure and open networks with fewer on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+//------- Wifi Practice Lesson 30043 — Open vs Secure Networks (test, no on-screen hints) -------
+                    DbInstruction(
+                        lessonsId = 30043,
+                        stepNo = 1,
+                        text = "Now try working with open and secure networks on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30043,
+                        stepNo = 2,
+                        text = "Tap the secure network.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30043,
+                        stepNo = 3,
+                        text = "Tap the open network.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30043,
+                        stepNo = 4,
+                        text = "Connect to the open network by tapping the Connect button.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 30043,
+                        stepNo = 5,
+                        text = "Excellent! You used what you learned to work with open and secure networks without on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
 
                     )
