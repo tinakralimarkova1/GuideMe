@@ -377,6 +377,7 @@ private fun DialPadKeys(
 
                     ) {
                         // Always tell the lesson VM what was tapped
+
                         onButtonPressed(anchor)
 
 // Only allowed keys should actually type digits
