@@ -1768,7 +1768,7 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 20032,
                         stepNo = 1,
-                        text = "Now let's add another contact without the yellow box.",
+                        text = "Now let's add another contact without the on screen hints",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
@@ -1933,6 +1933,148 @@ object DatabaseSeeder {
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
+                    //------- Phone Practice Lesson 20041 — Calling a Saved Contact (with on-screen hints) -------
+                    DbInstruction(
+                        lessonsId = 20041,
+                        stepNo = 1,
+                        text = "Practice time! Let's call a saved contact using the on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20041,
+                        stepNo = 2,
+                        text = "First, open your saved contacts.",
+                        anchorId = "Phone.BottomNav.Contacts",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20041,
+                        stepNo = 3,
+                        text = "Now tap on the saved contact named 'Alice Johnson'.",
+                        anchorId = "Contacts.Contact.Alice Johnson",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20041,
+                        stepNo = 4,
+                        text = "You are now calling Alice Johnson. To end the call, tap the hang up button.",
+                        anchorId = "DialPad.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20041,
+                        stepNo = 5,
+                        text = "Great job! You called a saved contact using the on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+
+//------- Phone Practice Lesson 20042 — Calling a Saved Contact (no on-screen hints, guided) -------
+                    DbInstruction(
+                        lessonsId = 20042,
+                        stepNo = 1,
+                        text = "Now let's call a saved contact again, this time with fewer on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20042,
+                        stepNo = 2,
+                        text = "Open your saved contacts.",
+                        anchorId = "Phone.BottomNav.Contacts",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L   // no visible highlight
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20042,
+                        stepNo = 3,
+                        text = "Tap on the saved contact named 'Bob Smith'.",
+                        anchorId = "Contacts.Contact.Bob Smith",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20042,
+                        stepNo = 4,
+                        text = "You are now calling Bob Smith. Tap the hang up button to end the call.",
+                        anchorId = "DialPad.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20042,
+                        stepNo = 5,
+                        text = "Nice work! You called a different saved contact with fewer on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+
+//------- Phone Practice Lesson 20043 — Calling a Saved Contact (test, no on-screen hints) -------
+                    DbInstruction(
+                        lessonsId = 20043,
+                        stepNo = 1,
+                        text = "Now try calling a saved contact more independently, without on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20043,
+                        stepNo = 2,
+                        text = "Open your saved contacts.",
+                        anchorId = "Phone.BottomNav.Contacts",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20043,
+                        stepNo = 3,
+                        text = "Call the contact named 'Alice Johnson' by tapping her name.",
+                        anchorId = "Contacts.Contact.Alice Johnson",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20043,
+                        stepNo = 4,
+                        text = "End the call.",
+                        anchorId = "DialPad.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20043,
+                        stepNo = 5,
+                        text = "Excellent! You called a saved contact on your own without on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
 
 
