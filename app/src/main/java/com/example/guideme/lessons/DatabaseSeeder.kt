@@ -1347,6 +1347,257 @@ object DatabaseSeeder {
 
 
                         ),
+
+
+                    //-------Phone Practice Lesson 20021 – Calling a number (with highlights)-------
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 1,
+                        text = "Practice time! Let's review how to call a phone number.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 2,
+                        text = "We will call the number 234 567.",
+                        anchorId = "DialPad.KeysGrid",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 3,
+                        text = "First, type 2.",
+                        anchorId = "DialPad.key2",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "2"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 4,
+                        text = "Now type 3. The screen should show 23.",
+                        anchorId = "DialPad.key3",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "23"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 5,
+                        text = "Now type 4. The screen should show 234.",
+                        anchorId = "DialPad.key4",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "234"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 6,
+                        text = "Type 5. The screen should show 2345.",
+                        anchorId = "DialPad.key5",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "2345"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 7,
+                        text = "Type 6. The screen should show 23456.",
+                        anchorId = "DialPad.key6",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "23456"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 8,
+                        text = "Type 7. The screen should show 234567.",
+                        anchorId = "DialPad.key7",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "234567"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 9,
+                        text = "Now press the call button to start the call.",
+                        anchorId = "DialPad.Call",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 10,
+                        text = "Great! You have started a call.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 11,
+                        text = "Tap the end call button to hang up.",
+                        anchorId = "DialPad.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 20021,
+                        stepNo = 12,
+                        text = "Well done! You have practiced calling a number from start to finish.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    //-------Phone Practice Lesson 20022 – Calling a number (no highlight, guided)-------
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 1,
+                        text = "Now let's practice calling another number without the on screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 2,
+                        text = "We will call the number 905 221.",
+                        anchorId = "DialPad.KeysGrid",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 3,
+                        text = "Type 9. The screen should show 9.",
+                        anchorId = "DialPad.key9",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "9"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 4,
+                        text = "Type 0. The screen should show 90.",
+                        anchorId = "DialPad.key0",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "90"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 5,
+                        text = "Type 5. The screen should show 905.",
+                        anchorId = "DialPad.key5",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "905"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 6,
+                        text = "Type 2. The screen should show 9052.",
+                        anchorId = "DialPad.key2",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "9052"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 7,
+                        text = "Type 2. The screen should show 90522.",
+                        anchorId = "DialPad.key2",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "90522"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 8,
+                        text = "Type 1. The screen should show 905221.",
+                        anchorId = "DialPad.key1",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "905221"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 9,
+                        text = "Now press the call button to start the call.",
+                        anchorId = "DialPad.Call",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 10,
+                        text = "Tap the end call button to hang up.",
+                        anchorId = "DialPad.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20022,
+                        stepNo = 11,
+                        text = "Nice work! You called a different number without any visual hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    //-------Phone Practice Lesson 20023 – Calling a number (test, no help)-------
+                    DbInstruction(
+                        lessonsId = 20023,
+                        stepNo = 1,
+                        text = "Now try calling a number more independently.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20023,
+                        stepNo = 2,
+                        text = "Call the number 411 999. Type it on the dial pad.",
+                        anchorId = null, // any key anchor; highlight hidden anyway
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "411999"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20023,
+                        stepNo = 3,
+                        text = "Press the call button.",
+                        anchorId = "DialPad.Call",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20023,
+                        stepNo = 4,
+                        text = "End the call.",
+                        anchorId = "DialPad.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20023,
+                        stepNo = 5,
+                        text = "Excellent! You called a new number on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+
                     // -------Phone Lesson 2003: Adding a new contact-------
                     DbInstruction(
                         lessonsId = 2003,
@@ -1448,6 +1699,194 @@ object DatabaseSeeder {
                         outlineColor = null,
 
                     ),
+                    //-------Phone Practice Lesson 20031 – Adding a contact (with highlights)-------
+                    DbInstruction(
+                        lessonsId = 20031,
+                        stepNo = 1,
+                        text = "Practice time! Let's add a new contact together.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 20031,
+                        stepNo = 2,
+                        text = "Navigate to the contacts tab.",
+                        anchorId = "Phone.BottomNav.Contacts",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+
+                    DbInstruction(
+                        lessonsId = 20031,
+                        stepNo = 3,
+                        text = "Tap the Add Contact button.",
+                        anchorId = "Contacts.AddContact",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20031,
+                        stepNo = 4,
+                        text = "In the name box, type the name Alice.",
+                        anchorId = "Contacts.Add.Name",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "Alice"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20031,
+                        stepNo = 5,
+                        text = "In the phone number box, type 555 1001.",
+                        anchorId = "Contacts.Add.Phone",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "5551001"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20031,
+                        stepNo = 6,
+                        text = "Tap the Add button to save Alice as a contact.",
+                        anchorId = "Contacts.Add.AddButton",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20031,
+                        stepNo = 7,
+                        text = "Great! You added Alice, number 555 1001, to your contacts.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    //-------Phone Practice Lesson 20032 – Adding a contact (no highlight, guided)-------
+                    DbInstruction(
+                        lessonsId = 20032,
+                        stepNo = 1,
+                        text = "Now let's add another contact without the yellow box.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 20032,
+                        stepNo = 2,
+                        text = "Navigate to the contacts tab.",
+                        anchorId = "Phone.BottomNav.Contacts",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20032,
+                        stepNo = 3,
+                        text = "Tap the Add Contact button.",
+                        anchorId = "Contacts.AddContact",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20032,
+                        stepNo = 4,
+                        text = "In the name box, type the name Bob.",
+                        anchorId = "Contacts.Add.Name",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "Bob"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20032,
+                        stepNo = 5,
+                        text = "In the phone number box, type 555 2002.",
+                        anchorId = "Contacts.Add.Phone",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "5552002"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20032,
+                        stepNo = 6,
+                        text = "Tap the Add button to save Bob as a contact.",
+                        anchorId = "Contacts.Add.AddButton",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20032,
+                        stepNo = 7,
+                        text = "Nice work! You added Bob, number 555 2002, to your contacts.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+//-------Phone Practice Lesson 20033 – Adding a contact (test, no highlight)-------
+                    DbInstruction(
+                        lessonsId = 20033,
+                        stepNo = 1,
+                        text = "Now try adding a contact more independently.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 20033,
+                        stepNo = 2,
+                        text = "Navigate to the contacts tab.",
+                        anchorId = "Phone.BottomNav.Contacts",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20033,
+                        stepNo = 3,
+                        text = "Add contact Grandma Li with phone number 555 3030",
+                        anchorId = "Contacts.AddContact",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20033,
+                        stepNo = 4,
+                        text = "Add contact Grandma Li with phone number 555 3030",
+                        anchorId = "Contacts.Add.Name",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "Grandma Li"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20033,
+                        stepNo = 5,
+                        text = "Add contact Grandma Li with phone number 555 3030",
+                        anchorId = "Contacts.Add.Phone",
+                        type = StepType.EnterText.name,
+                        outlineColor = 0x00000000L,
+                        expectedText = "5553030"
+                    ),
+                    DbInstruction(
+                        lessonsId = 20033,
+                        stepNo = 6,
+                        text = "Add contact Grandma Li with phone number 555 3030",
+                        anchorId = "Contacts.Add.AddButton",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20033,
+                        stepNo = 7,
+                        text = "Excellent! You added Grandma Li, number 555 3030, on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+
+
 
                     //------- Phone Lesson 2004 — Calling a Saved Contact -------
                     DbInstruction(
