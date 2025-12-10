@@ -612,7 +612,7 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 10022,
                         stepNo = 1,
-                        text = "Now let's practice again, this time without the yellow highlight.",
+                        text = "Now let's practice again, this time without the on screen hints.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
@@ -752,6 +752,135 @@ object DatabaseSeeder {
                         outlineColor = null
                     ),
 
+                    //-------Camera Practice Lesson 10031 – Zooming in (with highlights)-------
+                    DbInstruction(
+                        lessonsId = 10031,
+                        stepNo = 1,
+                        text = "Practice time! Let's review how to zoom in before taking a picture.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10031,
+                        stepNo = 2,
+                        text = "This is the zoom slider. Sliding it up makes things look closer.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10031,
+                        stepNo = 3,
+                        text = "Slide the zoom slider up to zoom in.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null // highlight ON
+                    ),
+                    DbInstruction(
+                        lessonsId = 10031,
+                        stepNo = 4,
+                        text = "Great job. Now the picture looks closer because you zoomed in.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10031,
+                        stepNo = 5,
+                        text = "Now tap the capture button to take a zoomed-in photo.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null // highlight ON
+                    ),
+                    DbInstruction(
+                        lessonsId = 10031,
+                        stepNo = 6,
+                        text = "Excellent! You have practiced zooming in and taking a picture.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    //-------Camera Practice Lesson 10032 – Zooming in (no highlight, guided)-------
+                    DbInstruction(
+                        lessonsId = 10032,
+                        stepNo = 1,
+                        text = "Now let's practice zooming again, this time without the on screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10032,
+                        stepNo = 2,
+                        text = "Find the zoom slider and slide it up to zoom in.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L // transparent → no visible highlight
+                    ),
+                    DbInstruction(
+                        lessonsId = 10032,
+                        stepNo = 3,
+                        text = "Great. The picture looks closer when you zoom in.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10032,
+                        stepNo = 4,
+                        text = "Now take a zoomed-in photo by pressing the capture button.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10032,
+                        stepNo = 5,
+                        text = "Nice work! You zoomed in and took a picture without any visual hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    //-------Camera Practice Lesson 10033 – Zooming in (test, no help)-------
+                    DbInstruction(
+                        lessonsId = 10033,
+                        stepNo = 1,
+                        text = "Now try it on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10033,
+                        stepNo = 2,
+                        text = "Zoom in.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10033,
+                        stepNo = 3,
+                        text = "Take a photo.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10033,
+                        stepNo = 4,
+                        text = "Excellent! You zoomed in and took a picture on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+
+
                     //-------Camera Lesson 1004: Flipping the camera-------
                     DbInstruction(
                         lessonsId = 1004,
@@ -826,6 +955,150 @@ object DatabaseSeeder {
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
+
+                    //-------Camera Practice Lesson 10041 – Flipping the camera (with highlights)-------
+                    DbInstruction(
+                        lessonsId = 10041,
+                        stepNo = 1,
+                        text = "Practice time! Let's review how to flip between the front and back cameras.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10041,
+                        stepNo = 2,
+                        text = "This is the switch camera button. It changes between the front and back camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10041,
+                        stepNo = 3,
+                        text = "Tap the switch camera button to go from the back camera to the front camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null // highlight ON
+                    ),
+                    DbInstruction(
+                        lessonsId = 10041,
+                        stepNo = 4,
+                        text = "Great. Now you are using the front camera, like when taking a selfie.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10041,
+                        stepNo = 5,
+                        text = "Tap the capture button to take a selfie.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null // highlight ON
+                    ),
+                    DbInstruction(
+                        lessonsId = 10041,
+                        stepNo = 6,
+                        text = "Now tap the switch camera button again to go back to the back camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10041,
+                        stepNo = 7,
+                        text = "Excellent! You have practiced flipping between the front and back cameras and taking a photo.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    //-------Camera Practice Lesson 10042 – Flipping the camera (no highlight, guided)-------
+                    DbInstruction(
+                        lessonsId = 10042,
+                        stepNo = 1,
+                        text = "Let's practice flipping cameras again, this time without the on screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10042,
+                        stepNo = 2,
+                        text = "Switch to the front camera by tapping the switch camera button.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L // no visible highlight
+                    ),
+                    DbInstruction(
+                        lessonsId = 10042,
+                        stepNo = 3,
+                        text = "Now take a selfie by pressing the capture button.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10042,
+                        stepNo = 4,
+                        text = "Switch back to the back camera using the same switch camera button.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10042,
+                        stepNo = 5,
+                        text = "Nice work! You flipped the camera and took a photo without any on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    //-------Camera Practice Lesson 10043 – Flipping the camera (test, no help)-------
+                    DbInstruction(
+                        lessonsId = 10043,
+                        stepNo = 1,
+                        text = "Now try flipping the camera on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 10043,
+                        stepNo = 2,
+                        text = "Switch to the front camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10043,
+                        stepNo = 3,
+                        text = "Take a photo.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10043,
+                        stepNo = 4,
+                        text = "Switch back to the back camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10043,
+                        stepNo = 5,
+                        text = "Excellent! You flipped the camera and took a picture by yourself.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+
 
 
 
