@@ -47,6 +47,78 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
+                    DbLesson(
+                        id = 1004,
+                        name =  "Flipping the camera",
+                        difficulty = 2,
+
+                        ),
+                    //-----------Camera Practice-------//
+                    // 1001
+                    DbLesson(
+                        id = 10011,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    //1002
+                    DbLesson(
+                        id = 10021,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    DbLesson(
+                        id = 10022,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    DbLesson(
+                        id = 10023,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+
+                    //1003
+                    DbLesson(
+                        id = 10031,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    DbLesson(
+                        id = 10032,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    DbLesson(
+                        id = 10033,
+                        name =  "Introduction to Camera",
+                        difficulty = 1,
+
+                        ),
+                    // 1004
+                    DbLesson(
+                        id = 10041,
+                        name = "Camera – Lesson 1004 Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 10042,
+                        name = "Camera – Lesson 1004 Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 10043,
+                        name = "Camera – Lesson 1004 Practice III",
+                        difficulty = 2,
+                    ),
+
+
+
                     //-----------Phone Lessons---------//
                     DbLesson(
                         id = 2001,
@@ -66,6 +138,73 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
+                    DbLesson(
+                        id = 2004,
+                        name =  "Calling a saved contact",
+                        difficulty = 2,
+
+                        ),
+
+                    //-----------Phone Practice---------//
+// 2001 – Intro to Dial Pad (single practice)
+                    DbLesson(
+                        id = 20011,
+                        name = "Introduction to Dial Pad – Practice I",
+                        difficulty = 1,
+                    ),
+
+// 2002 – Calling Someone (3 practices)
+                    DbLesson(
+                        id = 20021,
+                        name = "Calling Someone – Practice I",
+                        difficulty = 1,
+                    ),
+                    DbLesson(
+                        id = 20022,
+                        name = "Calling Someone – Practice II",
+                        difficulty = 1,
+                    ),
+                    DbLesson(
+                        id = 20023,
+                        name = "Calling Someone – Practice III",
+                        difficulty = 1,
+                    ),
+
+// 2003 – Adding a new contact (3 practices)
+                    DbLesson(
+                        id = 20031,
+                        name = "Adding a new contact – Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 20032,
+                        name = "Adding a new contact – Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 20033,
+                        name = "Adding a new contact – Practice III",
+                        difficulty = 2,
+                    ),
+
+// 2004 – Calling a saved contact (3 practices)
+                    DbLesson(
+                        id = 20041,
+                        name = "Calling a saved contact – Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 20042,
+                        name = "Calling a saved contact – Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 20043,
+                        name = "Calling a saved contact – Practice III",
+                        difficulty = 2,
+                    ),
+
+
                     //-----------Wifi Lessons---------//
                     DbLesson(
                         id = 3001,
@@ -85,7 +224,74 @@ object DatabaseSeeder {
                         difficulty = 2,
 
                         ),
-                    // add more later as needed
+
+                    DbLesson(
+                        id = 3004,
+                        name =  "Open vs Secured Wifi networks",
+                        difficulty = 2,
+
+                        ),
+
+                    //-----------Wifi Practice---------//
+// 3001 – Intro to Wifi (single practice)
+                    DbLesson(
+                        id = 30011,
+                        name = "Introduction to Wifi – Practice I",
+                        difficulty = 1,
+                    ),
+
+// 3002 – Turning Wifi On and Off (3 practices)
+                    DbLesson(
+                        id = 30021,
+                        name = "Turning Wifi On and Off – Practice I",
+                        difficulty = 1,
+                    ),
+                    DbLesson(
+                        id = 30022,
+                        name = "Turning Wifi On and Off – Practice II",
+                        difficulty = 1,
+                    ),
+                    DbLesson(
+                        id = 30023,
+                        name = "Turning Wifi On and Off – Practice III",
+                        difficulty = 1,
+                    ),
+
+// 3003 – Connecting to Wifi (3 practices)
+                    DbLesson(
+                        id = 30031,
+                        name = "Connecting to the Wifi – Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 30032,
+                        name = "Connecting to the Wifi – Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 30033,
+                        name = "Connecting to the Wifi – Practice III",
+                        difficulty = 2,
+                    ),
+
+// 3004 – Open vs Secured networks (3 practices)
+                    DbLesson(
+                        id = 30041,
+                        name = "Open vs Secured Wifi networks – Practice I",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 30042,
+                        name = "Open vs Secured Wifi networks – Practice II",
+                        difficulty = 2,
+                    ),
+                    DbLesson(
+                        id = 30043,
+                        name = "Open vs Secured Wifi networks – Practice III",
+                        difficulty = 2,
+                    ),
+
+
                 )
             )
         }
@@ -196,6 +402,65 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------Camera Practice Lesson 10011 Instructions-------
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 1,
+                        text = "Practice time! You will see the names of camera buttons. Tap the matching button on the screen.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor =  0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 2,
+                        text = "Tap the Capture button.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        // Transparent outline so there is no visible highlight
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 3,
+                        text = "Now tap the Gallery button.",
+                        anchorId = "Camera.Gallery",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 4,
+                        text = "Find and tap the Zoom slider.",
+                        anchorId = "Camera.ZoomSlider",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 5,
+                        text = "Tap the Flash button.",
+                        anchorId = "Camera.FlashButton",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 6,
+                        text = "Tap the Switch Camera button.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 10011,
+                        stepNo = 7,
+                        text = "Great job! You’ve practiced finding the main camera buttons.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
                     //-------Camera tester 1002
                     DbInstruction(
@@ -337,6 +602,82 @@ object DatabaseSeeder {
                         outlineColor = null
                     ),
 
+                    //-------Camera Lesson 1004: Flipping the camera-------
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 1,
+                        text = "This lesson will teach you how to flip between the front and the back camera.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 2,
+                        text = "Your phone has two cameras: the back camera, which points away from you, and the front camera, which points towards you for selfies.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 3,
+                        text = "This is the switch camera button. It lets you change between the front and back camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 4,
+                        text = "Tap the switch camera button once to change from the back camera to the front camera.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 5,
+                        text = "Now you are using the front camera. In a real app, you would see yourself on the screen, like taking a selfie.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 6,
+                        text = "Let's take a selfie. Press the capture button.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 7,
+                        text = "You can switch back to the back camera the same way. Tap the switch camera button again to go back.",
+                        anchorId = "Camera.SwitchCamera",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 8,
+                        text = "Great job. You are now back on the back camera. You have learned how to flip between the front and back cameras.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 1004,
+                        stepNo = 9,
+                        text = "Remember: use the back camera for things in front of you, and the front camera when you want to take a picture of yourself.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
 
 
                     //-------Phone Lesson 2001 Instrucitons-------
@@ -403,6 +744,50 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------Phone Practice Lesson 20011 Instructions-------
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 1,
+                        text = "Practice time! You will see the names of phone buttons. Tap the matching button on the screen.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 2,
+                        text = "Tap the call button.",
+                        anchorId = "DialPad.Call",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 3,
+                        text = "Tap the backspace button.",
+                        anchorId = "DialPad.Backspace",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 4,
+                        text = "Tap the Key 1 button.",
+                        anchorId = "DialPad.key1",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 20011,
+                        stepNo = 5,
+                        text = "Great job! You have practiced finding the main dial pad buttons.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
                     //-------Phone Lesson 2002 Instructions-------
                     DbInstruction(
                         lessonsId = 2002,
@@ -539,12 +924,11 @@ object DatabaseSeeder {
 
 
                         ),
-                    // -------tester contacts
                     // -------Phone Lesson 2003: Adding a new contact-------
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 1,
-                        text = "This lesson will teach you how to add a new contact so you don’t have to remember phone numbers.",
+                        text = "This lesson will show you how to add a new contact so you don’t have to remember phone numbers.",
                         anchorId = null,
                         type = StepType.Acknowledge.name,
                         outlineColor = null
@@ -572,7 +956,7 @@ object DatabaseSeeder {
                         lessonsId = 2003,
                         stepNo = 4,
                         text = "This is the contacts screen. Here you will see people whose phone numbers you have already saved.",
-                        anchorId = null,
+                        anchorId = "Contacts.List",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
@@ -580,8 +964,8 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 5,
-                        text = "To add someone new, look for the Add contact button with a plus sign. In the real app, tapping this button opens a form to create a new contact.",
-                        anchorId = "Contacts.AddContact",   // later you can attach something like \"Contacts.AddButton\"
+                        text = "To add someone new, look for the Add contact button with a plus sign. Tap this button to open the contact form.",
+                        anchorId = "Contacts.AddContact",
                         type = StepType.TapTarget.name,
                         outlineColor = null
                     ),
@@ -589,29 +973,107 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 6,
-                        text = "The form has a box for the person’s name. This is where you would type who the contact is, for example “Daughter” or “Dr. Chen”.",
-                        anchorId = "Contacts.NameField",   // e.g. \"Contacts.NameField\" once you anchor the TextField
+                        text = "At the top of the form is a box for the person’s name. This is where you type who the contact is, for example “Daughter” or “Dr. Chen”.",
+                        anchorId = "Contacts.Add.Name",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
-
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 7,
-                        text = "Below the name box is a box for the phone number. This is where you type the person’s phone number.",
-                        anchorId = null,   // e.g. \"Contacts.PhoneField\"
-                        type = StepType.Acknowledge.name,
-                        outlineColor = null
+                        text = "Let's practice adding a contact. Type in 'John Doe' in the name field",
+                        anchorId = "Contacts.Add.Name",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "John Doe"
                     ),
+
 
                     DbInstruction(
                         lessonsId = 2003,
                         stepNo = 8,
-                        text = "After you type the name and phone number, you tap the Add button to save the contact. Next time, you can call them directly from your contacts list.",
-                        anchorId = null,   // e.g. \"Contacts.ConfirmAdd\"
+                        text = "Below the name box is a box for the phone number. This is where you type the person’s phone number.",
+                        anchorId = "Contacts.Add.Phone",
                         type = StepType.Acknowledge.name,
                         outlineColor = null
                     ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 9,
+                        text = "Now type in '987654' in the phone number field",
+                        anchorId = "Contacts.Add.Phone",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "987654"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 10,
+                        text = "After you enter the name and phone number, tap the Add button to save the contact. Next time, you can call them directly from your contacts list.",
+                        anchorId = "Contacts.Add.AddButton",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 2003,
+                        stepNo = 11,
+                        text = "Awesome! You have added a new contact John Doe and learned how to add a contact.",
+                        anchorId = "Contacts.Add.Name",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null,
+
+                    ),
+
+                    //------- Phone Lesson 2004 — Calling a Saved Contact -------
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 1,
+                        text = "In this lesson, you will learn how to call a saved contact.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 2,
+                        text = "First, open your saved contacts.",
+                        anchorId = "Phone.BottomNav.Contacts",   // Make sure Contacts tab has this anchor
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 3,
+                        text = "Now tap on the saved contact named 'Alice Johnson'.",
+                        anchorId = "Contacts.Contact.Alice Johnson",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 4,
+                        text = "You are now calling the saved contact of Alice Johnson. To end the call, tap the hang up button.",
+                        anchorId = "DialPad.EndCall",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 2004,
+                        stepNo = 5,
+                        text = "Good job! You’ve learned how to call a saved contact.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+
 
 
                     //-------Wifi Lesson 3001 Instructions-------
@@ -697,6 +1159,43 @@ object DatabaseSeeder {
 
                     ),
 
+                    //-------Wifi Practice Lesson 30011 Instructions-------
+                    DbInstruction(
+                        lessonsId = 30011,
+                        stepNo = 1,
+                        text = "Practice time! You will see the names of WiFi controls. Tap the matching part of the screen.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    DbInstruction(
+                        lessonsId = 30011,
+                        stepNo = 2,
+                        text = "Tap the WiFi toggle button.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 30011,
+                        stepNo = 3,
+                        text = "Tap the WiFi network named 'Campus-Guest'.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 30011,
+                        stepNo = 4,
+                        text = "Nice work! You have practiced the main parts of the WiFi screen.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
                     //------- tester wifi
 
                     DbInstruction(
@@ -774,6 +1273,136 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------WiFi Lesson 3003 Instructions-------
+                    // Goal: Connect to Home-5G with password "password"
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 1,
+                        text = "In this lesson, you'll practice connecting to your home Wi-Fi network called Home-5G.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 2,
+                        text = "First, tap the Home-5G network in the list.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 3,
+                        text = "Now type the Wi-Fi password in the password box. For practice, enter the word: password.",
+                        anchorId = "Wifi.Connect.Password",
+                        type = StepType.EnterText.name,
+                        outlineColor = null,
+                        expectedText = "password"
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 4,
+                        text = "Great! On a real phone, you would tap the Connect button to join Home-5G.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3003,
+                        stepNo = 5,
+                        text = "Nice job! You practiced connecting to a secure Wi-Fi network.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+                    //------- Wifi Lesson 3004 — Open vs Secure Networks -------
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 1,
+                        text = "In this lesson, you will learn the difference between open and secure Wi-Fi networks.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 2,
+                        text = "This is your list of available Wi-Fi networks.",
+                        anchorId = "Wifi.NetworkBox",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 3,
+                        text = "Some networks are secure. A secure network needs a password, usually for places like your home or office. Home-5G is a secure network.",
+                        anchorId = "Wifi.Network.Home-5G",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 4,
+                        text = "Other networks are open. An open network does NOT need a password, and is often used in public places like airports, coffee shops, or guest networks. Campus-Guest is an open network.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 5,
+                        text = "Secure networks are usually safer because only people with the password can join. Open networks are more convenient, but you should avoid doing banking or anything very private on them.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 6,
+                        text = "Now, let’s practice connecting to an open network. Tap on the network called Campus-Guest.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 7,
+                        text = "You are now on the connect screen for Campus-Guest. Because this is an open network, it does not need a password.",
+                        anchorId = "Wifi.Connect.SSID",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 8,
+                        text = "To connect to this open network, tap the Connect button.",
+                        anchorId = "Wifi.Connect.Button",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 3004,
+                        stepNo = 9,
+                        text = "Great job! You learned the difference between open and secure Wi-Fi, and practiced connecting to an open network.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
 
                     )
             )

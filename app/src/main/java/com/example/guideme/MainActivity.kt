@@ -2,6 +2,7 @@ package com.example.guideme
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -89,6 +90,7 @@ import com.example.guideme.lessons.LessonHost
 import com.example.guideme.lessons.LessonsRepository
 import com.example.guideme.lessons.MissingLessonDao
 import com.example.guideme.lessons.RoomLessonsRepository
+import com.example.guideme.lessons.Sfx
 import com.example.guideme.phone.CameraScreen
 import com.example.guideme.phone.PhoneNavHost
 import com.example.guideme.tts.TTS
@@ -96,11 +98,10 @@ import com.example.guideme.ui.theme.GuideMeTheme
 import com.example.guideme.ui.theme.MainBackgroundGradient
 import com.example.guideme.ui.theme.MainButtonColor
 import com.example.guideme.ui.theme.MainButtonContentColor
+import com.example.guideme.ui.theme.PracticeButton
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
-import me.nikhilchaudhari.library.BuildConfig
-import android.content.Context
 
 
 class MainActivity : ComponentActivity() {
@@ -112,6 +113,8 @@ class MainActivity : ComponentActivity() {
         TTS.init(this) {
             // We speak the welcome message after login in GuideMeRoot
         }
+        Sfx.init(this)
+
 
         // --- Room database + repository setup ---
         val db = Room.databaseBuilder(
@@ -129,6 +132,11 @@ class MainActivity : ComponentActivity() {
             lessonDao = db.lessonDao()
 
         )
+
+        val testScreen = intent.getStringExtra("test_screen") // e.g. "camera", "phone", "wifi", "lesson_menu"
+        val lockToScreen = intent.getBooleanExtra("lock_screen", false)
+        val testLessonId = intent.getIntExtra("test_lesson_id", -1)
+        val resolvedTestLessonId = if (testLessonId > 0) testLessonId else null
 
 
         // --- end Room setup ---
@@ -154,7 +162,10 @@ class MainActivity : ComponentActivity() {
                             customerDao = db.customerDao(),
                             lessonDao = db.lessonDao(),
                             missingLessonDao = db.missingLessonDao(),
-                            completionDao = db.completionDao()
+                            completionDao = db.completionDao(),
+                            testScreen = testScreen,
+                            lockToScreen = lockToScreen,
+                            testLessonId = resolvedTestLessonId
 
                         )
                     }
@@ -166,6 +177,7 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         TTS.shutdown()
+        Sfx.release()
     }
 }
 
@@ -178,7 +190,11 @@ fun GuideMeRoot(
     customerDao: CustomerDao,
     lessonDao: LessonDao? = null,
     missingLessonDao: MissingLessonDao? = null,
-    completionDao: CompletionDao
+    completionDao: CompletionDao,
+    testScreen: String? = null,      // 🔹 new
+    lockToScreen: Boolean = false,    // 🔹 new
+    testLessonId: Int? = null
+
 ) {
     val context = LocalContext.current
     // SharedPreferences where we remember who is logged in
@@ -230,6 +246,9 @@ fun GuideMeRoot(
             missingLessonDao = missingLessonDao,
             completionDao = completionDao,
             customerDao = customerDao,
+            testScreen = testScreen,
+            lockToScreen = lockToScreen,
+            testLessonId = testLessonId
         )
     }
 }
@@ -246,15 +265,39 @@ fun MainScreen(
     missingLessonDao: MissingLessonDao? = null,
     onLogout: () -> Unit = {},
     customerDao: CustomerDao,
-    completionDao: CompletionDao
+    completionDao: CompletionDao,
+    testScreen: String? = null,      // 🔹 new
+    lockToScreen: Boolean = false,    // 🔹 new
+    testLessonId: Int? = null
 ) {
     Column(modifier = modifier) {
         // Screens: welcome -> main (lessons menu) -> phone/camera/wifi/lesson/search
         var currentScreen by remember { mutableStateOf("welcome") }
-
-        // For launching any lesson
         var selectedApp by remember { mutableStateOf<String?>(null) }
         var selectedLessonId by remember { mutableStateOf<Int?>(null) }
+
+        LaunchedEffect(testScreen) {
+            if (testScreen != null) {
+                currentScreen = when (testScreen.lowercase()) {
+                    "welcome" -> "welcome"
+                    "lesson_menu" -> "main"
+                    "camera" -> "camera"
+                    "phone" -> "phone"
+                    "wifi" -> "wifi"
+                    else -> "welcome"
+                }
+            }
+        }
+        LaunchedEffect(testLessonId) {
+            if (testLessonId != null) {
+                selectedLessonId = testLessonId
+                selectedApp = inferAppFromId(testLessonId)   // you already have this helper
+                currentScreen = "lesson"
+            }
+        }
+
+        // For launching any lesson
+
 
         when (currentScreen) {
             "welcome" -> {
@@ -291,28 +334,24 @@ fun MainScreen(
                         selectedLessonId = lessonId
                         currentScreen = "lesson"
                     },
+                    onStartPractice = { appName, lessonId ->
+                        TTS.speak("Opening practice menu.")
+                        selectedApp = appName
+                        selectedLessonId = lessonId
+                        currentScreen = "practice"
+                    },
                     onBack = {
                         TTS.speak("Returning to welcome.")
                         currentScreen = "welcome"
                     }
-//                    onOpenCamera = {
-//                        TTS.speak("Opening Camera.")
-//                        currentScreen = "camera"
-//                    },
-//                    onOpenPhone = {
-//                        TTS.speak("Opening Phone.")
-//                        currentScreen = "phone"
-//                    },
-//                    onOpenWifi = {
-//                        TTS.speak("Opening Wi-Fi.")
-//                        currentScreen = "wifi"
-//                    }
                 )
                 BackHandler {
                     TTS.speak("Returning to welcome.")
                     currentScreen = "welcome"
                 }
             }
+
+
 
             "search" -> {
                 if (lessonDao == null || missingLessonDao == null) {
@@ -346,7 +385,7 @@ fun MainScreen(
                     )
                 }
 
-                BackHandler {
+                BackHandler(enabled = lockToScreen) {
                     TTS.speak("Returning to welcome.")
                     currentScreen = "welcome"
                 }
@@ -396,11 +435,41 @@ fun MainScreen(
                         currentScreen = "lesson"
                     }
                 )
+                BackHandler(enabled = !lockToScreen) {
+                    TTS.speak("Returning to lessons menu.")
+                    currentScreen = "main"
+                }
+            }
+
+            "practice" -> {
+                val app = selectedApp ?: return
+                val baseLessonId = selectedLessonId ?: return
+
+                PracticeLevelMenu(
+                    modifier = modifier.fillMaxSize(),
+                    appName = app,
+                    lessonId = baseLessonId,
+                    onBack = {
+                        TTS.speak("Returning to lessons menu.")
+                        currentScreen = "main"
+                    },
+                    onStartPracticeLevel = { level ->
+                        // For 1001, level 1 → 10011 (1001 * 10 + 1)
+                        val practiceId = baseLessonId * 10 + level
+
+                        selectedLessonId = practiceId   // e.g. 10011
+                        currentScreen = "lesson"
+
+                        TTS.speak("Starting practice level $level.")
+                    }
+                )
+
                 BackHandler {
                     TTS.speak("Returning to lessons menu.")
                     currentScreen = "main"
                 }
             }
+
 
             "account" -> {
                 var user by remember { mutableStateOf<DbCustomer?>(null) }
@@ -501,8 +570,8 @@ fun MainScreen(
                         }
                     }
                 }
-
-                BackHandler {
+// disable for monkey testing
+                BackHandler (enabled = !lockToScreen){
                     TTS.speak("Returning to Welcome.")
                     currentScreen = "welcome"
                 }
@@ -581,12 +650,12 @@ private fun WelcomeScreen(
 
             Button(
                 onClick = {
-                    if (!BuildConfig.DEBUG) {
-                        onLogoutClick()
-                    } else {
-                        // debug build – just ignore to keep Monkey from going to login
-                        TTS.speak("Logout is disabled in testing mode.")
-                    }
+//                    if (!BuildConfig.DEBUG) {
+//                        onLogoutClick()
+//                    } else {
+//                        // debug build – just ignore to keep Monkey from going to login
+//                        TTS.speak("Logout is disabled in testing mode.")
+//                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
@@ -631,15 +700,12 @@ private fun LessonsMenu(
     modifier: Modifier = Modifier,
     lessonDao: LessonDao? = null,
     onStartLesson: (appName: String, lessonId: Int) -> Unit,
+    onStartPractice: (appName: String, lessonId: Int) -> Unit,
     onBack: () -> Unit = {}
-    //if need to check ui of apps seperately
-//    onOpenCamera: () -> Unit = {},
-//    onOpenPhone: () -> Unit = {},
-//    onOpenWifi: () -> Unit = {}
 ) {
-    val cameraIds = listOf(1001, 1002, 1003)
-    val phoneIds  = listOf(2001, 2002, 2003)
-    val wifiIds   = listOf(3001, 3002, 3003)
+    val cameraIds = listOf(1001, 1002, 1003,1004)
+    val phoneIds  = listOf(2001, 2002, 2003,2004)
+    val wifiIds   = listOf(3001, 3002, 3003,3004)
 
     var lessonNames by remember { mutableStateOf<Map<Int, String>>(emptyMap()) }
 
@@ -716,19 +782,28 @@ private fun LessonsMenu(
                     title = "Camera",
                     ids = cameraIds,
                     label = { label(it) },
-                ) { id -> onStartLesson("Camera", id) }
+                    onStartLesson = { id -> onStartLesson("Camera", id) },
+                    onStartPractice = { id -> onStartPractice("Camera", id) },
+
+                )
 
                 ExpandableLessonSection(
                     title = "Phone",
                     ids = phoneIds,
                     label = { label(it) },
-                ) { id -> onStartLesson("Phone", id) }
+                    onStartLesson = { id -> onStartLesson("Phone", id) },
+                    onStartPractice = { id -> onStartPractice("Phone", id) },
+
+                )
 
                 ExpandableLessonSection(
                     title = "Wi-Fi",
                     ids = wifiIds,
                     label = { label(it) },
-                ) { id -> onStartLesson("WiFi", id) }
+                    onStartLesson = { id -> onStartLesson("WiFi", id) },
+                    onStartPractice = { id -> onStartPractice("WiFi", id) },
+
+                )
             }
 
 
@@ -737,15 +812,16 @@ private fun LessonsMenu(
         }
     }
 }
-
 @Composable
-private fun LessonButton(text: String, onClick: () -> Unit) {
+private fun LessonButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 30.dp)
-            .heightIn(min = 48.dp), // issue here ,
+        modifier = modifier
+            .heightIn(min = 48.dp),
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MainButtonColor,
@@ -753,10 +829,33 @@ private fun LessonButton(text: String, onClick: () -> Unit) {
         ),
         contentPadding = PaddingValues(
             horizontal = 20.dp,
-            vertical = 10.dp          // let it breathe vertically
+            vertical = 10.dp
         )
     ) {
-        Text(text, style = MaterialTheme.typography.bodyLarge,maxLines = 2      )
+        Text(text, style = MaterialTheme.typography.bodyLarge, maxLines = 2)
+    }
+}
+
+@Composable
+private fun PracticeButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .heightIn(min = 48.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = ButtonDefaults.buttonColors(
+            contentColor = MainButtonColor,
+            containerColor = MainButtonContentColor
+        ),
+        contentPadding = PaddingValues(
+            horizontal = 10.dp,
+            vertical = 10.dp
+        )
+    ) {
+        Text("Practice", style = MaterialTheme.typography.bodyLarge, maxLines = 1)
     }
 }
 
@@ -765,18 +864,18 @@ private fun ExpandableLessonSection(
     title: String,
     ids: List<Int>,
     label: (Int) -> String,
-    onStartLesson: (id: Int) -> Unit
+    onStartLesson: (id: Int) -> Unit,
+    onStartPractice: (id: Int) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .animateContentSize()     // smooth open/close animation
+            .padding(horizontal = 4.dp)
+            .animateContentSize()
     ) {
 
-        // The clickable group header (button style)
         Button(
             onClick = { expanded = !expanded },
             modifier = Modifier
@@ -784,20 +883,17 @@ private fun ExpandableLessonSection(
                 .heightIn(min = 54.dp),
             shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MainButtonColor,
-                contentColor = MainButtonContentColor
+                contentColor = MainButtonColor,
+                containerColor = PracticeButton
             ),
-            contentPadding = PaddingValues(
-                horizontal = 20.dp,
-                vertical = 10.dp
-            )
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
         ) {
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(title, style = MaterialTheme.typography.titleLarge,maxLines = 2)
+                Text(title, style = MaterialTheme.typography.titleLarge, maxLines = 2)
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = null
@@ -805,19 +901,138 @@ private fun ExpandableLessonSection(
             }
         }
 
-        // Expanded content (your lesson buttons)
         if (expanded) {
             Spacer(Modifier.height(8.dp))
 
             ids.forEach { id ->
-                LessonButton(text = label(id)) {
-                    onStartLesson(id)
+
+                Row(
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // big Lesson button
+                    LessonButton(
+                        text = label(id),
+                        modifier = Modifier.weight(5f)
+                    ) { onStartLesson(id) }
+
+                    // smaller Practice button (skip for intro lessons)
+
+                    PracticeButton(
+                        modifier = Modifier.weight(3f)
+                    ) { onStartPractice(id) }
+
+
                 }
-                Spacer(Modifier.height(8.dp))
+
+                Spacer(Modifier.height(12.dp))
             }
         }
     }
 }
+@Composable
+fun PracticeLevelMenu(
+    modifier: Modifier = Modifier,
+    appName: String,
+    lessonId: Int,
+    onBack: () -> Unit,
+    onStartPracticeLevel: (Int) -> Unit,
+    // Default: only lesson 1001 is an intro lesson
+    isIntro: (id: Int) -> Boolean = { id -> id in setOf(3001, 1001, 2001) }
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MainBackgroundGradient)
+    ) {
+        // Back chip (same style as LessonsMenu)
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(vertical = 30.dp, horizontal = 15.dp)
+                .heightIn(min = 40.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MainButtonContentColor)
+                .clickable { onBack() }
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = "Back",
+                tint = MainButtonColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Back",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MainButtonColor,
+                    fontSize = 20.sp
+                )
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 80.dp, bottom = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(32.dp)
+        ) {
+            Text(
+                text = "Practice",
+                color = MainButtonContentColor,
+                style = MaterialTheme.typography.headlineLarge
+            )
+
+            Text(
+                text = "Choose a practice level",
+                color = MainButtonContentColor,
+                style = MaterialTheme.typography.headlineLarge
+            )
+
+            if (isIntro(lessonId)) {
+                // Intro lesson: only one practice level
+                PracticeCircleButton("Practice I") { onStartPracticeLevel(1) }
+                PracticeCircleButton("Practice II") { onStartPracticeLevel(2) }
+            } else {
+                // Non-intro lesson: three practice levels
+                PracticeCircleButton("Practice I") { onStartPracticeLevel(1) }
+                PracticeCircleButton("Practice II") { onStartPracticeLevel(2) }
+                PracticeCircleButton("Practice III") { onStartPracticeLevel(3) }
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun PracticeCircleButton(
+    label: String,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier. fillMaxWidth().padding(horizontal = 30.dp, vertical = 10.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(36.dp),
+        colors = ButtonDefaults.buttonColors(
+            contentColor = MainButtonColor,
+            containerColor = MainButtonContentColor
+        ),
+        contentPadding = PaddingValues(30.dp)
+    ) {
+        Text(
+            text = label,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
 
 
 @Composable
@@ -1142,11 +1357,13 @@ fun PreviewWelcome() {
 fun PreviewLessonsMenu() {
     GuideMeTheme {
         LessonsMenu(
-            lessonDao = null, // previews won't query DB
-            onStartLesson = { _, _ -> }
+            lessonDao = null,
+            onStartLesson = { _, _ -> },
+            onStartPractice = { _, _ -> }
         )
     }
 }
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

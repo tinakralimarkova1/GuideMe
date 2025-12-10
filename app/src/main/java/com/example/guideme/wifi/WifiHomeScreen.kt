@@ -62,7 +62,7 @@ fun WifiHomeScreen(nav: NavController,
     val networks = remember {
         listOf(
             FakeWifi("Campus-Guest", false, 3),
-            FakeWifi("Home-5G", true, 4),
+            FakeWifi("Home-5G", false, 4),
             FakeWifi("Coffee_Shop_WiFi", true, 2),
             FakeWifi("PrinterSetup", true, 1)
         )
@@ -145,7 +145,7 @@ fun WifiHomeScreen(nav: NavController,
                                         onButtonPressed(networkAnchorId)
                                         TTS.speak("Opening connect screen for ${n.ssid}.")
                                         val encoded = java.net.URLEncoder.encode(n.ssid, "UTF-8")
-                                        nav.navigate("connect?ssid=$encoded")
+                                        nav.navigate("connect?ssid=$encoded&secured=${n.secured}")
                                     }
                                 }
                         ) {
