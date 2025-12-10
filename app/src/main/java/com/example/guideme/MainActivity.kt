@@ -777,7 +777,7 @@ private fun LessonsMenu(
                     label = { label(it) },
                     onStartLesson = { id -> onStartLesson("Camera", id) },
                     onStartPractice = { id -> onStartPractice("Camera", id) },
-                    isIntro = { id -> id == 1001 } // intro has no practice
+
                 )
 
                 ExpandableLessonSection(
@@ -786,7 +786,7 @@ private fun LessonsMenu(
                     label = { label(it) },
                     onStartLesson = { id -> onStartLesson("Phone", id) },
                     onStartPractice = { id -> onStartPractice("Phone", id) },
-                    isIntro = { id -> id == 2001 }
+
                 )
 
                 ExpandableLessonSection(
@@ -795,7 +795,7 @@ private fun LessonsMenu(
                     label = { label(it) },
                     onStartLesson = { id -> onStartLesson("WiFi", id) },
                     onStartPractice = { id -> onStartPractice("WiFi", id) },
-                    isIntro = { id -> id == 3001 }
+
                 )
             }
 
@@ -859,7 +859,6 @@ private fun ExpandableLessonSection(
     label: (Int) -> String,
     onStartLesson: (id: Int) -> Unit,
     onStartPractice: (id: Int) -> Unit,
-    isIntro: (id: Int) -> Boolean = { false }
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -934,7 +933,9 @@ fun PracticeLevelMenu(
     appName: String,
     lessonId: Int,
     onBack: () -> Unit,
-    onStartPracticeLevel: (Int) -> Unit
+    onStartPracticeLevel: (Int) -> Unit,
+    // Default: only lesson 1001 is an intro lesson
+    isIntro: (id: Int) -> Boolean = { id -> id in setOf(3001, 1001, 2001) }
 ) {
     Box(
         modifier = modifier
@@ -987,14 +988,19 @@ fun PracticeLevelMenu(
                 style = MaterialTheme.typography.headlineLarge
             )
 
-
-            PracticeCircleButton("Practice I") { onStartPracticeLevel(1) }
-            PracticeCircleButton("Practice II") { onStartPracticeLevel(2) }
-            PracticeCircleButton("Practice III") { onStartPracticeLevel(3) }
-
+            if (isIntro(lessonId)) {
+                // Intro lesson: only one practice level
+                PracticeCircleButton("Practice I") { onStartPracticeLevel(1) }
+            } else {
+                // Non-intro lesson: three practice levels
+                PracticeCircleButton("Practice I") { onStartPracticeLevel(1) }
+                PracticeCircleButton("Practice II") { onStartPracticeLevel(2) }
+                PracticeCircleButton("Practice III") { onStartPracticeLevel(3) }
+            }
         }
     }
 }
+
 
 @Composable
 private fun PracticeCircleButton(
