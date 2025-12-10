@@ -119,18 +119,26 @@ fun CameraScreen(
             .background(Color.Black)
     ) {
         // ===== CAMERA "PREVIEW" BACKGROUND =====
+        // Choose preview image based on which "camera" is active
+        val previewRes = if (isFrontCamera) {
+            R.drawable.selfie1          // FRONT camera → selfie image
+        } else {
+            R.drawable.ash_tree___geograph_org_uk___590710  // BACK camera → tree photo
+        }
+
         Image(
-            painter = painterResource(id = R.drawable.ash_tree___geograph_org_uk___590710),
+            painter = painterResource(id = previewRes),
             contentDescription = "Simulated camera preview",
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer(
-                    scaleX = if (isFrontCamera) -zoom else zoom, // 👈 mirror when front
+                    scaleX = if (isFrontCamera) -zoom else zoom, // still mirror when front
                     scaleY = zoom,
                     transformOrigin = androidx.compose.ui.graphics.TransformOrigin.Center
                 ),
             contentScale = ContentScale.Crop
         )
+
 
         // ===== FLASH OVERLAY =====
 //        Box(
@@ -316,6 +324,11 @@ fun CameraScreen(
                                     flashAlpha.animateTo(0f, tween(300))
                                     TTS.speak("Photo captured!")
                                     hasPhoto = true
+                                    lastThumbRes = if (isFrontCamera) {
+                                        R.drawable.selfie1
+                                    } else {
+                                        R.drawable.ash_tree___geograph_org_uk___590710
+                                    }
                                 }
                             }
                         }
