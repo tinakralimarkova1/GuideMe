@@ -84,6 +84,7 @@ import com.example.guideme.lessons.CompletionDao
 import com.example.guideme.lessons.CustomerDao
 import com.example.guideme.lessons.DatabaseSeeder
 import com.example.guideme.lessons.DbCustomer
+import com.example.guideme.lessons.DbMissingLesson
 import com.example.guideme.lessons.GuideMeDatabase
 import com.example.guideme.lessons.LessonDao
 import com.example.guideme.lessons.LessonHost
@@ -373,15 +374,19 @@ fun MainScreen(
 
                     var showTextDialog by remember { mutableStateOf(false) }
                     var typedQuery by remember { mutableStateOf("") }
+                    var queryText by remember { mutableStateOf("") }
+
 
                     SearchMenu(
                         modifier = modifier
                             .fillMaxSize()
                             .padding(24.dp),
-                        onVoiceSearch = {  },
+                        onVoiceSearch = {TTS.speak("Opening voice search.")},
                         onTextSearch = { TTS.speak("Opening text search.") },
                         onBack = {TTS.speak("Returning to welcome.")
-                            currentScreen = "welcome"}
+                            currentScreen = "welcome"
+                        },
+                        missingLessonDao = missingLessonDao
                     )
                 }
 
@@ -1040,7 +1045,8 @@ private fun SearchMenu(
     modifier: Modifier = Modifier,
     onVoiceSearch: () -> Unit,
     onTextSearch: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    missingLessonDao: MissingLessonDao? = null,
 ) {
     val context = LocalContext.current
     val activity = context as Activity
@@ -1102,6 +1108,12 @@ private fun SearchMenu(
                     if (prediction == null || prediction.confidence < 0.6f) {
                         resultText = null
                         errorText = "Sorry, we do not have a lesson on that yet"
+                        val missingLesson = DbMissingLesson(
+                            queryText = text
+                        )
+                        missingLessonDao?.let { dao ->
+                            dao.insertMissingLesson(missingLesson)
+                        }
                     } else {
                         // map label to lesson name
                         val lessonName = prediction.label
@@ -1267,8 +1279,13 @@ private fun SearchMenu(
                                             val prediction = classifier.classify(text)
                                             if (prediction == null || prediction.confidence < 0.6f) {
                                                 resultText = null
-                                                errorText =
-                                                    "Sorry, we don't have a lesson on that yet"
+                                                errorText = "Sorry, we don't have a lesson on that yet"
+                                                val missingLesson = DbMissingLesson(
+                                                    queryText = text
+                                                )
+                                                missingLessonDao?.let { dao ->
+                                                    dao.insertMissingLesson(missingLesson)
+                                                }
                                             } else {
                                                 val lessonName = prediction.label
                                                 resultText = "Suggested lesson:\n$lessonName\n"
