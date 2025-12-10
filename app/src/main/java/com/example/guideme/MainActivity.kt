@@ -102,7 +102,6 @@ import com.example.guideme.ui.theme.PracticeButton
 import com.example.guideme.ui.theme.Transparent
 import com.example.guideme.wifi.WifiNavHost
 import kotlinx.coroutines.launch
-import me.nikhilchaudhari.library.BuildConfig
 
 
 class MainActivity : ComponentActivity() {
@@ -134,6 +133,11 @@ class MainActivity : ComponentActivity() {
 
         )
 
+        val testScreen = intent.getStringExtra("test_screen") // e.g. "camera", "phone", "wifi", "lesson_menu"
+        val lockToScreen = intent.getBooleanExtra("lock_screen", false)
+        val testLessonId = intent.getIntExtra("test_lesson_id", -1)
+        val resolvedTestLessonId = if (testLessonId > 0) testLessonId else null
+
 
         // --- end Room setup ---
 
@@ -158,7 +162,10 @@ class MainActivity : ComponentActivity() {
                             customerDao = db.customerDao(),
                             lessonDao = db.lessonDao(),
                             missingLessonDao = db.missingLessonDao(),
-                            completionDao = db.completionDao()
+                            completionDao = db.completionDao(),
+                            testScreen = testScreen,
+                            lockToScreen = lockToScreen,
+                            testLessonId = resolvedTestLessonId
 
                         )
                     }
@@ -183,7 +190,11 @@ fun GuideMeRoot(
     customerDao: CustomerDao,
     lessonDao: LessonDao? = null,
     missingLessonDao: MissingLessonDao? = null,
-    completionDao: CompletionDao
+    completionDao: CompletionDao,
+    testScreen: String? = null,      // 🔹 new
+    lockToScreen: Boolean = false,    // 🔹 new
+    testLessonId: Int? = null
+
 ) {
     val context = LocalContext.current
     // SharedPreferences where we remember who is logged in
@@ -235,6 +246,9 @@ fun GuideMeRoot(
             missingLessonDao = missingLessonDao,
             completionDao = completionDao,
             customerDao = customerDao,
+            testScreen = testScreen,
+            lockToScreen = lockToScreen,
+            testLessonId = testLessonId
         )
     }
 }
@@ -251,15 +265,39 @@ fun MainScreen(
     missingLessonDao: MissingLessonDao? = null,
     onLogout: () -> Unit = {},
     customerDao: CustomerDao,
-    completionDao: CompletionDao
+    completionDao: CompletionDao,
+    testScreen: String? = null,      // 🔹 new
+    lockToScreen: Boolean = false,    // 🔹 new
+    testLessonId: Int? = null
 ) {
     Column(modifier = modifier) {
         // Screens: welcome -> main (lessons menu) -> phone/camera/wifi/lesson/search
         var currentScreen by remember { mutableStateOf("welcome") }
-
-        // For launching any lesson
         var selectedApp by remember { mutableStateOf<String?>(null) }
         var selectedLessonId by remember { mutableStateOf<Int?>(null) }
+
+        LaunchedEffect(testScreen) {
+            if (testScreen != null) {
+                currentScreen = when (testScreen.lowercase()) {
+                    "welcome" -> "welcome"
+                    "lesson_menu" -> "main"
+                    "camera" -> "camera"
+                    "phone" -> "phone"
+                    "wifi" -> "wifi"
+                    else -> "welcome"
+                }
+            }
+        }
+        LaunchedEffect(testLessonId) {
+            if (testLessonId != null) {
+                selectedLessonId = testLessonId
+                selectedApp = inferAppFromId(testLessonId)   // you already have this helper
+                currentScreen = "lesson"
+            }
+        }
+
+        // For launching any lesson
+
 
         when (currentScreen) {
             "welcome" -> {
@@ -345,7 +383,7 @@ fun MainScreen(
                     )
                 }
 
-                BackHandler {
+                BackHandler(enabled = lockToScreen) {
                     TTS.speak("Returning to welcome.")
                     currentScreen = "welcome"
                 }
@@ -395,7 +433,7 @@ fun MainScreen(
                         currentScreen = "lesson"
                     }
                 )
-                BackHandler {
+                BackHandler(enabled = !lockToScreen) {
                     TTS.speak("Returning to lessons menu.")
                     currentScreen = "main"
                 }
@@ -525,8 +563,8 @@ fun MainScreen(
                         }
                     }
                 }
-
-                BackHandler {
+// disable for monkey testing
+                BackHandler (enabled = !lockToScreen){
                     TTS.speak("Returning to Welcome.")
                     currentScreen = "welcome"
                 }
@@ -605,12 +643,12 @@ private fun WelcomeScreen(
 
             Button(
                 onClick = {
-                    if (!BuildConfig.DEBUG) {
-                        onLogoutClick()
-                    } else {
-                        // debug build – just ignore to keep Monkey from going to login
-                        TTS.speak("Logout is disabled in testing mode.")
-                    }
+//                    if (!BuildConfig.DEBUG) {
+//                        onLogoutClick()
+//                    } else {
+//                        // debug build – just ignore to keep Monkey from going to login
+//                        TTS.speak("Logout is disabled in testing mode.")
+//                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)

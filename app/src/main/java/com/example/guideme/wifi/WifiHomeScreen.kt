@@ -62,7 +62,7 @@ fun WifiHomeScreen(nav: NavController,
     val networks = remember {
         listOf(
             FakeWifi("Campus-Guest", false, 3),
-            FakeWifi("Home-5G", true, 4),
+            FakeWifi("Home-5G", false, 4),
             FakeWifi("Coffee_Shop_WiFi", true, 2),
             FakeWifi("PrinterSetup", true, 1)
         )
