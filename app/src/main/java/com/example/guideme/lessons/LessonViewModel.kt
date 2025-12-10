@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 sealed class UserEvent {
@@ -16,6 +18,15 @@ sealed class UserEvent {
     object Acknowledge : UserEvent()
 }
 
+
+sealed class SoundEvent {
+    object Correct : SoundEvent()
+    object Wrong : SoundEvent()
+
+    object Click : SoundEvent()
+
+    object Complete : SoundEvent()
+}
 class LessonViewModel(
     private val repo: LessonsRepository,
     private val userEmail: String
@@ -23,6 +34,12 @@ class LessonViewModel(
 
     var uiState by mutableStateOf(LessonState())
         private set
+
+    private val _soundEvent = MutableStateFlow<SoundEvent?>(null)
+    val soundEvent: StateFlow<SoundEvent?> = _soundEvent
+    fun clearSoundEvent() {
+        _soundEvent.value = null
+    }
 
     // --- tracking for Completion table ---
     private var lessonStartTimeMillis: Long = 0L
@@ -79,6 +96,7 @@ class LessonViewModel(
                 feedback = "Try again.",
                 tappedIncorrectAnchorId = buildWrongTapId(evt)
             )
+            _soundEvent.value = SoundEvent.Wrong
             return
         }
 
@@ -140,6 +158,7 @@ class LessonViewModel(
             }
 
             StepType.Acknowledge -> true
+
         }
 
         // ---- 3. Wrong action (right event type, wrong target) ----
@@ -148,10 +167,16 @@ class LessonViewModel(
             uiState = s.copy(feedback = "Try again.",
                     tappedIncorrectAnchorId = buildWrongTapId(evt)
             )
-
+            _soundEvent.value = SoundEvent.Wrong
             return
         } else {
             uiState = s.copy(feedback = null)
+            if (step.type != StepType.Acknowledge) {
+                _soundEvent.value = SoundEvent.Correct
+            }
+            else{
+                _soundEvent.value = SoundEvent.Click
+            }
         }
 
         // ---- 4. Correct action ----
@@ -182,6 +207,8 @@ class LessonViewModel(
                     recommendedLessons = recLessons
                 )
             }
+
+            _soundEvent.value = SoundEvent.Complete
         }
 
         uiState = s.copy(

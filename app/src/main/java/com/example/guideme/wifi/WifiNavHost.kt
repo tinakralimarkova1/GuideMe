@@ -31,7 +31,8 @@ fun WifiNavHost(
     correctAnchor: String? = null,
     tappedIncorrectAnchor: String? = null,
     isAnchorAllowed: (String) -> Boolean = { true },
-    defaultStates: Map<String, String> = emptyMap()
+    defaultStates: Map<String, String> = emptyMap(),
+    onNumberCommitted: (String) -> Unit = {},
 ) {
     val nav = rememberNavController()
     var showIntro by remember { mutableStateOf(false) }
@@ -117,7 +118,25 @@ fun WifiNavHost(
                 }
             )
         }
-        composable("connect") { WifiConnectScreen(nav) }
+        composable("connect") {
+            WifiConnectScreen(
+                nav = nav,
+                prefillSsid = "",
+                requiresPassword = true,
+                onAnchorTapped = { anchorId ->
+                    onAnchorTapped(anchorId)
+                },
+                correctAnchor = correctAnchor,
+                tappedIncorrectAnchor = tappedIncorrectAnchor,
+                isAnchorAllowed = { anchorId ->
+                    isAnchorAllowed(anchorId)
+                },
+                onNumberCommitted = { text ->
+                    onNumberCommitted(text)
+                }
+            )
+        }
+
         composable("add") { WifiAddNetworkScreen(nav) }
         composable("tips") { WifiTipsScreen(nav) }
 
@@ -130,7 +149,18 @@ fun WifiNavHost(
             })
         ) { backStack ->
             val ssid = backStack.arguments?.getString("ssid") ?: ""
-            WifiConnectScreen(nav, ssid)
+            val secured = backStack.arguments?.getBoolean("secured") ?: true
+
+            WifiConnectScreen(
+                nav = nav,
+                prefillSsid = ssid,
+                requiresPassword = secured, // or look this up if you pass `secured`
+                onAnchorTapped = { anchorId -> onAnchorTapped(anchorId) },
+                correctAnchor = correctAnchor,
+                tappedIncorrectAnchor = tappedIncorrectAnchor,
+                isAnchorAllowed = { anchorId -> isAnchorAllowed(anchorId) },
+                onNumberCommitted = { text -> onNumberCommitted(text) }
+            )
         }
     }
 }

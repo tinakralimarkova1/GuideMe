@@ -1,6 +1,7 @@
 package com.example.guideme.phone
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,11 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -26,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -47,6 +50,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.guideme.lessons.anchorId
 import com.example.guideme.lessons.flash
 import com.example.guideme.tts.TTS
+
 
 data class Contact(val name: String, val phone: String)
 
@@ -71,20 +75,7 @@ fun ContactsScreen(
     }
     var showAddDialog by remember { mutableStateOf(false) }
 
-    if (showAddDialog) {
-        AddContactDialog(
-            onDismiss = { showAddDialog = false },
-            onAdd = { name, phone ->
-                if (name.isBlank() || phone.isBlank()) {
-                    TTS.speak("Please enter a name and a phone number.")
-                } else {
-                    contacts.add(Contact(name.trim(), phone.trim()))
-                    TTS.speak("Contact added: $name.")
-                    showAddDialog = false
-                }
-            }
-        )
-    }
+
 
     Scaffold(
         topBar = {
@@ -158,9 +149,9 @@ fun ContactsScreen(
                 modifier = Modifier
                     .weight(8f)
                     .fillMaxWidth()
-                    // anchor for “this is the contacts list” highlight-only steps
                     .anchorId("Contacts.List")
             ) {
+                // --- existing content underneath ---
                 if (contacts.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -179,18 +170,76 @@ fun ContactsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(contacts) { c ->
-                            ContactRow(
-                                c,
-                                onClick = {
-                                    TTS.speak("Dialing ${c.name}.")
-                                    val encoded = Uri.encode(c.phone)
-                                    navController.navigate("dialpad?number=$encoded")
+
+                            val anchor = "Contacts.Contact.${c.name}"
+
+                            ElevatedCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .anchorId(anchor)
+                                    .flash(tappedIncorrectAnchor, anchor)
+                                    .clickable {
+
+                                        // 1. Send tap event to Lesson VM
+
+
+                                        // 2. If this tap is NOT allowed right now → stop.
+                                        if (!isAnchorAllowed(anchor)) {
+                                            // VM will already show error + highlight
+                                            onAnchorTapped(anchor)
+                                        }
+                                        else{
+                                            TTS.speak("Dialing ${c.name}.")
+                                            val encoded = Uri.encode(c.phone)
+                                            onAnchorTapped(anchor)
+                                            navController.navigate("dialpad?number=$encoded")
+                                        }
+
+
+                                    }
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text(
+                                        c.name,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        c.phone,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
                                 }
-                            )
+                            }
                         }
                     }
                 }
+
+
+                // --- "fake dialog" overlay, drawn on top but still under Lesson overlay ---
+                if (showAddDialog) {
+                    AddContactSheet(
+                        onDismiss = { showAddDialog = false },
+                        onAdd = { name, phone ->
+                            if (name.isBlank() || phone.isBlank()) {
+                                TTS.speak("Please enter a name and a phone number.")
+                            } else {
+                                contacts.add(Contact(name.trim(), phone.trim()))
+                                TTS.speak("Contact added: $name.")
+                                showAddDialog = false
+                            }
+                        },
+                        onNumberCommitted ={text ->
+                            onNumberCommitted(text)
+                        },
+                        onAnchorTapped ={anchor ->
+                            onAnchorTapped(anchor)
+
+                        }
+                    )
+                }
             }
+
 
             // Bottom nav bar anchored at the bottom in its own row,
             // leaving the usual empty band above for the lesson overlay.
@@ -234,46 +283,113 @@ private fun ContactRow(c: Contact, onClick: () -> Unit) {
 }
 
 @Composable
-private fun AddContactDialog(
+private fun AddContactSheet(
     onDismiss: () -> Unit,
-    onAdd: (name: String, phone: String) -> Unit
-) {
+    onAdd: (name: String, phone: String) -> Unit,
+    onNumberCommitted:(String) -> Unit ={},
+    onAnchorTapped: (String) -> Unit = {},
+
+
+    ) {
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add contact", fontWeight = FontWeight.Bold) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    // Full-size overlay container
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f))
+            .anchorId("Contacts.Add.Overlay"),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            shape = RoundedCornerShape(24.dp),
+            tonalElevation = 8.dp,
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .heightIn(min = 260.dp)
+                .anchorId("Contacts.Add.Container")
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .anchorId("Contacts.Add.Content"),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    "Add contact",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.anchorId("Contacts.Add.Title")
+                )
+
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = {newValue ->
+                        name = newValue
+                        onNumberCommitted(newValue)},
                     label = { Text("Name") },
-                    singleLine = true
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .anchorId("Contacts.Add.Name")
                 )
+
                 OutlinedTextField(
                     value = phone,
-                    onValueChange = { phone = it },
+                    onValueChange = {newValue ->
+                        phone = newValue
+                        onNumberCommitted(newValue)},
                     label = { Text("Phone number") },
-                    singleLine = true
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .anchorId("Contacts.Add.Phone")
                 )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = { onAdd(name, phone) }) {
-                Text("Add")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    TTS.speak("Canceled.")
-                    onDismiss()
+
+                Spacer(
+                    Modifier
+                        .height(8.dp)
+                        .anchorId("Contacts.Add.Spacer")
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .anchorId("Contacts.Add.ButtonRow"),
+                    horizontalArrangement = Arrangement.End
+                ) {
+
+                    TextButton(
+                        onClick = {
+                            TTS.speak("Canceled.")
+                            onDismiss()
+                            onAnchorTapped("Contacts.Add.Cancel")
+                        },
+                        modifier = Modifier.anchorId("Contacts.Add.Cancel")
+                    ) {
+                        Text("Cancel")
+                    }
+
+                    Spacer(
+                        Modifier
+                            .width(8.dp)
+                            .anchorId("Contacts.Add.Spacer.Small")
+                    )
+
+                    TextButton(
+                        onClick = { onAdd(name, phone)
+                            onAnchorTapped("Contacts.Add.AddButton")
+
+                        },
+                        modifier = Modifier.anchorId("Contacts.Add.AddButton")
+                    ) {
+                        Text("Add")
+                    }
                 }
-            ) { Text("Cancel") }
+            }
         }
-    )
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)

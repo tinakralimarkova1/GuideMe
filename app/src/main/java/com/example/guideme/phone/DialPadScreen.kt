@@ -376,11 +376,11 @@ private fun DialPadKeys(
 
 
                     ) {
-                        if (!isAnchorAllowed(anchor)) {
-                            // Wrong key for this step → send as wrong tap, no typing
-                            onButtonPressed(anchor)
-                        } else {
-                            // Allowed by VM → do the actual typing behaviour
+                        // Always tell the lesson VM what was tapped
+                        onButtonPressed(anchor)
+
+// Only allowed keys should actually type digits
+                        if (isAnchorAllowed(anchor)) {
                             onKey(key)
                         }
                     }
