@@ -544,6 +544,156 @@ object DatabaseSeeder {
                         outlineColor = null
 
                     ),
+                    //-------Camera Practice Lesson 10021 – Taking a Picture (with highlights)-------
+                    DbInstruction(
+                        lessonsId = 10021,
+                        stepNo = 1,
+                        text = "Practice time! Let's review how to take a photo.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10021,
+                        stepNo = 2,
+                        text = "Remember, this is the pretend camera app. In the real app, you would see your surroundings here.",
+                        anchorId = "Camera.Screen",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10021,
+                        stepNo = 3,
+                        text = "To take a photo, press the capture button. Tap the capture button now.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null   // default highlight ON
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10021,
+                        stepNo = 4,
+                        text = "Great! You have taken a photo.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10021,
+                        stepNo = 5,
+                        text = "In the real app, you can tap the gallery button to see your photos.",
+                        anchorId = "Camera.Gallery",
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10021,
+                        stepNo = 6,
+                        text = "Tap the gallery button. Here it won't open a real gallery, but in the real app it would show your photos.",
+                        anchorId = "Camera.Gallery",
+                        type = StepType.TapTarget.name,
+                        outlineColor = null   // default highlight ON
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10021,
+                        stepNo = 7,
+                        text = "Well done! You have practiced taking a photo and opening the gallery.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    //-------Camera Practice Lesson 10022 – Taking a Picture (no highlight, guided)-------
+                    DbInstruction(
+                        lessonsId = 10022,
+                        stepNo = 1,
+                        text = "Now let's practice again, this time without the yellow highlight.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10022,
+                        stepNo = 2,
+                        text = "To take a photo, press the capture button. Find and tap the capture button now.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L   // transparent → no visible highlight
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10022,
+                        stepNo = 3,
+                        text = "Great! You have taken a photo.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10022,
+                        stepNo = 4,
+                        text = "Next, open the gallery. Tap the gallery button to practice.",
+                        anchorId = "Camera.Gallery",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L   // transparent → no visible highlight
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10022,
+                        stepNo = 5,
+                        text = "Nice work! You can now find the capture and gallery buttons without on-screen hints.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    //-------Camera Practice Lesson 10023 – Taking a Picture (test, no help)-------
+                    DbInstruction(
+                        lessonsId = 10023,
+                        stepNo = 1,
+                        text = "For this practice, try to use the camera on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10023,
+                        stepNo = 2,
+                        text = "Take a photo using the camera.",
+                        anchorId = "Camera.Capture",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L   // no highlight, user must remember capture button
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10023,
+                        stepNo = 3,
+                        text = "Now open your photos.",
+                        anchorId = "Camera.Gallery",
+                        type = StepType.TapTarget.name,
+                        outlineColor = 0x00000000L   // no highlight, user must remember gallery button
+                    ),
+
+                    DbInstruction(
+                        lessonsId = 10023,
+                        stepNo = 4,
+                        text = "Excellent! You have shown that you can take a photo and open the gallery on your own.",
+                        anchorId = null,
+                        type = StepType.Acknowledge.name,
+                        outlineColor = null
+                    ),
+
+
+
+
                     //-------Camera Lesson 1003: Zooming in-------
                     DbInstruction(
                         lessonsId = 1003,
@@ -1171,20 +1321,22 @@ object DatabaseSeeder {
                     DbInstruction(
                         lessonsId = 30011,
                         stepNo = 2,
-                        text = "Tap the WiFi toggle button.",
-                        anchorId = "Wifi.WifiToggle",
-                        type = StepType.Toggle.name,
+                        text = "Tap the WiFi network named 'Campus-Guest'.",
+                        anchorId = "Wifi.Network.Campus-Guest",
+                        type = StepType.TapTarget.name,
                         outlineColor = 0x00000000L
                     ),
 
                     DbInstruction(
                         lessonsId = 30011,
                         stepNo = 3,
-                        text = "Tap the WiFi network named 'Campus-Guest'.",
-                        anchorId = "Wifi.Network.Campus-Guest",
-                        type = StepType.TapTarget.name,
+                        text = "Tap the WiFi toggle button.",
+                        anchorId = "Wifi.WifiToggle",
+                        type = StepType.Toggle.name,
                         outlineColor = 0x00000000L
                     ),
+
+
 
                     DbInstruction(
                         lessonsId = 30011,
@@ -1445,7 +1597,13 @@ object DatabaseSeeder {
                         lessonsId = 1001,
                         buttonName = "Camera.FlashButton",
                         state = "OFF"
+                    ),
+                    DbDefaultButton(
+                        lessonsId = 30011,
+                        buttonName = "Wifi.OnOffButton",
+                        state = "false"
                     )
+
 
                     )
             )
